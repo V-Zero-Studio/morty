@@ -1,11 +1,11 @@
 {
   "manifest_version": 3,
-  "name": "Hello Extensions",
-  "description": "Base Level Extension",
+  "name": "MORTY",
+  "description": "Mitigating OverReliance on inTelligent sYstems",
   "version": "1.0",
   "action": {
     "default_popup": "hello.html",
-    "default_icon": "hello_extensions.png"
+    "default_icon": "morty_icon.001.png"
   },
   "content_scripts": [
     {
