@@ -9,10 +9,13 @@
   },
   "content_scripts": [
     {
-      "js": ["scripts/morty.main.js"],
+      "js": ["scripts/morty.waittime.js"],
       "matches": [
         "https://chat.openai.com/c/*"
       ]
     }
-  ]
+  ],
+  "background": {
+    "service_worker": "scripts/background.js"
+  }
 }
