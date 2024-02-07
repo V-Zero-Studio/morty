@@ -12,6 +12,6 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
         // chrome.tabs.sendMessage(tabId, {greeting: "Hello, content script! The page is loaded."}, function(response) {
         //     console.log(response.reply);
         // });
-        chrome.tabs.sendMessage(tabId, {"message": "hello"});
+        chrome.tabs.sendMessage(tabId, {"message": "waittime on"});
     }
 });
