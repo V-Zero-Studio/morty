@@ -1,21 +1,33 @@
 {
-  "manifest_version": 3,
-  "name": "MORTY",
-  "description": "Mitigating OverReliance on inTelligent sYstems",
-  "version": "1.0",
-  "action": {
-    "default_popup": "hello.html",
-    "default_icon": "morty_icon.001.png"
-  },
-  "content_scripts": [
-    {
-      "js": ["scripts/morty.waittime.js"],
-      "matches": [
-        "https://chat.openai.com/c/*"
-      ]
-    }
-  ],
-  "background": {
-    "service_worker": "scripts/background.js"
-  }
+    "manifest_version": 3,
+    "name": "MORTY",
+    "description": "Mitigating OverReliance on inTelligent sYstems",
+    "version": "1.0",
+    "action": {
+        "default_popup": "hello.html",
+        "default_icon": "morty_icon.001.png"
+    },
+    "content_scripts": [
+        {
+            "js": [
+                "scripts/morty.waittime.js"
+            ],
+            "matches": [
+                "https://chat.openai.com/c/*"
+            ]
+        }
+    ],
+    "background": {
+        "service_worker": "scripts/background.js"
+    },
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "data/config.json"
+            ],
+            "matches": [
+              "<all_urls>"
+          ]
+        }
+    ]
 }

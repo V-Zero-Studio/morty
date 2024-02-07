@@ -5,23 +5,20 @@
 const WAITTIME = 5000
 const FADERATIO = 1.1
 const FADEOPACITY = 0.05
-const FADEINTERVAL = 100 // Math.round(FADETIMEOUT / (Math.log(1 / FADEOPACITY) / Math.log(FADERATIO)))
-
-
-const KEYWORDSTREAMING = "result-streaming"
-const KEYWORDANSWER = "markdown" // prose w-full break-words dark:prose-invert light"
-
+const FADEINTERVAL = 200
 const TIMEOUTSTREAMINGDONE = 5000
+
+let config = {}
 
 var tsAnsLastUpdated = -1
 var elmAnswer = undefined
 
-// // Callback function to execute when mutations are observed
+// Callback function to execute when mutations are observed
 const callbackNewAnswer = function (mutationsList, observer) {
     for (const mutation of mutationsList) {
         if (mutation.type === 'childList') {
             mutation.addedNodes.forEach(node => {
-                if (node.className != undefined && node.className.includes(KEYWORDSTREAMING)) {
+                if (node.className != undefined && node.className.includes(config.KEYWORDSTREAMING)) {
                     console.log("streaming starts")
                     monitorStreamingEnd()
 
@@ -36,8 +33,6 @@ const callbackNewAnswer = function (mutationsList, observer) {
 
     }
 }
-
-
 
 const fadeIn = (elm) => {
     if (elm == undefined) {
@@ -54,7 +49,7 @@ const fadeIn = (elm) => {
 
 const monitorStreamingEnd = () => {
     setTimeout(() => {
-        var elements = document.querySelectorAll('[class*="' + KEYWORDSTREAMING + '"')
+        var elements = document.querySelectorAll('[class*="' + config.KEYWORDSTREAMING + '"')
         if (elements.length > 0) {
             monitorStreamingEnd()
         } else {
@@ -69,6 +64,17 @@ const monitorStreamingEnd = () => {
 
 (function () {
     console.log("wait time")
+
+    const jsonFilePath = chrome.runtime.getURL("data/config.json");
+
+    fetch(jsonFilePath)
+        .then(response => response.json()) // Parse the JSON from the response
+        .then(data => {
+            console.log(data); // Here's your data
+            config = data
+        })
+        .catch(error => console.error('Error fetching JSON:', error));
+
     chrome.runtime.onMessage.addListener(
         function (request, sender, sendResponse) {
             if (request.message === "waittime on") {
