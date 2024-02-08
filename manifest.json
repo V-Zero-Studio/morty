@@ -10,7 +10,7 @@
     "content_scripts": [
         {
             "js": [
-                "scripts/morty.waittime.js"
+                "scripts/morty.cff.js"
             ],
             "matches": [
                 "https://chat.openai.com/c/*"

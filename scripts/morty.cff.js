@@ -63,7 +63,7 @@ const monitorStreamingEnd = () => {
 }
 
 (function () {
-    console.log("wait time")
+    // console.log("wait time")
 
     const jsonFilePath = chrome.runtime.getURL("data/config.json");
 
