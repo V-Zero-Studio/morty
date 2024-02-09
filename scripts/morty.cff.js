@@ -3,9 +3,9 @@
 //
 
 const WAITTIME = 5000
-const FADERATIO = 1.1
+const FADERATIO = 1.25
 const FADEOPACITY = 0.05
-const FADEINTERVAL = 200
+const FADEINTERVAL = 100
 const TIMEOUTSTREAMINGDONE = 5000
 
 const IDBTNREVEAL = "btnReveal"
@@ -13,10 +13,10 @@ const IDBTNREVEAL = "btnReveal"
 let config = {}
 
 var tsAnsLastUpdated = -1
-var elmAnswer = undefined
+var elmResponse = undefined
 
 // Callback function to execute when mutations are observed
-const callbackNewAnswer = function (mutationsList, observer) {
+const callbackNewResponse = function (mutationsList, observer) {
     for (const mutation of mutationsList) {
         if (mutation.type === 'childList') {
             mutation.addedNodes.forEach(node => {
@@ -25,10 +25,10 @@ const callbackNewAnswer = function (mutationsList, observer) {
                     monitorStreamingEnd()
 
                     var elements = document.querySelectorAll('[data-message-author-role="assistant"]')
-                    elmAnswer = elements[elements.length - 1]
-                    elmAnswer.style.opacity = FADEOPACITY.toString()
+                    elmResponse = elements[elements.length - 1]
+                    elmResponse.style.opacity = FADEOPACITY.toString()
 
-                    addRevealButton(elmAnswer)
+                    addRevealButton(elmResponse)
 
                     return
                 }
@@ -61,45 +61,52 @@ const monitorStreamingEnd = () => {
         } else {
             console.log("streaming ended")
             setTimeout(() => {
-                fadeIn(elmAnswer)
+                fadeIn(elmResponse)
             }, WAITTIME);
         }
     }, 2000);
 
 }
 
-const addRevealButton = (elmAnswer) => {
+//
+//  add a button to the response area to reveal AI response
+//
+const addRevealButton = (elmResponse) => {
     const button = document.createElement("button")
 
-    button.textContent = "Show AI Response";
+    button.textContent = "Click to see AI Response";
     button.id = IDBTNREVEAL
-    button.className = "btn-reveal";
+    button.className = "btn btn-reveal";
 
+    // show the button at the bottom of the response area
     button.style.position = 'absolute'
     button.style.bottom = '0'
-    // button.style.display = 'block'
-    // button.style.marginLeft = 'auto'
-    // button.style.marginRight = 'auto'
-    // button.style.width = '25%'
+    // center the button
+    button.style.left = '50%'
+    button.style.transform = 'translateX(-50%)'
     
-    elmAnswer.parentElement.style.position = 'relative'
-    // elmAnswer.parentElement.style.textAlign = 'center'
+    elmResponse.parentElement.style.position = 'relative'
 
+    // click to reveal AI response
     button.addEventListener("click", function () {
-        alert("Button was clicked!");
+        fadeIn(elmResponse)
+        removeRevealButton()
     });
 
-    elmAnswer.parentElement.appendChild(button);
+    elmResponse.parentElement.appendChild(button);
 }
 
+//
+//  remove the button that reveals AI response
+//
 const removeRevealButton = () => {
     const button = document.getElementById(IDBTNREVEAL)
-    button.remove()
+    if(button != null) {
+        button.remove()
+    }
 }
 
 (function () {
-    // console.log("wait time")
-
     const jsonFilePath = chrome.runtime.getURL("data/config.json");
 
     fetch(jsonFilePath)
@@ -123,10 +130,10 @@ const removeRevealButton = () => {
                 const config = { childList: true, subtree: true };
 
                 // Create an instance of MutationObserver
-                const observerNewAnswer = new MutationObserver(callbackNewAnswer);
+                const observerNewResponse = new MutationObserver(callbackNewResponse);
 
                 // Start observing the target node for configured mutations
-                observerNewAnswer.observe(targetNode, config);
+                observerNewResponse.observe(targetNode, config);
             } else if (request.message === "waittime off") {
                 //  disconnect observer
             }
