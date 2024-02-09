@@ -2,20 +2,31 @@
 //
 //
 
+// cognitive forcing function variations
+const CFF_WAIT = 0
+const CFF_ONDEMAND = 1
+
+// design parameters for cff_wait
 const WAITTIME = 5000
 const FADERATIO = 1.25
 const FADEOPACITY = 0.05
 const FADEINTERVAL = 100
 const TIMEOUTSTREAMINGDONE = 5000
 
+// design parameters for cff_ondemand
 const IDBTNREVEAL = "btnReveal"
+const TEXTBTNREVEAL = "Click to See AI Response"
+
+
+const cff = CFF_ONDEMAND
 
 let config = {}
+let tsAnsLastUpdated = -1
+let elmResponse = undefined
 
-var tsAnsLastUpdated = -1
-var elmResponse = undefined
-
-// Callback function to execute when mutations are observed
+//
+// callback function to execute when mutations are observed
+//
 const callbackNewResponse = function (mutationsList, observer) {
     for (const mutation of mutationsList) {
         if (mutation.type === 'childList') {
@@ -28,7 +39,9 @@ const callbackNewResponse = function (mutationsList, observer) {
                     elmResponse = elements[elements.length - 1]
                     elmResponse.style.opacity = FADEOPACITY.toString()
 
-                    addRevealButton(elmResponse)
+                    if (cff == CFF_ONDEMAND) {
+                        addRevealButton(elmResponse)
+                    }
 
                     return
                 }
@@ -38,6 +51,9 @@ const callbackNewResponse = function (mutationsList, observer) {
     }
 }
 
+//
+//  fade in the AI response area
+//
 const fadeIn = (elm) => {
     if (elm == undefined) {
         return
@@ -53,6 +69,10 @@ const fadeIn = (elm) => {
     }
 }
 
+//
+//  a recurring function to monitor if streaming ends,
+//  in which case certain element marked as streaming can no longer be found
+//
 const monitorStreamingEnd = () => {
     setTimeout(() => {
         var elements = document.querySelectorAll('[class*="' + config.KEYWORDSTREAMING + '"')
@@ -60,9 +80,11 @@ const monitorStreamingEnd = () => {
             monitorStreamingEnd()
         } else {
             console.log("streaming ended")
-            setTimeout(() => {
-                fadeIn(elmResponse)
-            }, WAITTIME);
+            if (cff == CFF_WAIT) {
+                setTimeout(() => {
+                    fadeIn(elmResponse)
+                }, WAITTIME);
+            }
         }
     }, 2000);
 
@@ -74,7 +96,7 @@ const monitorStreamingEnd = () => {
 const addRevealButton = (elmResponse) => {
     const button = document.createElement("button")
 
-    button.textContent = "Click to see AI Response";
+    button.textContent = TEXTBTNREVEAL;
     button.id = IDBTNREVEAL
     button.className = "btn btn-reveal";
 
@@ -84,7 +106,7 @@ const addRevealButton = (elmResponse) => {
     // center the button
     button.style.left = '50%'
     button.style.transform = 'translateX(-50%)'
-    
+
     elmResponse.parentElement.style.position = 'relative'
 
     // click to reveal AI response
@@ -101,11 +123,14 @@ const addRevealButton = (elmResponse) => {
 //
 const removeRevealButton = () => {
     const button = document.getElementById(IDBTNREVEAL)
-    if(button != null) {
+    if (button != null) {
         button.remove()
     }
 }
 
+//
+//  "init" function
+//
 (function () {
     const jsonFilePath = chrome.runtime.getURL("data/config.json");
 
