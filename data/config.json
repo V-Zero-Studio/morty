@@ -1,3 +1,4 @@
 {
-  "KEYWORDSTREAMING": "result-streaming"
+  "KEYWORDSTREAMING": "result-streaming",
+  "IDPROMPTINPUT": "prompt-textarea"
 }

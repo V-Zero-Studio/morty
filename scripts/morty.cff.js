@@ -17,7 +17,7 @@ const TIMEOUTSTREAMINGDONE = 5000
 const IDBTNREVEAL = "btnReveal"
 const TEXTBTNREVEAL = "Click to See AI Response"
 
-
+// the type of cognitive forcing function
 const cff = CFF_ONDEMAND
 
 let config = {}
@@ -64,9 +64,10 @@ const fadeIn = (elm) => {
         setTimeout(() => {
             fadeIn(elm)
         }, FADEINTERVAL);
-    } else {
-        removeRevealButton()
     }
+    // else {
+    //     removeRevealButton()
+    // }
 }
 
 //
@@ -128,41 +129,44 @@ const removeRevealButton = () => {
     }
 }
 
+const init = () => {
+    // add observer to monitor streaming of ai response
+    chrome.runtime.onMessage.addListener(
+        function (request, sender, sendResponse) {
+            if (request.message === "cff on") {
+                console.log("Message from background script:", request.message);
+                // create an instance of MutationObserver
+                const observerNewResponse = new MutationObserver(callbackNewResponse);
+                // start observing the target node for configured mutations
+                observerNewResponse.observe(document.body, { childList: true, subtree: true });
+            } else if (request.message === "waittime off") {
+                //  disconnect observer
+            }
+        }
+    );
+
+    let elmPrompt = document.getElementById(config.IDPROMPTINPUT)
+    elmPrompt.addEventListener('keydown', (e) => {
+        if (e.key === "Enter") {
+            console.log(e.target.value)
+        }
+    })
+}
+
 //
 //  "init" function
 //
 (function () {
     const jsonFilePath = chrome.runtime.getURL("data/config.json");
 
+    // load config file
     fetch(jsonFilePath)
         .then(response => response.json()) // Parse the JSON from the response
         .then(data => {
             console.log(data); // Here's your data
             config = data
+            init()
         })
         .catch(error => console.error('Error fetching JSON:', error));
-
-    chrome.runtime.onMessage.addListener(
-        function (request, sender, sendResponse) {
-            if (request.message === "cff on") {
-                console.log("Message from background script:", request.message);
-                // Perform some action based on the message
-
-                // Select the node that will be observed for mutations
-                const targetNode = document.body; // You can change this to any other element
-
-                // Options for the observer (which mutations to observe)
-                const config = { childList: true, subtree: true };
-
-                // Create an instance of MutationObserver
-                const observerNewResponse = new MutationObserver(callbackNewResponse);
-
-                // Start observing the target node for configured mutations
-                observerNewResponse.observe(targetNode, config);
-            } else if (request.message === "waittime off") {
-                //  disconnect observer
-            }
-        }
-    );
 
 })();
