@@ -145,11 +145,18 @@ const init = () => {
         }
     );
 
+    // intercept the sending of prompts: enter key and send button
     let elmPrompt = document.getElementById(config.IDPROMPTINPUT)
     elmPrompt.addEventListener('keydown', (e) => {
         if (e.key === "Enter") {
-            console.log(e.target.value)
+            console.log("enter", e.target.value)
         }
+    })
+
+    let elmSendBtn = document.querySelector(config.QUERYSENDBTN)
+    elmSendBtn.addEventListener('click', (e) => {
+        let elmPrompt = document.getElementById(config.IDPROMPTINPUT)
+        console.log("button", elmPrompt.value)
     })
 }
 

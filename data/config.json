@@ -1,4 +1,5 @@
 {
   "KEYWORDSTREAMING": "result-streaming",
-  "IDPROMPTINPUT": "prompt-textarea"
+  "IDPROMPTINPUT": "prompt-textarea",
+  "QUERYSENDBTN": "[data-testid=\"send-button\"]"
 }
