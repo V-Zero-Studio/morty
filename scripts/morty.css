@@ -1,0 +1,10 @@
+#btnReveal {
+    background: blue;
+}
+
+.parentResponse {
+    display: flex;
+    align-items: center; /* Aligns children vertically in the center */
+    justify-content: center; /* Optional, for horizontal centering */
+    height: 100%; /* Or any specific height */
+  }
