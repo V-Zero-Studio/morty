@@ -17,6 +17,9 @@ const TIMEOUTSTREAMINGDONE = 5000
 const IDBTNREVEAL = "btnReveal"
 const TEXTBTNREVEAL = "Click to See AI Response"
 
+// design parameters for showing hints
+const IDHINTTEXT = "pHint"
+
 // the type of cognitive forcing function
 const cff = CFF_ONDEMAND
 
@@ -43,6 +46,8 @@ const callbackNewResponse = function (mutationsList, observer) {
                         addRevealButton(elmResponse)
                     }
 
+                    addHintText(elmResponse)
+
                     return
                 }
             })
@@ -65,9 +70,9 @@ const fadeIn = (elm) => {
             fadeIn(elm)
         }, FADEINTERVAL);
     }
-    // else {
-    //     removeRevealButton()
-    // }
+    else {
+        removeHintText()
+    }
 }
 
 //
@@ -129,6 +134,39 @@ const removeRevealButton = () => {
     }
 }
 
+//
+//
+//
+const addHintText = (elmResponse) => {
+    const paragraph = document.createElement("p")
+
+    paragraph.innerHTML = "hint text"
+    paragraph.id = IDHINTTEXT
+    
+    // center the hint text
+    paragraph.style.position = 'absolute'
+    // paragraph.style.width = '100%'
+    // paragraph.style.height = '100%'
+    paragraph.style.background = 'red'
+    paragraph.style.top = '0'
+    paragraph.style.left = '50%'
+    paragraph.style.transform = 'translateX(-50%)'
+
+    elmResponse.parentElement.style.position = 'relative'
+
+    elmResponse.parentElement.appendChild(paragraph)
+}
+
+//
+//
+//
+const removeHintText = () => {
+    const paragraph = document.getElementById(IDHINTTEXT)
+    if (paragraph != null) {
+        paragraph.remove()
+    }
+}
+
 const init = () => {
     // add observer to monitor streaming of ai response
     chrome.runtime.onMessage.addListener(
@@ -146,18 +184,18 @@ const init = () => {
     );
 
     // intercept the sending of prompts: enter key and send button
-    let elmPrompt = document.getElementById(config.IDPROMPTINPUT)
-    elmPrompt.addEventListener('keydown', (e) => {
-        if (e.key === "Enter") {
-            console.log("enter", e.target.value)
-        }
-    })
+    // let elmPrompt = document.getElementById(config.IDPROMPTINPUT)
+    // elmPrompt.addEventListener('keydown', (e) => {
+    //     if (e.key === "Enter") {
+    //         console.log("enter", e.target.value)
+    //     }
+    // })
 
-    let elmSendBtn = document.querySelector(config.QUERYSENDBTN)
-    elmSendBtn.addEventListener('click', (e) => {
-        let elmPrompt = document.getElementById(config.IDPROMPTINPUT)
-        console.log("button", elmPrompt.value)
-    })
+    // let elmSendBtn = document.querySelector(config.QUERYSENDBTN)
+    // elmSendBtn.addEventListener('click', (e) => {
+    //     let elmPrompt = document.getElementById(config.IDPROMPTINPUT)
+    //     console.log("button", elmPrompt.value)
+    // })
 }
 
 //
