@@ -102,6 +102,9 @@ const monitorStreamingEnd = () => {
 
 }
 
+//
+//
+//
 const createCffContainer = () => {
     divCff = document.createElement("div")
     divCff.classList.add("cff-container")
@@ -121,6 +124,7 @@ const addRevealButton = (container) => {
     button.addEventListener("click", function () {
         fadeIn(elmResponse)
         removeRevealButton()
+        removeHintText()
     });
 
     container.appendChild(button);
@@ -141,7 +145,8 @@ const removeRevealButton = () => {
 //
 const addHintText = (container) => {
     const paragraph = document.createElement("p")
-    paragraph.innerHTML = "hint text"
+    const k = Math.floor(Math.random() * 1009)
+    paragraph.innerHTML = config.HINTTEXTS[k % config.HINTTEXTS.length]
     paragraph.id = IDHINTTEXT
     container.appendChild(paragraph)
 }
