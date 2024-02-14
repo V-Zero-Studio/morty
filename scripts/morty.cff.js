@@ -14,7 +14,7 @@ const FADEINTERVAL = 100
 const TIMEOUTSTREAMINGDONE = 5000
 
 //
-const CLASSRESPONSEPARENT = "parentResponse"
+// const CLASSRESPONSEPARENT = "parentResponse"
 
 // design parameters for cff_ondemand
 const IDBTNREVEAL = "btnReveal"
@@ -29,6 +29,7 @@ const cff = CFF_ONDEMAND
 let config = {}
 let tsAnsLastUpdated = -1
 let elmResponse = undefined
+let divCff = undefined
 
 //
 // callback function to execute when mutations are observed
@@ -45,13 +46,13 @@ const callbackNewResponse = function (mutationsList, observer) {
                     elmResponse = elements[elements.length - 1]
                     elmResponse.style.opacity = FADEOPACITY.toString()
 
-                    elmResponse.classList.add(CLASSRESPONSEPARENT)
+                    elmResponse.parentElement.appendChild(divCff);
+
+                    addHintText(divCff)
 
                     if (cff == CFF_ONDEMAND) {
-                        addRevealButton(elmResponse)
+                        addRevealButton(divCff)
                     }
-
-                    addHintText(elmResponse)
 
                     return
                 }
@@ -101,24 +102,20 @@ const monitorStreamingEnd = () => {
 
 }
 
+const createCffContainer = () => {
+    divCff = document.createElement("div")
+    divCff.classList.add("cff-container")
+}
+
 //
 //  add a button to the response area to reveal AI response
 //
-const addRevealButton = (elmResponse) => {
+const addRevealButton = (container) => {
     const button = document.createElement("button")
 
     button.textContent = TEXTBTNREVEAL;
     button.id = IDBTNREVEAL
     button.className = "btn btn-reveal";
-
-    // show the button at the bottom of the response area
-    // button.style.position = 'absolute'
-    // button.style.bottom = '0'
-    // center the button
-    // button.style.left = '50%'
-    // button.style.transform = 'translateX(-50%)'
-
-    // elmResponse.parentElement.style.position = 'relative'
 
     // click to reveal AI response
     button.addEventListener("click", function () {
@@ -126,7 +123,7 @@ const addRevealButton = (elmResponse) => {
         removeRevealButton()
     });
 
-    elmResponse.parentElement.appendChild(button);
+    container.appendChild(button);
 }
 
 //
@@ -142,24 +139,11 @@ const removeRevealButton = () => {
 //
 //
 //
-const addHintText = (elmResponse) => {
+const addHintText = (container) => {
     const paragraph = document.createElement("p")
-
     paragraph.innerHTML = "hint text"
     paragraph.id = IDHINTTEXT
-    
-    // center the hint text
-    paragraph.style.position = 'absolute'
-    // paragraph.style.width = '100%'
-    // paragraph.style.height = '100%'
-    paragraph.style.background = 'red'
-    paragraph.style.top = '0'
-    paragraph.style.left = '50%'
-    paragraph.style.transform = 'translateX(-50%)'
-
-    elmResponse.parentElement.style.position = 'relative'
-
-    elmResponse.parentElement.appendChild(paragraph)
+    container.appendChild(paragraph)
 }
 
 //
@@ -176,14 +160,18 @@ const init = () => {
     // add observer to monitor streaming of ai response
     chrome.runtime.onMessage.addListener(
         function (request, sender, sendResponse) {
+            console.log("Message from background script:", request.message);
             if (request.message === "cff on") {
-                console.log("Message from background script:", request.message);
                 // create an instance of MutationObserver
                 const observerNewResponse = new MutationObserver(callbackNewResponse);
                 // start observing the target node for configured mutations
                 observerNewResponse.observe(document.body, { childList: true, subtree: true });
+                
+                // create a container for added cff elements
+                createCffContainer()
+
             } else if (request.message === "waittime off") {
-                //  disconnect observer
+                //  TODO: disconnect observer
             }
         }
     );
