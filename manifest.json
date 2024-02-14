@@ -12,6 +12,9 @@
             "js": [
                 "scripts/morty.cff.js"
             ],
+            "css": [
+                "scripts/morty.css"
+            ],
             "matches": [
                 "https://chat.openai.com/c/*"
             ]
@@ -26,8 +29,8 @@
                 "data/config.json"
             ],
             "matches": [
-              "<all_urls>"
-          ]
+                "<all_urls>"
+            ]
         }
     ]
 }

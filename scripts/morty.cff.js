@@ -13,6 +13,9 @@ const FADEOPACITY = 0.05
 const FADEINTERVAL = 100
 const TIMEOUTSTREAMINGDONE = 5000
 
+//
+const CLASSRESPONSEPARENT = "parentResponse"
+
 // design parameters for cff_ondemand
 const IDBTNREVEAL = "btnReveal"
 const TEXTBTNREVEAL = "Click to See AI Response"
@@ -41,6 +44,8 @@ const callbackNewResponse = function (mutationsList, observer) {
                     var elements = document.querySelectorAll('[data-message-author-role="assistant"]')
                     elmResponse = elements[elements.length - 1]
                     elmResponse.style.opacity = FADEOPACITY.toString()
+
+                    elmResponse.classList.add(CLASSRESPONSEPARENT)
 
                     if (cff == CFF_ONDEMAND) {
                         addRevealButton(elmResponse)
@@ -107,13 +112,13 @@ const addRevealButton = (elmResponse) => {
     button.className = "btn btn-reveal";
 
     // show the button at the bottom of the response area
-    button.style.position = 'absolute'
-    button.style.bottom = '0'
+    // button.style.position = 'absolute'
+    // button.style.bottom = '0'
     // center the button
-    button.style.left = '50%'
-    button.style.transform = 'translateX(-50%)'
+    // button.style.left = '50%'
+    // button.style.transform = 'translateX(-50%)'
 
-    elmResponse.parentElement.style.position = 'relative'
+    // elmResponse.parentElement.style.position = 'relative'
 
     // click to reveal AI response
     button.addEventListener("click", function () {
