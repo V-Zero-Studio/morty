@@ -43,9 +43,13 @@ const callbackNewResponse = function (mutationsList, observer) {
                     monitorStreamingEnd()
 
                     var elements = document.querySelectorAll('[data-message-author-role="assistant"]')
+                    elements.forEach((value, index, array) => {
+                        array[index].style.opacity = 1
+                    })
                     elmResponse = elements[elements.length - 1]
                     elmResponse.style.opacity = FADEOPACITY.toString()
 
+                    resetCffContainer()
                     elmResponse.parentElement.appendChild(divCff);
 
                     addHintText(divCff)
@@ -77,7 +81,8 @@ const fadeIn = (elm) => {
         }, FADEINTERVAL);
     }
     else {
-        removeHintText()
+        // removeHintText()
+        clearCffContainer()
     }
 }
 
@@ -105,9 +110,10 @@ const monitorStreamingEnd = () => {
 //
 //
 //
-const createCffContainer = () => {
-    divCff = document.createElement("div")
-    divCff.classList.add("cff-container")
+const resetCffContainer = () => {
+    divCff.innerHTML = ""
+    divCff.remove()
+
 }
 
 //
@@ -123,22 +129,30 @@ const addRevealButton = (container) => {
     // click to reveal AI response
     button.addEventListener("click", function () {
         fadeIn(elmResponse)
-        removeRevealButton()
-        removeHintText()
+        clearCffContainer()
     });
 
     container.appendChild(button);
 }
 
 //
+//
+//
+const clearCffContainer = () => {
+    divCff.innerHTML = ""
+    divCff.remove()
+    // resetCffContainer()
+}
+
+//
 //  remove the button that reveals AI response
 //
-const removeRevealButton = () => {
-    const button = document.getElementById(IDBTNREVEAL)
-    if (button != null) {
-        button.remove()
-    }
-}
+// const removeRevealButton = () => {
+//     const button = document.getElementById(IDBTNREVEAL)
+//     if (button != null) {
+//         button.remove()
+//     }
+// }
 
 //
 //
@@ -154,12 +168,12 @@ const addHintText = (container) => {
 //
 //
 //
-const removeHintText = () => {
-    const paragraph = document.getElementById(IDHINTTEXT)
-    if (paragraph != null) {
-        paragraph.remove()
-    }
-}
+// const removeHintText = () => {
+//     const paragraph = document.getElementById(IDHINTTEXT)
+//     if (paragraph != null) {
+//         paragraph.remove()
+//     }
+// }
 
 const init = () => {
     // add observer to monitor streaming of ai response
@@ -171,9 +185,10 @@ const init = () => {
                 const observerNewResponse = new MutationObserver(callbackNewResponse);
                 // start observing the target node for configured mutations
                 observerNewResponse.observe(document.body, { childList: true, subtree: true });
-                
+
                 // create a container for added cff elements
-                createCffContainer()
+                divCff = document.createElement("div")
+                divCff.classList.add("cff-container")
 
             } else if (request.message === "waittime off") {
                 //  TODO: disconnect observer
@@ -182,18 +197,20 @@ const init = () => {
     );
 
     // intercept the sending of prompts: enter key and send button
-    // let elmPrompt = document.getElementById(config.IDPROMPTINPUT)
-    // elmPrompt.addEventListener('keydown', (e) => {
-    //     if (e.key === "Enter") {
-    //         console.log("enter", e.target.value)
-    //     }
-    // })
+    let elmPrompt = document.getElementById(config.IDPROMPTINPUT)
+    elmPrompt.addEventListener('keydown', (e) => {
+        if (e.key === "Enter") {
+            // console.log("enter", e.target.value)
+            // clearCffContainer()
+        }
+    })
 
-    // let elmSendBtn = document.querySelector(config.QUERYSENDBTN)
-    // elmSendBtn.addEventListener('click', (e) => {
-    //     let elmPrompt = document.getElementById(config.IDPROMPTINPUT)
-    //     console.log("button", elmPrompt.value)
-    // })
+    let elmSendBtn = document.querySelector(config.QUERYSENDBTN)
+    elmSendBtn.addEventListener('mousedown', (e) => {
+        // let elmPrompt = document.getElementById(config.IDPROMPTINPUT)
+        // console.log("button", elmPrompt.value)
+        // clearCffContainer()
+    })
 }
 
 //
