@@ -14,6 +14,10 @@
         "Can you predict any counterarguments or different perspectives on this topic?",
         "What keywords would you use to search for more information on this subject?",
         "What similar questions can you think of that might lead you to the answer?",
-        "How would you explain this topic to someone else without prior knowledge?"
+        "How would you explain this topic to someone else without prior knowledge?",
+        "What specific details or examples could you request to support ChatGPT's explanation?",
+        "How might you use ChatGPT's response as a starting point for a deeper dive into related topics?",
+        "What creative approaches could you take to explore this topic beyond traditional research methods?",
+        "What are the limitations of ChatGPT's knowledge base, and how does that affect its responses?"
     ]
 }
