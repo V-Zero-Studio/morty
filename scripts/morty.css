@@ -1,5 +1,7 @@
-.btn .btn-reveal {
-    background: gray;
+.btn-reveal {
+    text-decoration: underline;
+    cursor: pointer;
+    
 }
 
 .cff-container {

@@ -118,7 +118,7 @@ const addRevealButton = (container) => {
 
     button.textContent = TEXTBTNREVEAL;
     button.id = IDBTNREVEAL
-    button.className = "btn btn-reveal";
+    button.className = "btn-reveal";
 
     // click to reveal AI response
     button.addEventListener("click", function () {
