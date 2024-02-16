@@ -47,7 +47,7 @@ const callbackNewResponse = function (mutationsList, observer) {
                     elmResponse.style.opacity = FADE_OPACITY.toString()
 
                     clearCffContainer()
-                    elmResponse.parentElement.appendChild(divCff);
+                    elmResponse.parentElement.appendChild(divCff)
 
                     if (CFF_OPTION_HINT) {
                         addHintText(divCff)
@@ -77,7 +77,7 @@ const fadeIn = (elm) => {
         elm.style.opacity = (opacity * FADE_RATIO).toString()
         setTimeout(() => {
             fadeIn(elm)
-        }, FADE_INTERVAL);
+        }, FADE_INTERVAL)
     }
     else {
         clearCffContainer()
@@ -98,10 +98,10 @@ const monitorStreamingEnd = () => {
             if (cff == CFF_WAIT) {
                 setTimeout(() => {
                     fadeIn(elmResponse)
-                }, WAIT_TIME);
+                }, WAIT_TIME)
             }
         }
-    }, 2000);
+    }, 2000)
 
 }
 
@@ -119,17 +119,17 @@ const clearCffContainer = () => {
 const addRevealButton = (container) => {
     const button = document.createElement("button")
 
-    button.textContent = TEXT_BTN_REVEAL;
+    button.textContent = TEXT_BTN_REVEAL
     button.id = ID_BTN_REVEAL
-    button.className = "btn-reveal";
+    button.className = "btn-reveal"
 
     // click to reveal AI response
     button.addEventListener("click", function () {
         fadeIn(elmResponse)
         clearCffContainer()
-    });
+    })
 
-    container.appendChild(button);
+    container.appendChild(button)
 }
 
 //
@@ -150,12 +150,12 @@ const init = () => {
     // add observer to monitor streaming of ai response
     chrome.runtime.onMessage.addListener(
         function (request, sender, sendResponse) {
-            console.log("Message from background script:", request.message);
+            console.log("Message from background script:", request.message)
             if (request.message === "cff on") {
                 // create an instance of MutationObserver
-                const observerNewResponse = new MutationObserver(callbackNewResponse);
+                const observerNewResponse = new MutationObserver(callbackNewResponse)
                 // start observing the target node for configured mutations
-                observerNewResponse.observe(document.body, { childList: true, subtree: true });
+                observerNewResponse.observe(document.body, { childList: true, subtree: true })
 
                 // create a container for added cff elements
                 divCff = document.createElement("div")
@@ -165,17 +165,16 @@ const init = () => {
                 //  TODO: disconnect observer
             }
         }
-    );
+    )
 
     // TODO: clean up the following
     // intercept the sending of prompts: enter key and send button
-    // let elmPrompt = document.getElementById(config.IDPROMPTINPUT)
-    // elmPrompt.addEventListener('keydown', (e) => {
-    // if (e.key === "Enter") {
-    // console.log("enter", e.target.value)
-    // clearCffContainer()
-    // }
-    // })
+    let elmPrompt = document.getElementById(config.IDPROMPTINPUT)
+    elmPrompt.addEventListener('keydown', (e) => {
+        if (e.key === "Enter") {
+            e.target.value += " instead of showing me the response, show me some hints to help me think about my prompt."
+        }
+    }, true)
 
     // let elmSendBtn = document.querySelector(config.QUERYSENDBTN)
     // elmSendBtn.addEventListener('mousedown', (e) => {
@@ -189,16 +188,15 @@ const init = () => {
 //  entry function
 //
 (function () {
-    const jsonFilePath = chrome.runtime.getURL("data/config.json");
+    const jsonFilePath = chrome.runtime.getURL("data/config.json")
 
     // load config file
     fetch(jsonFilePath)
         .then(response => response.json()) // Parse the JSON from the response
         .then(data => {
-            console.log(data); // Here's your data
             config = data
             init()
         })
-        .catch(error => console.error('Error fetching JSON:', error));
+        .catch(error => console.error('Error fetching JSON:', error))
 
-})();
+})()
