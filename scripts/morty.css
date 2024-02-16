@@ -13,5 +13,5 @@
   }
 
   .cff-container .child:not(:last-child) {
-    margin-bottom: 10px; /* Adds margin between children */
+    margin-bottom: 25px; /* Adds margin between children */
   }

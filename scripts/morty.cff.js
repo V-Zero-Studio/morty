@@ -5,23 +5,20 @@
 // cognitive forcing function variations
 const CFF_WAIT = 0
 const CFF_ONDEMAND = 1
+const CFF_OPTION_HINT = true
 
 // design parameters for cff_wait
-const WAITTIME = 5000
-const FADERATIO = 1.25
-const FADEOPACITY = 0.05
-const FADEINTERVAL = 100
-const TIMEOUTSTREAMINGDONE = 5000
-
-//
-// const CLASSRESPONSEPARENT = "parentResponse"
+const WAIT_TIME = 5000
+const FADE_RATIO = 1.25
+const FADE_OPACITY = 0.05
+const FADE_INTERVAL = 100
 
 // design parameters for cff_ondemand
-const IDBTNREVEAL = "btnReveal"
-const TEXTBTNREVEAL = "Click to See AI Response"
+const ID_BTN_REVEAL = "btnReveal"
+const TEXT_BTN_REVEAL = "Click to See AI Response"
 
 // design parameters for showing hints
-const IDHINTTEXT = "pHint"
+const ID_HINT_TEXT = "pHint"
 
 // the type of cognitive forcing function
 const cff = CFF_ONDEMAND
@@ -47,12 +44,14 @@ const callbackNewResponse = function (mutationsList, observer) {
                         array[index].style.opacity = 1
                     })
                     elmResponse = elements[elements.length - 1]
-                    elmResponse.style.opacity = FADEOPACITY.toString()
+                    elmResponse.style.opacity = FADE_OPACITY.toString()
 
-                    resetCffContainer()
+                    clearCffContainer()
                     elmResponse.parentElement.appendChild(divCff);
 
-                    addHintText(divCff)
+                    if (CFF_OPTION_HINT) {
+                        addHintText(divCff)
+                    }
 
                     if (cff == CFF_ONDEMAND) {
                         addRevealButton(divCff)
@@ -75,13 +74,12 @@ const fadeIn = (elm) => {
     }
     const opacity = parseFloat(elm.style.opacity)
     if (opacity < 1) {
-        elm.style.opacity = (opacity * FADERATIO).toString()
+        elm.style.opacity = (opacity * FADE_RATIO).toString()
         setTimeout(() => {
             fadeIn(elm)
-        }, FADEINTERVAL);
+        }, FADE_INTERVAL);
     }
     else {
-        // removeHintText()
         clearCffContainer()
     }
 }
@@ -100,7 +98,7 @@ const monitorStreamingEnd = () => {
             if (cff == CFF_WAIT) {
                 setTimeout(() => {
                     fadeIn(elmResponse)
-                }, WAITTIME);
+                }, WAIT_TIME);
             }
         }
     }, 2000);
@@ -108,12 +106,11 @@ const monitorStreamingEnd = () => {
 }
 
 //
+// remove children in the container and remove the container
 //
-//
-const resetCffContainer = () => {
+const clearCffContainer = () => {
     divCff.innerHTML = ""
     divCff.remove()
-
 }
 
 //
@@ -122,8 +119,8 @@ const resetCffContainer = () => {
 const addRevealButton = (container) => {
     const button = document.createElement("button")
 
-    button.textContent = TEXTBTNREVEAL;
-    button.id = IDBTNREVEAL
+    button.textContent = TEXT_BTN_REVEAL;
+    button.id = ID_BTN_REVEAL
     button.className = "btn-reveal";
 
     // click to reveal AI response
@@ -136,45 +133,19 @@ const addRevealButton = (container) => {
 }
 
 //
-//
-//
-const clearCffContainer = () => {
-    divCff.innerHTML = ""
-    divCff.remove()
-    // resetCffContainer()
-}
-
-//
-//  remove the button that reveals AI response
-//
-// const removeRevealButton = () => {
-//     const button = document.getElementById(IDBTNREVEAL)
-//     if (button != null) {
-//         button.remove()
-//     }
-// }
-
-//
-//
+// add hint text over the response area that triggers users to think
 //
 const addHintText = (container) => {
     const paragraph = document.createElement("p")
     const k = Math.floor(Math.random() * 1009)
     paragraph.innerHTML = config.HINTTEXTS[k % config.HINTTEXTS.length]
-    paragraph.id = IDHINTTEXT
+    paragraph.id = ID_HINT_TEXT
     container.appendChild(paragraph)
 }
 
 //
+// initialization
 //
-//
-// const removeHintText = () => {
-//     const paragraph = document.getElementById(IDHINTTEXT)
-//     if (paragraph != null) {
-//         paragraph.remove()
-//     }
-// }
-
 const init = () => {
     // add observer to monitor streaming of ai response
     chrome.runtime.onMessage.addListener(
@@ -190,31 +161,32 @@ const init = () => {
                 divCff = document.createElement("div")
                 divCff.classList.add("cff-container")
 
-            } else if (request.message === "waittime off") {
+            } else if (request.message === "WAIT_TIME off") {
                 //  TODO: disconnect observer
             }
         }
     );
 
+    // TODO: clean up the following
     // intercept the sending of prompts: enter key and send button
-    let elmPrompt = document.getElementById(config.IDPROMPTINPUT)
-    elmPrompt.addEventListener('keydown', (e) => {
-        if (e.key === "Enter") {
-            // console.log("enter", e.target.value)
-            // clearCffContainer()
-        }
-    })
+    // let elmPrompt = document.getElementById(config.IDPROMPTINPUT)
+    // elmPrompt.addEventListener('keydown', (e) => {
+    // if (e.key === "Enter") {
+    // console.log("enter", e.target.value)
+    // clearCffContainer()
+    // }
+    // })
 
-    let elmSendBtn = document.querySelector(config.QUERYSENDBTN)
-    elmSendBtn.addEventListener('mousedown', (e) => {
-        // let elmPrompt = document.getElementById(config.IDPROMPTINPUT)
-        // console.log("button", elmPrompt.value)
-        // clearCffContainer()
-    })
+    // let elmSendBtn = document.querySelector(config.QUERYSENDBTN)
+    // elmSendBtn.addEventListener('mousedown', (e) => {
+    // let elmPrompt = document.getElementById(config.IDPROMPTINPUT)
+    // console.log("button", elmPrompt.value)
+    // clearCffContainer()
+    // })
 }
 
 //
-//  "init" function
+//  entry function
 //
 (function () {
     const jsonFilePath = chrome.runtime.getURL("data/config.json");
