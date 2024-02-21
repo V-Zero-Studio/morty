@@ -14,3 +14,14 @@
 .cff-container .child:not(:last-child) {
   margin-bottom: 25px; /* Adds margin between children */
 }
+
+.fade-out {
+    animation: fadeOutAnimation 2s forwards; /* Adjust time as needed */
+  }
+  
+  @keyframes fadeOutAnimation {
+    to {
+      opacity: 0;
+    }
+  }
+  

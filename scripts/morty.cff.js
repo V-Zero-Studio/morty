@@ -16,6 +16,7 @@ const FADE_INTERVAL = 100
 // design parameters for cff_ondemand
 const ID_BTN_REVEAL = "btnReveal"
 const TEXT_BTN_REVEAL = "Click to See AI Response"
+const HTML_REVEAL_INFO = "Click anywhere to reveal AI response."
 
 // design parameters for showing hints
 const ID_HINT_TEXT = "pHint"
@@ -46,7 +47,7 @@ const callbackNewResponse = function (mutationsList, observer) {
                     elmResponse = elements[elements.length - 1]
                     elmResponse.style.opacity = FADE_OPACITY.toString()
 
-                    clearCffContainer()
+                    clearCffContainer(false)
                     elmResponse.parentElement.appendChild(divCff)
 
                     if (CFF_OPTION_HINT) {
@@ -54,7 +55,11 @@ const callbackNewResponse = function (mutationsList, observer) {
                     }
 
                     if (cff == CFF_ONDEMAND) {
-                        addRevealButton(divCff)
+                        // addRevealButton(divCff)
+                        const spanRevealInfo = document.createElement('span')
+                        spanRevealInfo.innerHTML = HTML_REVEAL_INFO
+                        divCff.appendChild(spanRevealInfo)
+                        elmResponse.parentElement.addEventListener("click", revealResponse)
                     }
 
                     return
@@ -108,9 +113,14 @@ const monitorStreamingEnd = () => {
 //
 // remove children in the container and remove the container
 //
-const clearCffContainer = () => {
+const clearCffContainer = (fadeOut = true) => {
     divCff.innerHTML = ""
-    divCff.remove()
+    if(fadeOut) {
+        fadeOutAndRemove(divCff)
+    } else {
+        divCff.remove()
+    }
+    elmResponse.parentElement.removeEventListener("click", revealResponse)
 }
 
 //
@@ -124,7 +134,7 @@ const addRevealButton = (container) => {
     button.className = "btn-reveal"
 
     // click to reveal AI response
-    button.addEventListener("click", function () {
+    button.addEventListener("click", function (e) {
         fadeIn(elmResponse)
         clearCffContainer()
     })
@@ -142,6 +152,28 @@ const addHintText = (container) => {
     paragraph.id = ID_HINT_TEXT
     container.appendChild(paragraph)
 }
+
+//
+//
+//
+const revealResponse = (e) => {
+    fadeIn(elmResponse)
+    clearCffContainer()
+}
+
+//
+//
+//
+const fadeOutAndRemove = (element) => {
+    // Apply the fade-out class
+    element.classList.add('fade-out');
+  
+    // Listen for the end of the animation
+    element.addEventListener('animationend', function() {
+      // Remove the element from the DOM
+      element.remove();
+    });
+  }
 
 //
 // initialization
