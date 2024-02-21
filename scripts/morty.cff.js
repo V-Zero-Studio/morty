@@ -171,8 +171,8 @@ const init = () => {
     // intercept the sending of prompts: enter key and send button
     let elmPrompt = document.getElementById(config.IDPROMPTINPUT)
     elmPrompt.addEventListener('keydown', (e) => {
-        if (e.key === "Enter") {
-            e.target.value += " instead of showing me the response, show me some hints to help me think about my prompt."
+        if (e.key === "Enter" && !e.ctrlKey) {
+            e.target.value += "Instead of showing me the response, show me some hints to help me think about my prompt."
         }
     }, true)
 

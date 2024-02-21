@@ -1,17 +1,16 @@
 .btn-reveal {
-    text-decoration: underline;
-    cursor: pointer;
-    
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .cff-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Aligns children vertically in the center */
-    justify-content: center; /* Optional, for horizontal centering */
-    height: 100px; /* Or any specific height */
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Aligns children vertically in the center */
+  justify-content: center; /* Optional, for horizontal centering */
+  height: 100px; /* Or any specific height */
+}
 
-  .cff-container .child:not(:last-child) {
-    margin-bottom: 25px; /* Adds margin between children */
-  }
+.cff-container .child:not(:last-child) {
+  margin-bottom: 25px; /* Adds margin between children */
+}
