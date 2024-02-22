@@ -186,8 +186,8 @@ const init = () => {
             if (request.message === "cff on") {
                 // create an instance of MutationObserver
                 const observerNewResponse = new MutationObserver(callbackNewResponse)
-                // start observing the target node for configured mutations
-                observerNewResponse.observe(document.body, { childList: true, subtree: true })
+                const divChat = document.querySelector(config.QUERYCHATDIV)
+                observerNewResponse.observe(divChat, { childList: true, subtree: true })
 
                 // create a container for added cff elements
                 divCff = document.createElement("div")
