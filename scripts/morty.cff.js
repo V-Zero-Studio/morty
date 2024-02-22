@@ -24,6 +24,9 @@ const ID_HINT_TEXT = "pHint"
 // the type of cognitive forcing function
 const cff = CFF_ONDEMAND
 
+// others
+const INTERVAL_MONITOR_STREAMING = 2000 // ms
+
 let config = {}
 let tsAnsLastUpdated = -1
 let elmResponse = undefined
@@ -106,7 +109,7 @@ const monitorStreamingEnd = () => {
                 }, WAIT_TIME)
             }
         }
-    }, 2000)
+    }, INTERVAL_MONITOR_STREAMING)
 
 }
 
