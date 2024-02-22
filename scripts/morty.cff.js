@@ -154,7 +154,7 @@ const addHintText = (container) => {
 }
 
 //
-//
+// reveal ai response
 //
 const revealResponse = (e) => {
     fadeIn(elmResponse)
@@ -162,16 +162,16 @@ const revealResponse = (e) => {
 }
 
 //
-//
+// fade out and remove an element
 //
 const fadeOutAndRemove = (element) => {
-    // Apply the fade-out class
-    element.classList.add('fade-out');
+    // apply the fade-out class
+    element.classList.add('fade-out')
   
-    // Listen for the end of the animation
+    // listen for the end of the animation
     element.addEventListener('animationend', function() {
-      // Remove the element from the DOM
-      element.remove();
+      element.classList.remove('fade-out')
+      element.remove()
     });
   }
 
@@ -199,12 +199,12 @@ const init = () => {
         }
     )
 
-    // TODO: clean up the following
     // intercept the sending of prompts: enter key and send button
     let elmPrompt = document.getElementById(config.IDPROMPTINPUT)
     elmPrompt.addEventListener('keydown', (e) => {
         if (e.key === "Enter" && !e.ctrlKey) {
-            e.target.value += "Instead of showing me the response, show me some hints to help me think about my prompt."
+            // e.target.value += "Instead of showing me the response, show me some hints to help me think about my prompt."
+            e.target.value += " First, show me some hints that allow me to think about my question; then, reveal the answer."
         }
     }, true)
 
@@ -224,7 +224,7 @@ const init = () => {
 
     // load config file
     fetch(jsonFilePath)
-        .then(response => response.json()) // Parse the JSON from the response
+        .then(response => response.json())
         .then(data => {
             config = data
             init()
