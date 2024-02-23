@@ -4,7 +4,7 @@
     "description": "Mitigating OverReliance on inTelligent sYstems",
     "version": "1.0",
     "action": {
-        "default_popup": "hello.html",
+        "default_popup": "morty.html",
         "default_icon": "morty_icon.001.png"
     },
     "content_scripts": [

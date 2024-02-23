@@ -1,0 +1,35 @@
+<html>
+  <head>
+    <h3>Morty</h3>
+  </head>
+  <body>
+    <link rel="stylesheet" type="text/css" href="morty.popup.css" />
+    <script src="morty.popup.js"></script>
+    <form>
+      <div>Cognitive forcing function:</div>
+      <div>
+        <input type="radio" id="wait" name="cff" value="wait" />
+        <label for="wait">Wait</label><br />
+
+        <input type="radio" id="on-demand" name="cff" value="on-demand" />
+        <label for="on-demand">On demand</label><br />
+
+        <input type="radio" id="none" name="cff" value="none" />
+        <label for="none">None</label>
+      </div>
+
+      <br />
+
+      <div>
+        <input type="checkbox" id="hint" />
+        <label for="hint">Show hints before revealing AI response</label>
+      </div>
+
+      <br />
+      <div>
+        <input type="checkbox" id="prompt-appendice" />
+        <label for="prompt-appendice">Prompt appendices</label>
+      </div>
+    </form>
+  </body>
+</html>
