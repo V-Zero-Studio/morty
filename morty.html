@@ -4,17 +4,17 @@
   </head>
   <body>
     <link rel="stylesheet" type="text/css" href="morty.popup.css" />
-    <script src="morty.popup.js"></script>
+    
     <form>
       <div>Cognitive forcing function:</div>
       <div>
-        <input type="radio" id="wait" name="cff" value="wait" />
+        <input type="radio" id="wait" name="cff" value=0 />
         <label for="wait">Wait</label><br />
 
-        <input type="radio" id="on-demand" name="cff" value="on-demand" />
+        <input type="radio" id="on-demand" name="cff" value=1 />
         <label for="on-demand">On demand</label><br />
 
-        <input type="radio" id="none" name="cff" value="none" />
+        <input type="radio" id="none" name="cff" value=-1 checked="true" />
         <label for="none">None</label>
       </div>
 
@@ -31,5 +31,7 @@
         <label for="prompt-appendice">Prompt appendices</label>
       </div>
     </form>
+
+    <script src="morty.popup.js"></script>
   </body>
 </html>

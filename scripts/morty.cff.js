@@ -5,6 +5,7 @@
 // cognitive forcing function variations
 const CFF_WAIT = 0
 const CFF_ONDEMAND = 1
+const CFF_NONE = -1
 const CFF_OPTION_HINT = true
 
 // design parameters for cff_wait
@@ -22,13 +23,14 @@ const HTML_REVEAL_INFO = "Click anywhere to reveal AI response."
 const ID_HINT_TEXT = "pHint"
 
 // the type of cognitive forcing function
-const cff = CFF_ONDEMAND
+let cff = CFF_NONE
 
 // others
 const INTERVAL_MONITOR_STREAMING = 2000 // ms
 
 let config = {}
-let tsAnsLastUpdated = -1
+let observerNewResponse = undefined
+// let tsAnsLastUpdated = -1
 let elmResponse = undefined
 let divCff = undefined
 
@@ -118,7 +120,7 @@ const monitorStreamingEnd = () => {
 //
 const clearCffContainer = (fadeOut = true) => {
     divCff.innerHTML = ""
-    if(fadeOut) {
+    if (fadeOut) {
         fadeOutAndRemove(divCff)
     } else {
         divCff.remove()
@@ -170,13 +172,13 @@ const revealResponse = (e) => {
 const fadeOutAndRemove = (element) => {
     // apply the fade-out class
     element.classList.add('fade-out')
-  
+
     // listen for the end of the animation
-    element.addEventListener('animationend', function() {
-      element.classList.remove('fade-out')
-      element.remove()
+    element.addEventListener('animationend', function () {
+        element.classList.remove('fade-out')
+        element.remove()
     });
-  }
+}
 
 //
 // initialization
@@ -185,20 +187,26 @@ const init = () => {
     // add observer to monitor streaming of ai response
     chrome.runtime.onMessage.addListener(
         function (request, sender, sendResponse) {
-            console.log("Message from background script:", request.message)
-            if (request.message === "cff on") {
-                // create an instance of MutationObserver
-                const observerNewResponse = new MutationObserver(callbackNewResponse)
-                const divChat = document.querySelector(config.QUERYCHATDIV)
-                observerNewResponse.observe(divChat, { childList: true, subtree: true })
+            console.log("updates from popup:", request)
+            if (request.cff != undefined && cff != request.cff) {
+                cff = request.cff
+                if (cff != CFF_NONE) {
+                    // create an instance of MutationObserver
+                    observerNewResponse = new MutationObserver(callbackNewResponse)
+                    const divChat = document.querySelector(config.QUERYCHATDIV)
+                    observerNewResponse.observe(divChat, { childList: true, subtree: true })
 
-                // create a container for added cff elements
-                divCff = document.createElement("div")
-                divCff.classList.add("cff-container")
+                    // create a container for added cff elements
+                    divCff = document.createElement("div")
+                    divCff.classList.add("cff-container")
 
-            } else if (request.message === "WAIT_TIME off") {
-                //  TODO: disconnect observer
+                } else if (cff === CFF_NONE) {
+                    if(observerNewResponse != undefined) {
+                        observerNewResponse.disconnect()
+                    }
+                }
             }
+
         }
     )
 
