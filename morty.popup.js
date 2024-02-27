@@ -16,4 +16,11 @@ const sendSettingUpdate = (settings) => {
         })
     }
 
+    const checkboxHints = document.getElementsByName("hint")
+    if(checkboxHints.length > 0) {
+        checkboxHints[0].addEventListener("change", (e) => {
+            sendSettingUpdate({hints: e.target.value})
+        })
+    }
+
 })()

@@ -6,7 +6,6 @@
 const CFF_WAIT = 0
 const CFF_ONDEMAND = 1
 const CFF_NONE = -1
-const CFF_OPTION_HINT = true
 
 // design parameters for cff_wait
 const WAIT_TIME = 5000
@@ -24,6 +23,7 @@ const ID_HINT_TEXT = "pHint"
 
 // the type of cognitive forcing function
 let cff = CFF_NONE
+let cffOptHint = false
 
 // others
 const INTERVAL_MONITOR_STREAMING = 2000 // ms
@@ -55,7 +55,7 @@ const callbackNewResponse = function (mutationsList, observer) {
                     clearCffContainer(false)
                     elmResponse.parentElement.appendChild(divCff)
 
-                    if (CFF_OPTION_HINT) {
+                    if (cffOptHint) {
                         addHintText(divCff)
                     }
 
@@ -205,6 +205,8 @@ const init = () => {
                         observerNewResponse.disconnect()
                     }
                 }
+            } else if (request.hint != undefined) {
+                cffOptHint = request.hint
             }
 
         }
