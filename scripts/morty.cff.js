@@ -21,9 +21,10 @@ const HTML_REVEAL_INFO = "Click anywhere to reveal AI response."
 // design parameters for showing hints
 const ID_HINT_TEXT = "pHint"
 
-// the type of cognitive forcing function
+// overreliance technique controls
 let cff = CFF_NONE
 let cffOptHint = false
+let promptAugmentation = false
 
 // others
 const INTERVAL_MONITOR_STREAMING = 2000 // ms
@@ -230,7 +231,7 @@ const init = () => {
     // intercept the sending of prompts: enter key and send button
     let elmPrompt = document.getElementById(config.IDPROMPTINPUT)
     elmPrompt.addEventListener('keydown', (e) => {
-        if (e.key === "Enter" && !e.ctrlKey) {
+        if (promptAugmentation && e.key === "Enter" && !e.ctrlKey) {
             // e.target.value += "Instead of showing me the response, show me some hints to help me think about my prompt."
             e.target.value += " First, show me some hints that allow me to think about my question; then, reveal the answer."
         }

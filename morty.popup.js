@@ -32,8 +32,8 @@ const sendSettingUpdate = (settings) => {
     })
 
     // hints setting
-    chrome.storage.local.get(['hint'], (result) => {
-        let hintValue = result.hint == undefined ? false : result.hint
+    chrome.storage.local.get(['hints'], (result) => {
+        let hintValue = result.hints == undefined ? false : result.hints
         const checkboxHints = document.getElementsByName("hint")
         if (checkboxHints.length > 0) {
             checkboxHints[0].addEventListener("change", (e) => {
