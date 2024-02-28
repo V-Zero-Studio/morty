@@ -10,8 +10,8 @@ const sendSettingUpdate = (settings) => {
 (function () {
     // cff setting
     chrome.storage.local.get(['cff'], (result) => {
-        let cffValue = result.cff == undefined ? -1 :  result.cff
-        console.log(result)
+        let cffValue = result.cff == undefined ? -1 : result.cff
+        // console.log(result)
         const radiosCff = document.getElementsByName("cff")
         for (let radio of radiosCff) {
             // add event handler
@@ -24,19 +24,30 @@ const sendSettingUpdate = (settings) => {
                 sendSettingUpdate(objCff)
             })
 
-            // restored value
+            // restore value
             if (radio.value == cffValue) {
                 radio.checked = true
             }
         }
     })
 
+    // hints setting
+    chrome.storage.local.get(['hint'], (result) => {
+        let hintValue = result.hint == undefined ? false : result.hint
+        const checkboxHints = document.getElementsByName("hint")
+        if (checkboxHints.length > 0) {
+            checkboxHints[0].addEventListener("change", (e) => {
+                let objHint = { hints: e.target.checked }
+                chrome.storage.local.set(objHint, () => {
+                    console.log(objHint)
+                })
+                sendSettingUpdate(objHint)
+            })
 
-    const checkboxHints = document.getElementsByName("hint")
-    if (checkboxHints.length > 0) {
-        checkboxHints[0].addEventListener("change", (e) => {
-            sendSettingUpdate({ hints: e.target.value })
-        })
-    }
+            // restore value
+            checkboxHints[0].checked = hintValue
+        }
+    })
+
 
 })()

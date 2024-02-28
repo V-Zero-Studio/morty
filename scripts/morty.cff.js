@@ -30,7 +30,6 @@ const INTERVAL_MONITOR_STREAMING = 2000 // ms
 
 let config = {}
 let observerNewResponse = undefined
-// let tsAnsLastUpdated = -1
 let elmResponse = undefined
 let divCff = undefined
 
@@ -181,30 +180,46 @@ const fadeOutAndRemove = (element) => {
 }
 
 //
+//
+//
+const configCff = () => {
+    if (cff != CFF_NONE) {
+        // create an instance of MutationObserver
+        observerNewResponse = new MutationObserver(callbackNewResponse)
+        const divChat = document.querySelector(config.QUERYCHATDIV)
+        observerNewResponse.observe(divChat, { childList: true, subtree: true })
+
+        // create a container for added cff elements
+        divCff = document.createElement("div")
+        divCff.classList.add("cff-container")
+
+    } else if (cff === CFF_NONE) {
+        if(observerNewResponse != undefined) {
+            observerNewResponse.disconnect()
+        }
+    }
+}
+
+//
 // initialization
 //
 const init = () => {
-    // add observer to monitor streaming of ai response
+    // read stored settings
+    chrome.storage.local.get(['cff'], (result) => {
+        cff = result.cff == undefined ? -1 : result.cff
+        configCff()
+    })
+    chrome.storage.local.get(['hints'], (result) => {
+        cffOptHint = result.hints == undefined ? false : result.hints
+    })
+
+    // receive setting updates from popup
     chrome.runtime.onMessage.addListener(
         function (request, sender, sendResponse) {
             console.log("updates from popup:", request)
             if (request.cff != undefined && cff != request.cff) {
                 cff = request.cff
-                if (cff != CFF_NONE) {
-                    // create an instance of MutationObserver
-                    observerNewResponse = new MutationObserver(callbackNewResponse)
-                    const divChat = document.querySelector(config.QUERYCHATDIV)
-                    observerNewResponse.observe(divChat, { childList: true, subtree: true })
-
-                    // create a container for added cff elements
-                    divCff = document.createElement("div")
-                    divCff.classList.add("cff-container")
-
-                } else if (cff === CFF_NONE) {
-                    if(observerNewResponse != undefined) {
-                        observerNewResponse.disconnect()
-                    }
-                }
+                configCff()
             } else if (request.hint != undefined) {
                 cffOptHint = request.hint
             }
