@@ -10,7 +10,7 @@
     "content_scripts": [
         {
             "js": [
-                "scripts/morty.cff.js"
+                "scripts/morty.js"
             ],
             "css": [
                 "scripts/morty.css"
