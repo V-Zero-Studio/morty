@@ -21,6 +21,9 @@ const HTML_REVEAL_INFO = "Click anywhere to reveal AI response."
 // design parameters for showing hints
 const ID_HINT_TEXT = "pHint"
 
+// design parameters for prompt augmentation
+const TEXT_PROMPT_AUGMENTATION = " First, show me some hints that allow me to think about my question; then, reveal the answer."
+
 // overreliance technique controls
 let cff = CFF_NONE
 let cffOptHint = false
@@ -71,7 +74,6 @@ const callbackNewResponse = function (mutationsList, observer) {
                 }
             })
         }
-
     }
 }
 
@@ -181,7 +183,7 @@ const fadeOutAndRemove = (element) => {
 }
 
 //
-//
+// configure cff: start or stop the monitor for implementing cff on the response element
 //
 const configCff = () => {
     if (cff != CFF_NONE) {
@@ -237,8 +239,7 @@ const init = () => {
     let elmPrompt = document.getElementById(config.IDPROMPTINPUT)
     elmPrompt.addEventListener('keydown', (e) => {
         if (promptAugmentation && e.key === "Enter" && !e.ctrlKey) {
-            // e.target.value += "Instead of showing me the response, show me some hints to help me think about my prompt."
-            e.target.value += " First, show me some hints that allow me to think about my question; then, reveal the answer."
+            e.target.value += TEXT_PROMPT_AUGMENTATION
         }
     }, true)
 
