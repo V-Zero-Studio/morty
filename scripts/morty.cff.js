@@ -213,6 +213,9 @@ const init = () => {
     chrome.storage.local.get(['hints'], (result) => {
         cffOptHint = result.hints == undefined ? false : result.hints
     })
+    chrome.storage.local.get(['promptAug'], (result) => {
+        promptAugmentation = result.promptAug == undefined ? false : result.promptAug
+    })
 
     // receive setting updates from popup
     chrome.runtime.onMessage.addListener(
@@ -223,6 +226,8 @@ const init = () => {
                 configCff()
             } else if (request.hint != undefined) {
                 cffOptHint = request.hint
+            } else if (request.promptAug != undefined) {
+                promptAugmentation = request.promptAug
             }
 
         }
