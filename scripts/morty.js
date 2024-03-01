@@ -8,7 +8,7 @@ const CFF_ONDEMAND = 1
 const CFF_NONE = -1
 
 // design parameters for cff_wait
-const WAIT_TIME = 5000
+const WAIT_TIME = 0
 const FADE_RATIO = 1.25
 const FADE_OPACITY = 0.05
 const FADE_INTERVAL = 100
@@ -218,6 +218,8 @@ const init = () => {
     chrome.storage.local.get(['promptAug'], (result) => {
         promptAugmentation = result.promptAug == undefined ? false : result.promptAug
     })
+
+    console.log("morty settings loaded")
 
     // receive setting updates from popup
     chrome.runtime.onMessage.addListener(
