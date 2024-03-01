@@ -4,4 +4,16 @@ body {
     margin: 15px;
     padding: 10px;
   }
-  
+
+li {
+  list-style-type: none;
+  margin-left: -10px;
+}
+
+input[type="number"] {
+  width: 40px;
+}
+
+input[type="radio"] {
+  margin-left: 15px;
+}

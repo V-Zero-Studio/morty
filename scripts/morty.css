@@ -16,12 +16,11 @@
 }
 
 .fade-out {
-    animation: fadeOutAnimation 2s forwards; /* Adjust time as needed */
+  animation: fadeOutAnimation 2s forwards; /* Adjust time as needed */
+}
+
+@keyframes fadeOutAnimation {
+  to {
+    opacity: 0;
   }
-  
-  @keyframes fadeOutAnimation {
-    to {
-      opacity: 0;
-    }
-  }
-  
+}
