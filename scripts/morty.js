@@ -8,7 +8,6 @@ const CFF_ONDEMAND = 1
 const CFF_NONE = -1
 
 // design parameters for cff_wait
-const WAIT_TIME = 0
 const FADE_RATIO = 1.25
 const FADE_OPACITY = 0.05
 const FADE_INTERVAL = 100
@@ -28,6 +27,7 @@ const TEXT_PROMPT_AUGMENTATION = " First, show me some hints that allow me to th
 let cff = CFF_NONE
 let cffOptHint = false
 let promptAugmentation = false
+let waitTime = 0 // additional wait time after screening is finished
 
 // others
 const INTERVAL_MONITOR_STREAMING = 2000 // ms
@@ -110,7 +110,7 @@ const monitorStreamingEnd = () => {
             if (cff == CFF_WAIT) {
                 setTimeout(() => {
                     fadeIn(elmResponse)
-                }, WAIT_TIME)
+                }, waitTime)
             }
         }
     }, INTERVAL_MONITOR_STREAMING)
@@ -212,6 +212,9 @@ const init = () => {
         cff = result.cff == undefined ? -1 : result.cff
         configCff()
     })
+    chrome.storage.local.get(['waitTime'], (result) => {
+        waitTime = result.waitTime == undefined ? 0 : result.waitTime
+    })
     chrome.storage.local.get(['hints'], (result) => {
         cffOptHint = result.hints == undefined ? false : result.hints
     })
@@ -219,7 +222,7 @@ const init = () => {
         promptAugmentation = result.promptAug == undefined ? false : result.promptAug
     })
 
-    console.log("morty settings loaded")
+    console.log("morty ready")
 
     // receive setting updates from popup
     chrome.runtime.onMessage.addListener(
@@ -228,6 +231,8 @@ const init = () => {
             if (request.cff != undefined && cff != request.cff) {
                 cff = request.cff
                 configCff()
+            } else if(request.waitTime != undefined){
+                waitTime = request.waitTime
             } else if (request.hint != undefined) {
                 cffOptHint = request.hint
             } else if (request.promptAug != undefined) {

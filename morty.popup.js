@@ -1,17 +1,40 @@
+//
+// morty.popup.js
+//
+
+//
+//
+//
 const sendSettingUpdate = (settings) => {
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
         chrome.tabs.sendMessage(tabs[0].id, settings, function (response) {
             console.log(response);
         });
     });
-
 }
 
+//
+//
+//
+// const decrWait = () => {
+//     var input = document.getElementById('inputMoreWait');
+//     var currentValue = parseInt(input.value, 10);
+//     input.value = currentValue - 1;
+// }
+
+// const incrWait = () => {
+//     var input = document.getElementById('inputMoreWait');
+//     var currentValue = parseInt(input.value, 10);
+//     input.value = currentValue + 1;
+// }
+
+//
+//
+//
 (function () {
     // cff setting
     chrome.storage.local.get(['cff'], (result) => {
         let cffValue = result.cff == undefined ? -1 : result.cff
-        // console.log(result)
         const radiosCff = document.getElementsByName("cff")
         for (let radio of radiosCff) {
             // add event handler
@@ -31,6 +54,21 @@ const sendSettingUpdate = (settings) => {
         }
     })
 
+    // more wait time setting
+    chrome.storage.local.get(['waitTime'], (result) => {
+        let waitTimeValue = result.waitTime == undefined ? 0 : result.waitTime
+        const inputMoreWait = document.getElementById("waitTime")
+        if (inputMoreWait != null) {
+            inputMoreWait.addEventListener("change", (e) => {
+                let objWaitTime = { waitTime: parseInt(e.target.value) * 1000 }
+                chrome.storage.local.set(objWaitTime)
+                sendSettingUpdate(objWaitTime)
+            })
+
+            inputMoreWait.value = waitTimeValue
+        }
+    })
+
     // hints setting
     chrome.storage.local.get(['hints'], (result) => {
         let hintValue = result.hints == undefined ? false : result.hints
@@ -38,9 +76,7 @@ const sendSettingUpdate = (settings) => {
         if (checkboxHints.length > 0) {
             checkboxHints[0].addEventListener("change", (e) => {
                 let objHint = { hints: e.target.checked }
-                chrome.storage.local.set(objHint, () => {
-                    console.log(objHint)
-                })
+                chrome.storage.local.set(objHint)
                 sendSettingUpdate(objHint)
             })
 
