@@ -233,7 +233,7 @@ const init = () => {
                 configCff()
             } else if(request.waitTime != undefined){
                 waitTime = request.waitTime
-            } else if (request.hint != undefined) {
+            } else if (request.hints != undefined) {
                 cffOptHint = request.hint
             } else if (request.promptAug != undefined) {
                 promptAugmentation = request.promptAug
