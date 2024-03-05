@@ -100,6 +100,4 @@ const sendSettingUpdate = (settings) => {
             checkboxPromptAug[0].checked = promptAugValue
         }
     })
-
-
 })()

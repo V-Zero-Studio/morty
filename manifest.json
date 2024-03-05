@@ -16,6 +16,7 @@
                 "scripts/morty.css"
             ],
             "matches": [
+                "https://chat.openai.com/",
                 "https://chat.openai.com/c/*"
             ]
         }

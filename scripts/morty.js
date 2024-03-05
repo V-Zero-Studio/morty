@@ -36,6 +36,8 @@ let config = {}
 let observerNewResponse = undefined
 let elmResponse = undefined
 let divCff = undefined
+let elmPrompt = undefined
+let elmSendBtn = undefined
 
 //
 // callback function to execute when mutations are observed
@@ -69,6 +71,9 @@ const callbackNewResponse = function (mutationsList, observer) {
                         divCff.appendChild(spanRevealInfo)
                         elmResponse.parentElement.addEventListener("click", revealResponse)
                     }
+
+                    // reset the send button element b/c it will change in the next prompt
+                    elmSendBtn = undefined
 
                     return
                 }
@@ -197,7 +202,7 @@ const configCff = () => {
         divCff.classList.add("cff-container")
 
     } else if (cff === CFF_NONE) {
-        if(observerNewResponse != undefined) {
+        if (observerNewResponse != undefined) {
             observerNewResponse.disconnect()
         }
     }
@@ -231,7 +236,7 @@ const init = () => {
             if (request.cff != undefined && cff != request.cff) {
                 cff = request.cff
                 configCff()
-            } else if(request.waitTime != undefined){
+            } else if (request.waitTime != undefined) {
                 waitTime = request.waitTime
             } else if (request.hints != undefined) {
                 cffOptHint = request.hint
@@ -243,19 +248,27 @@ const init = () => {
     )
 
     // intercept the sending of prompts: enter key and send button
-    let elmPrompt = document.getElementById(config.IDPROMPTINPUT)
+    elmPrompt = document.getElementById(config.IDPROMPTINPUT)
     elmPrompt.addEventListener('keydown', (e) => {
         if (promptAugmentation && e.key === "Enter" && !e.ctrlKey) {
             e.target.value += TEXT_PROMPT_AUGMENTATION
         }
     }, true)
 
-    // let elmSendBtn = document.querySelector(config.QUERYSENDBTN)
-    // elmSendBtn.addEventListener('mousedown', (e) => {
-    // let elmPrompt = document.getElementById(config.IDPROMPTINPUT)
-    // console.log("button", elmPrompt.value)
-    // clearCffContainer()
-    // })
+    // add prompt augmentation to the send button
+    // because the send button is updated/renewed after typing in the prompt
+    // an event handler needs to be added in real time
+    elmPrompt.addEventListener('keyup', (e) => {
+        if (elmSendBtn == undefined) {
+            elmSendBtn = document.querySelector(config.QUERYSENDBTN)
+            elmSendBtn.addEventListener('mousedown', (e) => {
+                if (promptAugmentation) {
+                    elmPrompt.value += TEXT_PROMPT_AUGMENTATION
+                }
+            }, true)
+        }
+    })
+
 }
 
 //
