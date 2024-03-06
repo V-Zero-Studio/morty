@@ -22,7 +22,8 @@ const ID_HINT_TEXT = "pHint"
 
 // design parameters for prompt augmentation
 // const TEXT_PROMPT_AUGMENTATION = " First, show me some hints that allow me to think about my question; then, reveal the answer."
-const TEXT_PROMPT_AUGMENTATION = " If the above prompt is an open-ended task, show me some hints that allow me to think about my request, then after some empty lines, reveal the answer; if the above prompt is a closed-ended question, just show the answer."
+const TEXT_PROMPT_AUGMENTATION = "\nIf the above prompt is an open-ended task, show me some hints that allow me to think about my request, then leave some empty space, and show the answer; if the above prompt is a closed-ended question, just show the answer. Examples of open-ended tasks include writing, content creation, problem-solving, and idea generation)"
+
 
 // overreliance technique controls
 let cff = CFF_NONE
