@@ -21,12 +21,13 @@ const HTML_REVEAL_INFO = "Click anywhere to reveal AI response."
 const ID_HINT_TEXT = "pHint"
 
 // design parameters for prompt augmentation
-const TEXT_PROMPT_AUGMENTATION = " First, show me some hints that allow me to think about my question; then, reveal the answer."
+// const TEXT_PROMPT_AUGMENTATION = " First, show me some hints that allow me to think about my question; then, reveal the answer."
+const TEXT_PROMPT_AUGMENTATION = " If the above prompt is an open-ended task, show me some hints that allow me to think about my request, then after some empty lines, reveal the answer; if the above prompt is a closed-ended question, just show the answer."
 
 // overreliance technique controls
 let cff = CFF_NONE
 let cffOptHint = false
-let promptAugmentation = false
+let promptAug = false
 let waitTime = 0 // additional wait time after screening is finished
 
 // others
@@ -224,7 +225,7 @@ const init = () => {
         cffOptHint = result.hints == undefined ? false : result.hints
     })
     chrome.storage.local.get(['promptAug'], (result) => {
-        promptAugmentation = result.promptAug == undefined ? false : result.promptAug
+        promptAug = result.promptAug == undefined ? false : result.promptAug
     })
 
     console.log("morty ready")
@@ -241,7 +242,7 @@ const init = () => {
             } else if (request.hints != undefined) {
                 cffOptHint = request.hint
             } else if (request.promptAug != undefined) {
-                promptAugmentation = request.promptAug
+                promptAug = request.promptAug
             }
 
         }
@@ -250,7 +251,7 @@ const init = () => {
     // intercept the sending of prompts: enter key and send button
     elmPrompt = document.getElementById(config.IDPROMPTINPUT)
     elmPrompt.addEventListener('keydown', (e) => {
-        if (promptAugmentation && e.key === "Enter" && !e.ctrlKey) {
+        if (promptAug && e.key === "Enter" && !e.ctrlKey) {
             e.target.value += TEXT_PROMPT_AUGMENTATION
         }
     }, true)
@@ -262,7 +263,7 @@ const init = () => {
         if (elmSendBtn == undefined) {
             elmSendBtn = document.querySelector(config.QUERYSENDBTN)
             elmSendBtn.addEventListener('mousedown', (e) => {
-                if (promptAugmentation) {
+                if (promptAug) {
                     elmPrompt.value += TEXT_PROMPT_AUGMENTATION
                 }
             }, true)
