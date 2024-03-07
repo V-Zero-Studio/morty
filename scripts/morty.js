@@ -22,12 +22,12 @@ const ID_HINT_TEXT = "pHint"
 
 // design parameters for prompt augmentation
 // const TEXT_PROMPT_AUGMENTATION = " First, show me some hints that allow me to think about my question; then, reveal the answer."
-const TEXT_PROMPT_AUGMENTATION = "\nIf the above prompt is an open-ended task, show me some hints that allow me to think about my request, then leave some empty space, and show the answer; if the above prompt is a closed-ended question, just show the answer. Examples of open-ended tasks include writing, content creation, problem-solving, and idea generation)"
+const TEXT_PROMPT_AUGMENTATION = "\nIf the above prompt is an open-ended task, show me some hints that allow me to think about my request, then leave some empty space, and show the answer; if the above prompt is a closed-ended question, just show the answer. Examples of open-ended tasks include writing, content creation, problem-solving, and idea generation."
 
 
 // overreliance technique controls
 let cff = CFF_NONE
-let cffOptHint = false
+let cffOptHints = false
 let promptAug = false
 let waitTime = 0 // additional wait time after screening is finished
 
@@ -62,7 +62,7 @@ const callbackNewResponse = function (mutationsList, observer) {
                     clearCffContainer(false)
                     elmResponse.parentElement.appendChild(divCff)
 
-                    if (cffOptHint) {
+                    if (cffOptHints) {
                         addHintText(divCff)
                     }
 
@@ -223,7 +223,7 @@ const init = () => {
         waitTime = result.waitTime == undefined ? 0 : result.waitTime
     })
     chrome.storage.local.get(['hints'], (result) => {
-        cffOptHint = result.hints == undefined ? false : result.hints
+        cffOptHints = result.hints == undefined ? false : result.hints
     })
     chrome.storage.local.get(['promptAug'], (result) => {
         promptAug = result.promptAug == undefined ? false : result.promptAug
@@ -241,7 +241,7 @@ const init = () => {
             } else if (request.waitTime != undefined) {
                 waitTime = request.waitTime
             } else if (request.hints != undefined) {
-                cffOptHint = request.hint
+                cffOptHints = request.hints
             } else if (request.promptAug != undefined) {
                 promptAug = request.promptAug
             }
