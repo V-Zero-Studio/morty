@@ -66,7 +66,7 @@ const sendSettingUpdate = (settings) => {
             })
 
             // restore value
-            checkboxHints[0].checked = hintValue
+            checkboxHints.checked = hintValue
         }
     })
 
