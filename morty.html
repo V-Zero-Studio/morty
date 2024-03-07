@@ -13,8 +13,8 @@
 
         <ul>
           <li>
-              Additional wait time (sec):
-              <input type="number" id="waitTime" value="0">
+            Additional wait time (sec):
+            <input type="number" id="waitTime" value="0" />
           </li>
         </ul>
 
@@ -28,13 +28,17 @@
       <br />
 
       <div>
-        <input type="checkbox" id="hint" name="hint" />
-        <label for="hint">Show hints before revealing AI response</label>
+        <input type="checkbox" id="hints" name="hints" />
+        <label for="hints">Show hints before revealing AI response</label>
       </div>
 
       <br />
       <div>
-        <input type="checkbox" name="prompt-augmentation" />
+        <input
+          type="checkbox"
+          id="prompt-augmentation"
+          name="prompt-augmentation"
+        />
         <label for="prompt-augmentation">Prompt augmentation</label>
       </div>
     </form>

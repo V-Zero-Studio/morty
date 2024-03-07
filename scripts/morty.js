@@ -67,7 +67,6 @@ const callbackNewResponse = function (mutationsList, observer) {
                     }
 
                     if (cff == CFF_ONDEMAND) {
-                        // addRevealButton(divCff)
                         const spanRevealInfo = document.createElement('span')
                         spanRevealInfo.innerHTML = HTML_REVEAL_INFO
                         divCff.appendChild(spanRevealInfo)

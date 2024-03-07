@@ -3,7 +3,7 @@
 //
 
 //
-//
+// send setting updates to the content script
 //
 const sendSettingUpdate = (settings) => {
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
@@ -14,22 +14,7 @@ const sendSettingUpdate = (settings) => {
 }
 
 //
-//
-//
-// const decrWait = () => {
-//     var input = document.getElementById('inputMoreWait');
-//     var currentValue = parseInt(input.value, 10);
-//     input.value = currentValue - 1;
-// }
-
-// const incrWait = () => {
-//     var input = document.getElementById('inputMoreWait');
-//     var currentValue = parseInt(input.value, 10);
-//     input.value = currentValue + 1;
-// }
-
-//
-//
+// entry function
 //
 (function () {
     // cff setting
@@ -39,11 +24,8 @@ const sendSettingUpdate = (settings) => {
         for (let radio of radiosCff) {
             // add event handler
             radio.addEventListener("change", (e) => {
-                // console.log(e.target.value)
                 let objCff = { cff: parseInt(e.target.value) }
-                chrome.storage.local.set(objCff, () => {
-                    console.log(objCff)
-                })
+                chrome.storage.local.set(objCff)
                 sendSettingUpdate(objCff)
             })
 
@@ -59,12 +41,14 @@ const sendSettingUpdate = (settings) => {
         let waitTimeValue = result.waitTime == undefined ? 0 : result.waitTime
         const inputMoreWait = document.getElementById("waitTime")
         if (inputMoreWait != null) {
+            // add event handler
             inputMoreWait.addEventListener("change", (e) => {
                 let objWaitTime = { waitTime: parseInt(e.target.value) * 1000 }
                 chrome.storage.local.set(objWaitTime)
                 sendSettingUpdate(objWaitTime)
             })
 
+            // restore value
             inputMoreWait.value = waitTimeValue
         }
     })
@@ -72,9 +56,10 @@ const sendSettingUpdate = (settings) => {
     // hints setting
     chrome.storage.local.get(['hints'], (result) => {
         let hintValue = result.hints == undefined ? false : result.hints
-        const checkboxHints = document.getElementsByName("hint")
-        if (checkboxHints.length > 0) {
-            checkboxHints[0].addEventListener("change", (e) => {
+        const checkboxHints = document.getElementById("hints")
+        if (checkboxHints != null) {
+            // add event handler
+            checkboxHints.addEventListener("change", (e) => {
                 let objHint = { hints: e.target.checked }
                 chrome.storage.local.set(objHint)
                 sendSettingUpdate(objHint)
@@ -88,9 +73,10 @@ const sendSettingUpdate = (settings) => {
     // prompt augmentation setting
     chrome.storage.local.get(['promptAug'], (result) => {
         let promptAugValue = result.promptAug == undefined ? false : result.promptAug
-        const checkboxPromptAug = document.getElementsByName("prompt-augmentation")
-        if (checkboxPromptAug.length > 0) {
-            checkboxPromptAug[0].addEventListener("change", (e) => {
+        const checkboxPromptAug = document.getElementById("prompt-augmentation")
+        if (checkboxPromptAug != null) {
+            // add event handler
+            checkboxPromptAug.addEventListener("change", (e) => {
                 let objPromptAug = { promptAug: e.target.checked }
                 chrome.storage.local.set(objPromptAug)
                 sendSettingUpdate(objPromptAug)
