@@ -83,7 +83,7 @@ const sendSettingUpdate = (settings) => {
             })
 
             // restore value
-            checkboxPromptAug[0].checked = promptAugValue
+            checkboxPromptAug.checked = promptAugValue
         }
     })
 })()

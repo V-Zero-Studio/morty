@@ -52,26 +52,15 @@ const callbackNewResponse = function (mutationsList, observer) {
                     console.log("streaming starts")
                     monitorStreamingEnd()
 
-                    var elements = document.querySelectorAll('[data-message-author-role="assistant"]')
+                    var elements = document.querySelectorAll(config.QUERYELMRESPONSE)
                     elements.forEach((value, index, array) => {
                         array[index].style.opacity = 1
                     })
                     elmResponse = elements[elements.length - 1]
-                    elmResponse.style.opacity = FADE_OPACITY.toString()
 
-                    clearCffContainer(false)
-                    elmResponse.parentElement.appendChild(divCff)
+                    monitorTaskTypeInfo()
 
-                    if (cffOptHints) {
-                        addHintText(divCff)
-                    }
 
-                    if (cff == CFF_ONDEMAND) {
-                        const spanRevealInfo = document.createElement('span')
-                        spanRevealInfo.innerHTML = HTML_REVEAL_INFO
-                        divCff.appendChild(spanRevealInfo)
-                        elmResponse.parentElement.addEventListener("click", revealResponse)
-                    }
 
                     // reset the send button element b/c it will change in the next prompt
                     elmSendBtn = undefined
@@ -99,6 +88,41 @@ const fadeIn = (elm) => {
     }
     else {
         clearCffContainer()
+    }
+}
+
+//
+//
+//
+const monitorTaskTypeInfo = () => {
+    setTimeout(() => {
+        if (elmResponse.innerHTML.includes("open-ended")) {
+            doCff()
+        } else if (elmResponse.innerHTML.includes("close-ended")) {
+            // do nothing
+        } else {
+            monitorTaskTypeInfo()
+        }
+    }, INTERVAL_MONITOR_STREAMING)
+}
+
+//
+//
+//
+const doCff = () => {
+    elmResponse.style.opacity = FADE_OPACITY.toString()
+    clearCffContainer(false)
+    elmResponse.parentElement.appendChild(divCff)
+
+    if (cffOptHints) {
+        addHintText(divCff)
+    }
+
+    if (cff == CFF_ONDEMAND) {
+        const spanRevealInfo = document.createElement('span')
+        spanRevealInfo.innerHTML = HTML_REVEAL_INFO
+        divCff.appendChild(spanRevealInfo)
+        elmResponse.parentElement.addEventListener("click", revealResponse)
     }
 }
 

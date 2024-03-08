@@ -3,6 +3,7 @@
     "IDPROMPTINPUT": "prompt-textarea",
     "QUERYSENDBTN": "[data-testid=\"send-button\"]",
     "QUERYCHATDIV": "[role=\"presentation\"]",
+    "QUERYELMRESPONSE": "[data-message-author-role=\"assistant\"]",
     "HINTTEXTS": [
         "How do you think ChatGPT's response'd be?",
         "If you have to answer this on your own, what'd it be?",
