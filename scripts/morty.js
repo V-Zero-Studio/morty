@@ -22,7 +22,8 @@ const ID_HINT_TEXT = "pHint"
 
 // design parameters for prompt augmentation
 // const TEXT_PROMPT_AUGMENTATION = " First, show me some hints that allow me to think about my question; then, reveal the answer."
-const TEXT_PROMPT_AUGMENTATION = "\nThe first line of output should state whether the above prompt is an open-ended or closed-ended. If it is an open-ended task, show me some hints that allow me to think about my request, then leave some empty space, and show the answer; if the above prompt is a closed-ended question, just show the answer. Examples of open-ended tasks include writing, content creation, problem-solving, and idea generation."
+const TEXT_PROMPT_TASK_TYPE_DETECTION = "\nBefore responding to the prompt, the first line of output should state whether the above prompt is an open-ended or closed-ended. "
+const TEXT_PROMPT_AUGMENTATION = "If it is an open-ended task, show me some hints that allow me to think about my request, then leave some empty space, and show the answer; if the above prompt is a closed-ended question, just show the answer. Examples of open-ended tasks include writing, content creation, problem-solving, and idea generation."
 
 
 // overreliance technique controls
@@ -60,8 +61,6 @@ const callbackNewResponse = function (mutationsList, observer) {
 
                     monitorTaskTypeInfo()
 
-
-
                     // reset the send button element b/c it will change in the next prompt
                     elmSendBtn = undefined
 
@@ -96,9 +95,9 @@ const fadeIn = (elm) => {
 //
 const monitorTaskTypeInfo = () => {
     setTimeout(() => {
-        if (elmResponse.innerHTML.includes("open-ended")) {
+        if (elmResponse.innerHTML.toLowerCase().includes("open-ended")) {
             doCff()
-        } else if (elmResponse.innerHTML.includes("close-ended")) {
+        } else if (elmResponse.innerHTML.toLowerCase().includes("close-ended")) {
             // do nothing
         } else {
             monitorTaskTypeInfo()
@@ -275,8 +274,11 @@ const init = () => {
     // intercept the sending of prompts: enter key and send button
     elmPrompt = document.getElementById(config.IDPROMPTINPUT)
     elmPrompt.addEventListener('keydown', (e) => {
-        if (promptAug && e.key === "Enter" && !e.ctrlKey) {
-            e.target.value += TEXT_PROMPT_AUGMENTATION
+        if (e.key === "Enter" && !e.ctrlKey) {
+            e.target.value += TEXT_PROMPT_TASK_TYPE_DETECTION 
+            if(promptAug) {
+                e.target.value += TEXT_PROMPT_AUGMENTATION
+            }
         }
     }, true)
 
