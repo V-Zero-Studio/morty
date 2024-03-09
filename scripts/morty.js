@@ -20,16 +20,15 @@ const HTML_REVEAL_INFO = "Click anywhere to reveal AI response."
 // design parameters for showing hints
 const ID_HINT_TEXT = "pHint"
 
-// design parameters for prompt augmentation
-// const TEXT_PROMPT_AUGMENTATION = " First, show me some hints that allow me to think about my question; then, reveal the answer."
+// prompt-related parameters
 const TEXT_PROMPT_TASK_TYPE_DETECTION = "\nBefore responding to the prompt, the first line of output should state whether the above prompt is an open-ended or closed-ended. "
 const TEXT_PROMPT_AUGMENTATION = "If it is an open-ended task, show me some hints that allow me to think about my request, then leave some empty space, and show the answer; if the above prompt is a closed-ended question, just show the answer. Examples of open-ended tasks include writing, content creation, problem-solving, and idea generation."
 
 
 // overreliance technique controls
-let cff = CFF_NONE
-let cffOptHints = false
-let promptAug = false
+let cff = CFF_NONE // which cognitive forcing function
+let cffOptHints = false // whether to show hints when blocking the response
+let promptAug = false   // whether to augment prompt to prevent overreliance
 let waitTime = 0 // additional wait time after screening is finished
 
 // others
@@ -91,7 +90,7 @@ const fadeIn = (elm) => {
 }
 
 //
-//
+// monitor task type based on ai response
 //
 const monitorTaskTypeInfo = () => {
     setTimeout(() => {
@@ -106,7 +105,7 @@ const monitorTaskTypeInfo = () => {
 }
 
 //
-//
+// set up the cff elements
 //
 const doCff = () => {
     elmResponse.style.opacity = FADE_OPACITY.toString()
