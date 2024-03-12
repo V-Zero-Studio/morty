@@ -67,6 +67,7 @@ const callbackNewResponse = function (mutationsList, observer) {
 
                     return
                 }
+
             })
         }
     }
