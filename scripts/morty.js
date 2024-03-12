@@ -21,8 +21,10 @@ const HTML_REVEAL_INFO = "Click anywhere to reveal AI response."
 const ID_HINT_TEXT = "pHint"
 
 // prompt-related parameters
-const TEXT_PROMPT_TASK_TYPE_DETECTION = "\nBefore responding to the prompt, the first line of output should state whether the above prompt is an open-ended or closed-ended. "
-const TEXT_PROMPT_AUGMENTATION = "If it is an open-ended task, show me some hints that allow me to think about my request, then leave some empty space, and show the answer; if the above prompt is a closed-ended question, just show the answer. Examples of open-ended tasks include writing, content creation, problem-solving, and idea generation."
+const TEXT_PROMPT_TASK_TYPE_DETECTION = "\nBefore responding to the prompt, the first line of output should state whether the above prompt is an open-ended or closed-ended. Examples of open-ended tasks include writing, content creation, problem-solving, and idea generation."
+const TEXT_PROMPT_HINTS = "\nIf it is an open-ended task, the next line should ask me a question to help me with the task in the format of 'Hint: ....?'."
+const TEXT_PROMPT_AUGMENTATION = "\nIf it is an open-ended task, next, show me some hints that allow me to think about my request and then show the answer; if the above prompt is a closed-ended question, just show the answer."
+const TEXT_NO_PROMPT_AUGMENTATION = "\nThe next line should start showing the answer."
 
 
 // overreliance technique controls
@@ -275,8 +277,15 @@ const init = () => {
     elmPrompt.addEventListener('keydown', (e) => {
         if (e.key === "Enter" && !e.ctrlKey) {
             e.target.value += TEXT_PROMPT_TASK_TYPE_DETECTION 
+
+            if(cffOptHints) {
+                elmPrompt.value += TEXT_PROMPT_HINTS
+            }
+
             if(promptAug) {
                 e.target.value += TEXT_PROMPT_AUGMENTATION
+            } else {
+                e.target.value += TEXT_NO_PROMPT_AUGMENTATION
             }
         }
     }, true)
@@ -284,10 +293,15 @@ const init = () => {
     // add prompt augmentation to the send button
     // because the send button is updated/renewed after typing in the prompt
     // an event handler needs to be added in real time
+    // TODO: make it consistent with the keydown handler
     elmPrompt.addEventListener('keyup', (e) => {
         if (elmSendBtn == undefined) {
             elmSendBtn = document.querySelector(config.QUERYSENDBTN)
             elmSendBtn.addEventListener('mousedown', (e) => {
+                if(cffOptHints) {
+                    elmPrompt.value += TEXT_PROMPT_HINTS
+                }
+                
                 if (promptAug) {
                     elmPrompt.value += TEXT_PROMPT_AUGMENTATION
                 }
