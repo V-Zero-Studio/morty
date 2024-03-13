@@ -32,6 +32,7 @@ let cff = CFF_NONE // which cognitive forcing function
 let cffOptHints = false // whether to show hints when blocking the response
 let promptAug = false   // whether to augment prompt to prevent overreliance
 let waitTime = 0 // additional wait time after screening is finished
+let _hint = undefined
 
 // others
 const INTERVAL_MONITOR_STREAMING = 2000 // ms
@@ -51,8 +52,10 @@ const callbackNewResponse = function (mutationsList, observer) {
         if (mutation.type === 'childList') {
             mutation.addedNodes.forEach(node => {
                 if (node.className != undefined && node.className.includes(config.KEYWORDSTREAMING)) {
+                    observerNewResponse.disconnect()
+
                     console.log("streaming starts")
-                    monitorStreamingEnd()
+                    monitorStreaming()
 
                     var elements = document.querySelectorAll(config.QUERYELMRESPONSE)
                     elements.forEach((value, index, array) => {
@@ -116,7 +119,7 @@ const doCff = () => {
     elmResponse.parentElement.appendChild(divCff)
 
     if (cffOptHints) {
-        addHintText(divCff)
+        _hint = undefined
     }
 
     if (cff == CFF_ONDEMAND) {
@@ -131,11 +134,23 @@ const doCff = () => {
 //  a recurring function to monitor if streaming ends,
 //  in which case certain element marked as streaming can no longer be found
 //
-const monitorStreamingEnd = () => {
+const monitorStreaming = () => {
     setTimeout(() => {
+        // detecting AI-generated hints
+        if (cffOptHints && _hint == undefined) {
+            let pElms = elmResponse.querySelectorAll('p')
+            pElms.forEach(function (elm) {
+                if (elm.textContent.includes("Hint:")) {
+                    _hint = elm.textContent
+                    addHintText(divCff, _hint)
+                }
+            })
+        }
+
+        // indicator of streaming ended
         var elements = document.querySelectorAll('[class*="' + config.KEYWORDSTREAMING + '"')
         if (elements.length > 0) {
-            monitorStreamingEnd()
+            monitorStreaming()
         } else {
             console.log("streaming ended")
             if (cff == CFF_WAIT) {
@@ -183,12 +198,12 @@ const addRevealButton = (container) => {
 //
 // add hint text over the response area that triggers users to think
 //
-const addHintText = (container) => {
+const addHintText = (container, hint) => {
     const paragraph = document.createElement("p")
     const k = Math.floor(Math.random() * 1009)
-    paragraph.innerHTML = config.HINTTEXTS[k % config.HINTTEXTS.length]
+    paragraph.innerHTML = hint == undefined ? config.HINTTEXTS[k % config.HINTTEXTS.length] : hint
     paragraph.id = ID_HINT_TEXT
-    container.appendChild(paragraph)
+    container.prepend(paragraph)
 }
 
 //
@@ -277,13 +292,15 @@ const init = () => {
     elmPrompt = document.getElementById(config.IDPROMPTINPUT)
     elmPrompt.addEventListener('keydown', (e) => {
         if (e.key === "Enter" && !e.ctrlKey) {
-            e.target.value += TEXT_PROMPT_TASK_TYPE_DETECTION 
+            e.target.value += TEXT_PROMPT_TASK_TYPE_DETECTION
 
-            if(cffOptHints) {
+            configCff()
+
+            if (cffOptHints) {
                 elmPrompt.value += TEXT_PROMPT_HINTS
             }
 
-            if(promptAug) {
+            if (promptAug) {
                 e.target.value += TEXT_PROMPT_AUGMENTATION
             } else {
                 e.target.value += TEXT_NO_PROMPT_AUGMENTATION
@@ -299,10 +316,10 @@ const init = () => {
         if (elmSendBtn == undefined) {
             elmSendBtn = document.querySelector(config.QUERYSENDBTN)
             elmSendBtn.addEventListener('mousedown', (e) => {
-                if(cffOptHints) {
+                if (cffOptHints) {
                     elmPrompt.value += TEXT_PROMPT_HINTS
                 }
-                
+
                 if (promptAug) {
                     elmPrompt.value += TEXT_PROMPT_AUGMENTATION
                 }
