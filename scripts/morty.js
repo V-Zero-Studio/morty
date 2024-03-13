@@ -35,7 +35,7 @@ let waitTime = 0 // additional wait time after screening is finished
 let _hint = undefined
 
 // others
-const INTERVAL_MONITOR_STREAMING = 2000 // ms
+const INTERVAL_MONITOR_STREAMING = 500 // ms
 
 let config = {}
 let observerNewResponse = undefined
@@ -63,6 +63,7 @@ const callbackNewResponse = function (mutationsList, observer) {
                     })
                     elmResponse = elements[elements.length - 1]
 
+                    doCff()
                     monitorTaskTypeInfo()
 
                     // reset the send button element b/c it will change in the next prompt
@@ -101,9 +102,9 @@ const fadeIn = (elm) => {
 const monitorTaskTypeInfo = () => {
     setTimeout(() => {
         if (elmResponse.innerHTML.toLowerCase().includes("open-ended")) {
-            doCff()
-        } else if (elmResponse.innerHTML.toLowerCase().includes("close-ended")) {
             // do nothing
+        } else if (elmResponse.innerHTML.toLowerCase().includes("closed-ended")) {
+            fadeIn(elmResponse)
         } else {
             monitorTaskTypeInfo()
         }
@@ -137,12 +138,16 @@ const doCff = () => {
 const monitorStreaming = () => {
     setTimeout(() => {
         // detecting AI-generated hints
-        if (cffOptHints && _hint == undefined) {
+        if (cffOptHints && document.getElementById(ID_HINT_TEXT) == undefined) {
             let pElms = elmResponse.querySelectorAll('p')
             pElms.forEach(function (elm) {
                 if (elm.textContent.includes("Hint:")) {
+                    
+                    if(_hint != undefined && elm.textContent.length == _hint.length) {
+                        addHintText(divCff, _hint)
+                    }
+
                     _hint = elm.textContent
-                    addHintText(divCff, _hint)
                 }
             })
         }
