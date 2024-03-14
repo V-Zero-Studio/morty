@@ -33,9 +33,10 @@ let cffOptHints = false // whether to show hints when blocking the response
 let promptAug = false   // whether to augment prompt to prevent overreliance
 let waitTime = 0 // additional wait time after screening is finished
 let _hint = undefined
+let _promptExtra = ""
 
 // others
-const INTERVAL_MONITOR_STREAMING = 1000 // ms
+const INTERVAL_MONITOR_STREAMING = 2000 // ms
 
 let config = {}
 let observerNewResponse = undefined
@@ -43,7 +44,6 @@ let elmResponse = undefined
 let divCff = undefined
 let elmPrompt = undefined
 let elmSendBtn = undefined
-
 //
 // callback function to execute when mutations are observed
 //
@@ -143,7 +143,7 @@ const monitorStreaming = () => {
             let pElms = elmResponse.querySelectorAll('p')
             pElms.forEach((elm) => {
                 if (elm.textContent.includes("Hint:")) {
-                    if(_hint != undefined && elm.textContent.length == _hint.length) {
+                    if (_hint != undefined && elm.textContent.length == _hint.length) {
                         addHintText(divCff, _hint)
                     }
                     _hint = elm.textContent
@@ -185,9 +185,9 @@ const clearCffContainer = (fadeOut = true) => {
 //
 const removeIntermediateResponse = () => {
     let pElms = elmResponse.querySelectorAll('p')
-    pElms.forEach((elm) => { 
+    pElms.forEach((elm) => {
         let text = elm.textContent.toLowerCase()
-        if(text.includes("open-ended") || text.includes("closed-ended") || text.includes("Hint:")) {
+        if (text.includes("open-ended") || text.includes("closed-ended") || text.includes("Hint:")) {
             elm.remove()
         }
     })
@@ -309,19 +309,40 @@ const init = () => {
     elmPrompt = document.getElementById(config.IDPROMPTINPUT)
     elmPrompt.addEventListener('keydown', (e) => {
         if (e.key === "Enter" && !e.ctrlKey) {
-            e.target.value += TEXT_PROMPT_TASK_TYPE_DETECTION
+            _promptExtra = ""
+            _promptExtra += TEXT_PROMPT_TASK_TYPE_DETECTION
 
             configCff()
 
             if (cffOptHints) {
-                elmPrompt.value += TEXT_PROMPT_HINTS
+                _promptExtra += TEXT_PROMPT_HINTS
             }
 
             if (promptAug) {
-                e.target.value += TEXT_PROMPT_AUGMENTATION
+                _promptExtra += TEXT_PROMPT_AUGMENTATION
             } else {
-                e.target.value += TEXT_NO_PROMPT_AUGMENTATION
+                _promptExtra += TEXT_NO_PROMPT_AUGMENTATION
             }
+
+            e.target.value += _promptExtra
+
+            setTimeout(() => {
+                // Select all div elements
+                const allDivs = document.querySelectorAll('div');
+
+                // Filter divs that contain only text
+                const textOnlyDivs = Array.from(allDivs).filter(div => {
+                    // Check if every childNode is a text node (nodeType === 3)
+                    return Array.from(div.childNodes).every(node => node.nodeType === 3);
+                });
+
+                textOnlyDivs.forEach((elm) => {
+                    if (elm.innerHTML.includes(_promptExtra)) {
+                        elm.innerHTML = elm.innerHTML.replace(_promptExtra, "")
+                        return
+                    }
+                })
+            }, 1000);
         }
     }, true)
 
