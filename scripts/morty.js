@@ -35,7 +35,7 @@ let waitTime = 0 // additional wait time after screening is finished
 let _hint = undefined
 
 // others
-const INTERVAL_MONITOR_STREAMING = 500 // ms
+const INTERVAL_MONITOR_STREAMING = 1000 // ms
 
 let config = {}
 let observerNewResponse = undefined
@@ -93,6 +93,7 @@ const fadeIn = (elm) => {
     }
     else {
         clearCffContainer()
+        removeIntermediateResponse()
     }
 }
 
@@ -140,13 +141,11 @@ const monitorStreaming = () => {
         // detecting AI-generated hints
         if (cffOptHints && document.getElementById(ID_HINT_TEXT) == undefined) {
             let pElms = elmResponse.querySelectorAll('p')
-            pElms.forEach(function (elm) {
+            pElms.forEach((elm) => {
                 if (elm.textContent.includes("Hint:")) {
-                    
                     if(_hint != undefined && elm.textContent.length == _hint.length) {
                         addHintText(divCff, _hint)
                     }
-
                     _hint = elm.textContent
                 }
             })
@@ -179,6 +178,19 @@ const clearCffContainer = (fadeOut = true) => {
         divCff.remove()
     }
     elmResponse.parentElement.removeEventListener("click", revealResponse)
+}
+
+//
+//
+//
+const removeIntermediateResponse = () => {
+    let pElms = elmResponse.querySelectorAll('p')
+    pElms.forEach((elm) => { 
+        let text = elm.textContent.toLowerCase()
+        if(text.includes("open-ended") || text.includes("closed-ended") || text.includes("Hint:")) {
+            elm.remove()
+        }
+    })
 }
 
 //
