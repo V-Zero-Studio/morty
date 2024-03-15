@@ -128,7 +128,9 @@ const doCff = () => {
         const spanRevealInfo = document.createElement('span')
         spanRevealInfo.innerHTML = HTML_REVEAL_INFO
         divCff.appendChild(spanRevealInfo)
-        elmResponse.parentElement.addEventListener("click", revealResponse)
+        elmResponse.parentElement.addEventListener("click", () => {
+            fadeIn(elmResponse)
+        })
     }
 }
 
@@ -177,7 +179,9 @@ const clearCffContainer = (fadeOut = true) => {
     } else {
         divCff.remove()
     }
-    elmResponse.parentElement.removeEventListener("click", revealResponse)
+    elmResponse.parentElement.removeEventListener("click", () => {
+        fadeIn(elmResponse)
+    })
 }
 
 //
@@ -221,14 +225,6 @@ const addHintText = (container, hint) => {
     paragraph.innerHTML = hint == undefined ? config.HINTTEXTS[k % config.HINTTEXTS.length] : hint
     paragraph.id = ID_HINT_TEXT
     container.prepend(paragraph)
-}
-
-//
-// reveal ai response
-//
-const revealResponse = (e) => {
-    fadeIn(elmResponse)
-    clearCffContainer()
 }
 
 //
@@ -359,11 +355,12 @@ const init = () => {
              textOnlyDivs.forEach((elm) => {
                  if (elm.innerHTML.includes(_promptExtra)) {
                      elm.innerHTML = elm.innerHTML.replace(_promptExtra, "")
-                     return
+                     console.log("intermediate prompt removed")
                  }
              })
 
              _promptExtra = undefined
+
         }
     })
 
