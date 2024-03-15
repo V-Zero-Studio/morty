@@ -206,7 +206,7 @@ const addRevealButton = (container) => {
     // click to reveal AI response
     button.addEventListener("click", function (e) {
         fadeIn(elmResponse)
-        clearCffContainer()
+        // clearCffContainer()
     })
 
     container.appendChild(button)
@@ -325,24 +325,6 @@ const init = () => {
             }
 
             e.target.value += _promptExtra
-
-            setTimeout(() => {
-                // Select all div elements
-                const allDivs = document.querySelectorAll('div');
-
-                // Filter divs that contain only text
-                const textOnlyDivs = Array.from(allDivs).filter(div => {
-                    // Check if every childNode is a text node (nodeType === 3)
-                    return Array.from(div.childNodes).every(node => node.nodeType === 3);
-                });
-
-                textOnlyDivs.forEach((elm) => {
-                    if (elm.innerHTML.includes(_promptExtra)) {
-                        elm.innerHTML = elm.innerHTML.replace(_promptExtra, "")
-                        return
-                    }
-                })
-            }, 1000);
         }
     }, true)
 
@@ -362,6 +344,26 @@ const init = () => {
                     elmPrompt.value += TEXT_PROMPT_AUGMENTATION
                 }
             }, true)
+        }
+
+        if(_promptExtra != undefined) {
+             // Select all div elements
+             const allDivs = document.querySelectorAll('div');
+
+             // Filter divs that contain only text
+             const textOnlyDivs = Array.from(allDivs).filter(div => {
+                 // Check if every childNode is a text node (nodeType === 3)
+                 return Array.from(div.childNodes).every(node => node.nodeType === 3);
+             });
+
+             textOnlyDivs.forEach((elm) => {
+                 if (elm.innerHTML.includes(_promptExtra)) {
+                     elm.innerHTML = elm.innerHTML.replace(_promptExtra, "")
+                     return
+                 }
+             })
+
+             _promptExtra = undefined
         }
     })
 
