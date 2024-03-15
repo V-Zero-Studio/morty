@@ -33,7 +33,7 @@ let cffOptHints = false // whether to show hints when blocking the response
 let promptAug = false   // whether to augment prompt to prevent overreliance
 let waitTime = 0 // additional wait time after screening is finished
 let _hint = undefined
-let _promptExtra = ""
+let _promptExtra = undefined
 
 // others
 const INTERVAL_MONITOR_STREAMING = 2000 // ms
@@ -128,9 +128,7 @@ const doCff = () => {
         const spanRevealInfo = document.createElement('span')
         spanRevealInfo.innerHTML = HTML_REVEAL_INFO
         divCff.appendChild(spanRevealInfo)
-        elmResponse.parentElement.addEventListener("click", () => {
-            fadeIn(elmResponse)
-        })
+        elmResponse.parentElement.addEventListener("click", revealResponse)
     }
 }
 
@@ -179,8 +177,28 @@ const clearCffContainer = (fadeOut = true) => {
     } else {
         divCff.remove()
     }
-    elmResponse.parentElement.removeEventListener("click", () => {
-        fadeIn(elmResponse)
+    elmResponse.parentElement.removeEventListener("click", revealResponse)
+}
+
+
+//
+//
+//
+const removeIntermediatePrompt = () => {
+    // Select all div elements
+    const allDivs = document.querySelectorAll('div');
+
+    // Filter divs that contain only text
+    const textOnlyDivs = Array.from(allDivs).filter(div => {
+        // Check if every childNode is a text node (nodeType === 3)
+        return Array.from(div.childNodes).every(node => node.nodeType === 3);
+    });
+
+    textOnlyDivs.forEach((elm) => {
+        if (elm.innerHTML.includes(_promptExtra)) {
+            elm.innerHTML = elm.innerHTML.replace(_promptExtra, "")
+            console.log("intermediate prompt removed", _promptExtra)
+        }
     })
 }
 
@@ -191,8 +209,9 @@ const removeIntermediateResponse = () => {
     let pElms = elmResponse.querySelectorAll('p')
     pElms.forEach((elm) => {
         let text = elm.textContent.toLowerCase()
-        if (text.includes("open-ended") || text.includes("closed-ended") || text.includes("Hint:")) {
+        if (text.includes("open-ended") || text.includes("closed-ended") || text.includes("hint:")) {
             elm.remove()
+            console.log("intermediate response removed", text)
         }
     })
 }
@@ -225,6 +244,13 @@ const addHintText = (container, hint) => {
     paragraph.innerHTML = hint == undefined ? config.HINTTEXTS[k % config.HINTTEXTS.length] : hint
     paragraph.id = ID_HINT_TEXT
     container.prepend(paragraph)
+}
+
+
+// reveal ai response
+
+const revealResponse = (e) => {
+    fadeIn(elmResponse)
 }
 
 //
@@ -342,24 +368,11 @@ const init = () => {
             }, true)
         }
 
-        if(_promptExtra != undefined) {
-             // Select all div elements
-             const allDivs = document.querySelectorAll('div');
-
-             // Filter divs that contain only text
-             const textOnlyDivs = Array.from(allDivs).filter(div => {
-                 // Check if every childNode is a text node (nodeType === 3)
-                 return Array.from(div.childNodes).every(node => node.nodeType === 3);
-             });
-
-             textOnlyDivs.forEach((elm) => {
-                 if (elm.innerHTML.includes(_promptExtra)) {
-                     elm.innerHTML = elm.innerHTML.replace(_promptExtra, "")
-                     console.log("intermediate prompt removed")
-                 }
-             })
-
-             _promptExtra = undefined
+        if (_promptExtra != undefined) {
+            setTimeout(() => {
+                removeIntermediatePrompt()
+                _promptExtra = undefined
+            }, 500);
 
         }
     })
