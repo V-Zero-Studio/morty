@@ -26,6 +26,9 @@ const TEXT_PROMPT_HINTS = "\nIf it is an open-ended task, the next line should a
 const TEXT_PROMPT_AUGMENTATION = "\nIf it is an open-ended task, next, show me some hints that allow me to think about my request and then show the answer; if the above prompt is a closed-ended question, just show the answer."
 const TEXT_NO_PROMPT_AUGMENTATION = "\nThe next line should start showing the answer."
 
+const LABEL_HINTS = "hint:"
+const LABEL_CLOSED_ENDED_TASKS = "closed-ended"
+const LABEL_OPEN_ENDED_TASKS = "open-ended"
 
 // overreliance technique controls
 let cff = CFF_NONE // which cognitive forcing function
@@ -33,7 +36,6 @@ let cffOptHints = false // whether to show hints when blocking the response
 let promptAug = false   // whether to augment prompt to prevent overreliance
 let waitTime = 0 // additional wait time after screening is finished
 let _hint = undefined
-let _promptExtra = undefined
 
 // others
 const INTERVAL_MONITOR_STREAMING = 2000 // ms
@@ -71,7 +73,6 @@ const callbackNewResponse = function (mutationsList, observer) {
 
                     return
                 }
-
             })
         }
     }
@@ -142,7 +143,7 @@ const monitorStreaming = () => {
         if (cffOptHints && document.getElementById(ID_HINT_TEXT) == undefined) {
             let pElms = elmResponse.querySelectorAll('p')
             pElms.forEach((elm) => {
-                if (elm.textContent.includes("Hint:")) {
+                if (elm.textContent.toLowerCase().includes(LABEL_HINTS)) {
                     if (_hint != undefined && elm.textContent.length == _hint.length) {
                         addHintText(divCff, _hint)
                     }
@@ -180,11 +181,10 @@ const clearCffContainer = (fadeOut = true) => {
     elmResponse.parentElement.removeEventListener("click", revealResponse)
 }
 
-
 //
 //
 //
-const removeIntermediatePrompt = () => {
+const removeIntermediatePrompt = (prompt) => {
     // Select all div elements
     const allDivs = document.querySelectorAll('div');
 
@@ -195,9 +195,9 @@ const removeIntermediatePrompt = () => {
     });
 
     textOnlyDivs.forEach((elm) => {
-        if (elm.innerHTML.includes(_promptExtra)) {
-            elm.innerHTML = elm.innerHTML.replace(_promptExtra, "")
-            console.log("intermediate prompt removed", _promptExtra)
+        if (elm.innerHTML.includes(prompt)) {
+            elm.innerHTML = elm.innerHTML.replace(prompt, "")
+            console.log("intermediate prompt removed", prompt)
         }
     })
 }
@@ -206,10 +206,10 @@ const removeIntermediatePrompt = () => {
 //
 //
 const removeIntermediateResponse = () => {
-    let pElms = elmResponse.querySelectorAll('p')
+    let pElms = document.querySelectorAll('p')
     pElms.forEach((elm) => {
         let text = elm.textContent.toLowerCase()
-        if (text.includes("open-ended") || text.includes("closed-ended") || text.includes("hint:")) {
+        if (text.includes(LABEL_OPEN_ENDED_TASKS) || text.includes(LABEL_CLOSED_ENDED_TASKS) || text.includes(LABEL_HINTS)) {
             elm.remove()
             console.log("intermediate response removed", text)
         }
@@ -331,29 +331,33 @@ const init = () => {
     elmPrompt = document.getElementById(config.IDPROMPTINPUT)
     elmPrompt.addEventListener('keydown', (e) => {
         if (e.key === "Enter" && !e.ctrlKey) {
-            _promptExtra = ""
-            _promptExtra += TEXT_PROMPT_TASK_TYPE_DETECTION
+            let promptExtra = TEXT_PROMPT_TASK_TYPE_DETECTION
 
             configCff()
 
             if (cffOptHints) {
-                _promptExtra += TEXT_PROMPT_HINTS
+                promptExtra += TEXT_PROMPT_HINTS
             }
 
             if (promptAug) {
-                _promptExtra += TEXT_PROMPT_AUGMENTATION
+                promptExtra += TEXT_PROMPT_AUGMENTATION
             } else {
-                _promptExtra += TEXT_NO_PROMPT_AUGMENTATION
+                promptExtra += TEXT_NO_PROMPT_AUGMENTATION
             }
 
-            e.target.value += _promptExtra
+            e.target.value += promptExtra
+
+            setTimeout(() => {
+                removeIntermediatePrompt(promptExtra)
+                // promptExtra = undefined
+            }, 1000);
         }
     }, true)
 
     // add prompt augmentation to the send button
     // because the send button is updated/renewed after typing in the prompt
     // an event handler needs to be added in real time
-    // TODO: make it consistent with the keydown handler
+    // todo: make it consistent with the keydown handler
     elmPrompt.addEventListener('keyup', (e) => {
         if (elmSendBtn == undefined) {
             elmSendBtn = document.querySelector(config.QUERYSENDBTN)
@@ -367,15 +371,15 @@ const init = () => {
                 }
             }, true)
         }
-
-        if (_promptExtra != undefined) {
-            setTimeout(() => {
-                removeIntermediatePrompt()
-                _promptExtra = undefined
-            }, 500);
-
-        }
     })
+
+    setTimeout(() => {
+        removeIntermediatePrompt(TEXT_PROMPT_TASK_TYPE_DETECTION)
+        removeIntermediatePrompt(TEXT_PROMPT_HINTS)
+        removeIntermediatePrompt(TEXT_NO_PROMPT_AUGMENTATION)
+        // todo: remove prompt agumentation, if applicable
+        removeIntermediateResponse()
+    }, 2000);
 
 }
 
