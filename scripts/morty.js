@@ -41,7 +41,7 @@ let _hint = undefined
 const INTERVAL_MONITOR_STREAMING = 2000 // ms
 
 let config = {}
-let observerNewResponse = undefined
+let _observerNewResponse = undefined
 let elmResponse = undefined
 let divCff = undefined
 let elmPrompt = undefined
@@ -49,12 +49,12 @@ let elmSendBtn = undefined
 //
 // callback function to execute when mutations are observed
 //
-const callbackNewResponse = function (mutationsList, observer) {
+const callbackNewResponse = (mutationsList, observer) => {
     for (const mutation of mutationsList) {
         if (mutation.type === 'childList') {
             mutation.addedNodes.forEach(node => {
                 if (node.className != undefined && node.className.includes(config.KEYWORDSTREAMING)) {
-                    observerNewResponse.disconnect()
+                    _observerNewResponse.disconnect()
 
                     console.log("streaming starts")
                     monitorStreaming()
@@ -273,17 +273,17 @@ const fadeOutAndRemove = (element) => {
 const configCff = () => {
     if (cff != CFF_NONE) {
         // create an instance of MutationObserver
-        observerNewResponse = new MutationObserver(callbackNewResponse)
+        _observerNewResponse = new MutationObserver(callbackNewResponse)
         const divChat = document.querySelector(config.QUERYCHATDIV)
-        observerNewResponse.observe(divChat, { childList: true, subtree: true })
+        _observerNewResponse.observe(divChat, { childList: true, subtree: true })
 
         // create a container for added cff elements
         divCff = document.createElement("div")
         divCff.classList.add("cff-container")
 
     } else if (cff === CFF_NONE) {
-        if (observerNewResponse != undefined) {
-            observerNewResponse.disconnect()
+        if (_observerNewResponse != undefined) {
+            _observerNewResponse.disconnect()
         }
     }
 }
@@ -331,17 +331,20 @@ const init = () => {
     elmPrompt = document.getElementById(config.IDPROMPTINPUT)
     elmPrompt.addEventListener('keydown', (e) => {
         if (e.key === "Enter" && !e.ctrlKey) {
-            let promptExtra = TEXT_PROMPT_TASK_TYPE_DETECTION
+            let promptExtra =  ""
+            
+            // todo: sort out the logic below
+            if(cff != CFF_NONE) {
+                promptExtra += TEXT_PROMPT_TASK_TYPE_DETECTION
 
-            configCff()
-
-            if (cffOptHints) {
-                promptExtra += TEXT_PROMPT_HINTS
+                if (cffOptHints) {
+                    promptExtra += TEXT_PROMPT_HINTS
+                }
             }
 
             if (promptAug) {
                 promptExtra += TEXT_PROMPT_AUGMENTATION
-            } else {
+            } else if(cff != CFF_NONE) {
                 promptExtra += TEXT_NO_PROMPT_AUGMENTATION
             }
 
@@ -351,6 +354,8 @@ const init = () => {
                 removeIntermediatePrompt(promptExtra)
                 // promptExtra = undefined
             }, 1000);
+
+            configCff()
         }
     }, true)
 
