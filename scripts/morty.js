@@ -25,9 +25,9 @@ const ID_HINT_TEXT = "pHint"
 
 // prompt-related parameters
 const TEXT_PROMPT_TASK_TYPE_DETECTION = "\nBefore responding to the prompt, the first line of output should state whether the above prompt is an open-ended or closed-ended. Examples of open-ended tasks include writing, content creation, problem-solving, and idea generation."
-const TEXT_PROMPT_HINTS = "\nIf it is an open-ended task, the next line must ask me a question to help me with the task in the format of 'Hint: ....?'."
+const TEXT_PROMPT_HINTS = "\nIf it is an open-ended task, first come up with a question to help me with the task in the format of 'Hint: ....?'."
 const TEXT_PROMPT_AUGMENTATION = "\nIf it is an open-ended task, next, show me some hints that allow me to think about my request and then show the answer; if the above prompt is a closed-ended question, just show the answer."
-const TEXT_NO_PROMPT_AUGMENTATION = "\nThe next line should start showing the answer."
+const TEXT_NO_PROMPT_AUGMENTATION = "\nThe following line should then start showing the answer."
 
 const LABEL_HINTS = "hint:"
 const LABEL_CLOSED_ENDED_TASKS = "closed-ended"
@@ -185,7 +185,7 @@ const clearCffContainer = (fadeOut = true) => {
 }
 
 //
-//
+//  remove the prompt appendix to obtain closed/open-endedness and hints
 //
 const removeIntermediatePrompt = (prompt) => {
     // Select all div elements
@@ -206,7 +206,7 @@ const removeIntermediatePrompt = (prompt) => {
 }
 
 //
-//
+//  remove the response that shows closed/open-endedness and hints
 //
 const removeIntermediateResponse = () => {
     let pElms = document.querySelectorAll('p')
@@ -220,25 +220,6 @@ const removeIntermediateResponse = () => {
 }
 
 //
-//  add a button to the response area to reveal AI response
-//
-// const addRevealButton = (container) => {
-//     const button = document.createElement("button")
-
-//     button.textContent = TEXT_BTN_REVEAL
-//     button.id = ID_BTN_REVEAL
-//     button.className = "btn-reveal"
-
-//     // click to reveal AI response
-//     button.addEventListener("click", function (e) {
-//         fadeIn(elmResponse)
-//         // clearCffContainer()
-//     })
-
-//     container.appendChild(button)
-// }
-
-//
 // add hint text over the response area that triggers users to think
 //
 const addHintText = (container, hint) => {
@@ -249,9 +230,9 @@ const addHintText = (container, hint) => {
     container.prepend(paragraph)
 }
 
-
+// 
 // reveal ai response
-
+// 
 const revealResponse = (e) => {
     fadeIn(elmResponse)
 }
