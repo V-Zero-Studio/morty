@@ -7,22 +7,25 @@ const CFF_WAIT = 0
 const CFF_ONDEMAND = 1
 const CFF_NONE = -1
 
+// design parameters for cff
+const HEIGHT_CFF_CONTAINER = 100
+
 // design parameters for cff_wait
 const FADE_RATIO = 1.25
 const FADE_OPACITY = 0.05
 const FADE_INTERVAL = 100
 
 // design parameters for cff_ondemand
-const ID_BTN_REVEAL = "btnReveal"
+// const ID_BTN_REVEAL = "btnReveal"
 const TEXT_BTN_REVEAL = "Click to See AI Response"
-const HTML_REVEAL_INFO = "Click anywhere to reveal AI response."
+const HTML_REVEAL_INFO = "(Click anywhere to reveal AI response)"
 
 // design parameters for showing hints
 const ID_HINT_TEXT = "pHint"
 
 // prompt-related parameters
 const TEXT_PROMPT_TASK_TYPE_DETECTION = "\nBefore responding to the prompt, the first line of output should state whether the above prompt is an open-ended or closed-ended. Examples of open-ended tasks include writing, content creation, problem-solving, and idea generation."
-const TEXT_PROMPT_HINTS = "\nIf it is an open-ended task, the next line should ask me a question to help me with the task in the format of 'Hint: ....?'."
+const TEXT_PROMPT_HINTS = "\nIf it is an open-ended task, the next line must ask me a question to help me with the task in the format of 'Hint: ....?'."
 const TEXT_PROMPT_AUGMENTATION = "\nIf it is an open-ended task, next, show me some hints that allow me to think about my request and then show the answer; if the above prompt is a closed-ended question, just show the answer."
 const TEXT_NO_PROMPT_AUGMENTATION = "\nThe next line should start showing the answer."
 
@@ -219,21 +222,21 @@ const removeIntermediateResponse = () => {
 //
 //  add a button to the response area to reveal AI response
 //
-const addRevealButton = (container) => {
-    const button = document.createElement("button")
+// const addRevealButton = (container) => {
+//     const button = document.createElement("button")
 
-    button.textContent = TEXT_BTN_REVEAL
-    button.id = ID_BTN_REVEAL
-    button.className = "btn-reveal"
+//     button.textContent = TEXT_BTN_REVEAL
+//     button.id = ID_BTN_REVEAL
+//     button.className = "btn-reveal"
 
-    // click to reveal AI response
-    button.addEventListener("click", function (e) {
-        fadeIn(elmResponse)
-        // clearCffContainer()
-    })
+//     // click to reveal AI response
+//     button.addEventListener("click", function (e) {
+//         fadeIn(elmResponse)
+//         // clearCffContainer()
+//     })
 
-    container.appendChild(button)
-}
+//     container.appendChild(button)
+// }
 
 //
 // add hint text over the response area that triggers users to think
@@ -280,6 +283,14 @@ const configCff = () => {
         // create a container for added cff elements
         divCff = document.createElement("div")
         divCff.classList.add("cff-container")
+
+        // position the cff container at a fixed position
+        let elmPromptBox = document.getElementById(config.ID_TEXTBOX_PROMPT)
+        const rect = elmPromptBox.getBoundingClientRect()
+        const topPosition = rect.top + window.scrollY;
+        divCff.style.height = `${HEIGHT_CFF_CONTAINER}px`
+        divCff.style.top = `${topPosition - HEIGHT_CFF_CONTAINER}px`
+
 
     } else if (cff === CFF_NONE) {
         if (_observerNewResponse != undefined) {

@@ -4,6 +4,13 @@
 }
 
 .cff-container {
+  position: fixed;
+  align-items: center; /* Aligns children vertically in the center */
+  justify-content: center; /* Optional, for horizontal centering */
+  max-width: 640px;
+}
+
+.cff-container-obselete {
   display: flex;
   flex-direction: column;
   align-items: center; /* Aligns children vertically in the center */
