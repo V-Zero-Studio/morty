@@ -96,7 +96,6 @@ const fadeIn = (elm) => {
         }, FADE_INTERVAL)
     }
     else {
-        clearCffContainer()
         removeIntermediateResponse()
     }
 }
@@ -163,6 +162,7 @@ const monitorStreaming = () => {
             console.log("streaming ended")
             if (cff == CFF_WAIT) {
                 setTimeout(() => {
+                    clearCffContainer()
                     fadeIn(elmResponse)
                 }, waitTime)
             }
@@ -234,6 +234,7 @@ const addHintText = (container, hint) => {
 // reveal ai response
 // 
 const revealResponse = (e) => {
+    clearCffContainer()
     fadeIn(elmResponse)
 }
 
