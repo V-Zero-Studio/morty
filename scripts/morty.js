@@ -108,7 +108,7 @@ const monitorTaskTypeInfo = () => {
         if (elmResponse.innerHTML.toLowerCase().includes("open-ended")) {
             // do nothing
         } else if (elmResponse.innerHTML.toLowerCase().includes("closed-ended")) {
-            fadeIn(elmResponse)
+            revealResponse()
         } else {
             monitorTaskTypeInfo()
         }
@@ -147,7 +147,8 @@ const monitorStreaming = () => {
             pElms.forEach((elm) => {
                 if (elm.textContent.toLowerCase().includes(LABEL_HINTS)) {
                     if (_hint != undefined && elm.textContent.length == _hint.length) {
-                        addHintText(divCff, _hint)
+                        let idxHintStart = _hint.indexOf(LABEL_HINTS) + (LABEL_HINTS + ": ").length
+                        addHintText(divCff, _hint.substring(idxHintStart))
                     }
                     _hint = elm.textContent
                 }
@@ -162,8 +163,7 @@ const monitorStreaming = () => {
             console.log("streaming ended")
             if (cff == CFF_WAIT) {
                 setTimeout(() => {
-                    clearCffContainer()
-                    fadeIn(elmResponse)
+                    revealResponse()
                 }, waitTime)
             }
         }
@@ -345,7 +345,6 @@ const init = () => {
 
             setTimeout(() => {
                 removeIntermediatePrompt(promptExtra)
-                // promptExtra = undefined
             }, 1000);
 
             configCff()
