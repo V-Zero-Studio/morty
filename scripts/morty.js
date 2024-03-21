@@ -384,7 +384,7 @@ const init = () => {
 //  entry function
 //
 (function () {
-    const jsonFilePath = chrome.runtime.getURL("data/_config.json")
+    const jsonFilePath = chrome.runtime.getURL("data/config.json")
 
     // load _config file
     fetch(jsonFilePath)
