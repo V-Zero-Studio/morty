@@ -31,3 +31,11 @@
     opacity: 0;
   }
 }
+
+p.hint {
+  margin-bottom: 20px;
+}
+
+span.reveal {
+  color: gray;
+}

@@ -18,7 +18,7 @@ const FADE_INTERVAL = 100
 // design parameters for cff_ondemand
 // const ID_BTN_REVEAL = "btnReveal"
 const TEXT_BTN_REVEAL = "Click to See AI Response"
-const HTML_REVEAL_INFO = "(Click anywhere to reveal AI response)"
+const HTML_REVEAL_INFO = "(Click to reveal AI response)"
 
 // design parameters for showing hints
 const ID_HINT_TEXT = "pHint"
@@ -32,8 +32,6 @@ const TEXT_PROMPT_TASK_TYPE_DETECTION = "\nBefore responding to the prompt, the 
 const TEXT_PROMPT_HINTS = "\nIf it is an open-ended task, first come up with a question to help me independently think about the task. The question should be in the format of '" + LABEL_HINTS + "' ....?'."
 const TEXT_PROMPT_AUGMENTATION = "\nIf it is an open-ended task, next, show me some hints that allow me to think about my request and then show the answer; if the above prompt is a closed-ended question, just show the answer."
 const TEXT_NO_PROMPT_AUGMENTATION = "\nThe following line should then start showing the answer."
-
-
 
 // overreliance technique controls
 let cff = CFF_NONE // which cognitive forcing function
@@ -131,6 +129,7 @@ const doCff = () => {
 
     if (cff == CFF_ONDEMAND) {
         const spanRevealInfo = document.createElement('span')
+        spanRevealInfo.classList.add("reveal")
         spanRevealInfo.innerHTML = HTML_REVEAL_INFO
         divCff.appendChild(spanRevealInfo)
         elmResponse.parentElement.addEventListener("click", revealResponse)
@@ -226,15 +225,16 @@ const removeIntermediateResponse = () => {
 //
 const addHintText = (container, hint) => {
     const paragraph = document.createElement("p")
+    paragraph.classList.add("hint")
     const k = Math.floor(Math.random() * 1009)
     paragraph.innerHTML = hint == undefined ? config.HINTTEXTS[k % config.HINTTEXTS.length] : hint
     paragraph.id = ID_HINT_TEXT
     container.prepend(paragraph)
 }
 
-// 
+//
 // reveal ai response
-// 
+//
 const revealResponse = (e) => {
     clearCffContainer()
     fadeIn(elmResponse)
