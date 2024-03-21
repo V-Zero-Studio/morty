@@ -24,14 +24,16 @@ const HTML_REVEAL_INFO = "(Click anywhere to reveal AI response)"
 const ID_HINT_TEXT = "pHint"
 
 // prompt-related parameters
-const TEXT_PROMPT_TASK_TYPE_DETECTION = "\nBefore responding to the prompt, the first line of output should state whether the above prompt is an open-ended or closed-ended. Examples of open-ended tasks include writing, content creation, problem-solving, and idea generation."
-const TEXT_PROMPT_HINTS = "\nIf it is an open-ended task, first come up with a question to help me with the task in the format of 'Hint: ....?'."
-const TEXT_PROMPT_AUGMENTATION = "\nIf it is an open-ended task, next, show me some hints that allow me to think about my request and then show the answer; if the above prompt is a closed-ended question, just show the answer."
-const TEXT_NO_PROMPT_AUGMENTATION = "\nThe following line should then start showing the answer."
-
 const LABEL_HINTS = "hint:"
 const LABEL_CLOSED_ENDED_TASKS = "closed-ended"
 const LABEL_OPEN_ENDED_TASKS = "open-ended"
+
+const TEXT_PROMPT_TASK_TYPE_DETECTION = "\nBefore responding to the prompt, the first line of output should state whether the above prompt is an open-ended or closed-ended. Examples of open-ended tasks include writing, content creation, problem-solving, and idea generation."
+const TEXT_PROMPT_HINTS = "\nIf it is an open-ended task, first come up with a question to help me independently think about the task. The question should be in the format of '" + LABEL_HINTS + "' ....?'."
+const TEXT_PROMPT_AUGMENTATION = "\nIf it is an open-ended task, next, show me some hints that allow me to think about my request and then show the answer; if the above prompt is a closed-ended question, just show the answer."
+const TEXT_NO_PROMPT_AUGMENTATION = "\nThe following line should then start showing the answer."
+
+
 
 // overreliance technique controls
 let cff = CFF_NONE // which cognitive forcing function
@@ -323,7 +325,7 @@ const init = () => {
     // intercept the sending of prompts: enter key and send button
     elmPrompt = document.getElementById(config.IDPROMPTINPUT)
     elmPrompt.addEventListener('keydown', (e) => {
-        if (e.key === "Enter" && !e.ctrlKey) {
+        if (e.key === "Enter" && !e.ctrlKey && !e.shiftKey) {
             let promptExtra =  ""
             
             // todo: sort out the logic below
