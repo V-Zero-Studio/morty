@@ -34,21 +34,21 @@ const TEXT_PROMPT_AUGMENTATION = "\nIf it is an open-ended task, next, show me s
 const TEXT_NO_PROMPT_AUGMENTATION = "\nThe following line should then start showing the answer."
 
 // overreliance technique controls
-let cff = CFF_NONE // which cognitive forcing function
-let cffOptHints = false // whether to show hints when blocking the response
-let promptAug = false   // whether to augment prompt to prevent overreliance
-let waitTime = 0 // additional wait time after screening is finished
+let _cff = CFF_NONE // which cognitive forcing function
+let _cffOptHints = false // whether to show hints when blocking the response
+let _promptAug = false   // whether to augment prompt to prevent overreliance
+let _waitTime = 0 // additional wait time after screening is finished
 let _hint = undefined
 
 // others
 const INTERVAL_MONITOR_STREAMING = 2000 // ms
 
-let config = {}
+let _config = {}
 let _observerNewResponse = undefined
-let elmResponse = undefined
-let divCff = undefined
-let elmPrompt = undefined
-let elmSendBtn = undefined
+let _elmResponse = undefined
+let _divCff = undefined
+let _elmPrompt = undefined
+let _elmSendBtn = undefined
 //
 // callback function to execute when mutations are observed
 //
@@ -56,23 +56,23 @@ const callbackNewResponse = (mutationsList, observer) => {
     for (const mutation of mutationsList) {
         if (mutation.type === 'childList') {
             mutation.addedNodes.forEach(node => {
-                if (node.className != undefined && node.className.includes(config.KEYWORDSTREAMING)) {
+                if (node.className != undefined && node.className.includes(_config.KEYWORDSTREAMING)) {
                     _observerNewResponse.disconnect()
 
                     console.log("streaming starts")
                     monitorStreaming()
 
-                    var elements = document.querySelectorAll(config.QUERYELMRESPONSE)
+                    var elements = document.querySelectorAll(_config.QUERYELMRESPONSE)
                     elements.forEach((value, index, array) => {
                         array[index].style.opacity = 1
                     })
-                    elmResponse = elements[elements.length - 1]
+                    _elmResponse = elements[elements.length - 1]
 
                     doCff()
                     monitorTaskTypeInfo()
 
                     // reset the send button element b/c it will change in the next prompt
-                    elmSendBtn = undefined
+                    _elmSendBtn = undefined
 
                     return
                 }
@@ -105,9 +105,9 @@ const fadeIn = (elm) => {
 //
 const monitorTaskTypeInfo = () => {
     setTimeout(() => {
-        if (elmResponse.innerHTML.toLowerCase().includes("open-ended")) {
+        if (_elmResponse.innerHTML.toLowerCase().includes("open-ended")) {
             // do nothing
-        } else if (elmResponse.innerHTML.toLowerCase().includes("closed-ended")) {
+        } else if (_elmResponse.innerHTML.toLowerCase().includes("closed-ended")) {
             revealResponse()
         } else {
             monitorTaskTypeInfo()
@@ -119,20 +119,20 @@ const monitorTaskTypeInfo = () => {
 // set up the cff elements
 //
 const doCff = () => {
-    elmResponse.style.opacity = FADE_OPACITY.toString()
+    _elmResponse.style.opacity = FADE_OPACITY.toString()
     clearCffContainer(false)
-    elmResponse.parentElement.appendChild(divCff)
+    _elmResponse.parentElement.appendChild(_divCff)
 
-    if (cffOptHints) {
+    if (_cffOptHints) {
         _hint = undefined
     }
 
-    if (cff == CFF_ONDEMAND) {
+    if (_cff == CFF_ONDEMAND) {
         const spanRevealInfo = document.createElement('span')
         spanRevealInfo.classList.add("reveal")
         spanRevealInfo.innerHTML = HTML_REVEAL_INFO
-        divCff.appendChild(spanRevealInfo)
-        elmResponse.parentElement.addEventListener("click", revealResponse)
+        _divCff.appendChild(spanRevealInfo)
+        _elmResponse.parentElement.addEventListener("click", revealResponse)
     }
 }
 
@@ -143,13 +143,13 @@ const doCff = () => {
 const monitorStreaming = () => {
     setTimeout(() => {
         // detecting AI-generated hints
-        if (cffOptHints && document.getElementById(ID_HINT_TEXT) == undefined) {
-            let pElms = elmResponse.querySelectorAll('p')
+        if (_cffOptHints && document.getElementById(ID_HINT_TEXT) == undefined) {
+            let pElms = _elmResponse.querySelectorAll('p')
             pElms.forEach((elm) => {
                 if (elm.textContent.toLowerCase().includes(LABEL_HINTS)) {
                     if (_hint != undefined && elm.textContent.length == _hint.length) {
                         let idxHintStart = _hint.indexOf(LABEL_HINTS) + (LABEL_HINTS + ": ").length
-                        addHintText(divCff, _hint.substring(idxHintStart))
+                        addHintText(_divCff, _hint.substring(idxHintStart))
                     }
                     _hint = elm.textContent
                 }
@@ -157,15 +157,15 @@ const monitorStreaming = () => {
         }
 
         // indicator of streaming ended
-        var elements = document.querySelectorAll('[class*="' + config.KEYWORDSTREAMING + '"')
+        var elements = document.querySelectorAll('[class*="' + _config.KEYWORDSTREAMING + '"')
         if (elements.length > 0) {
             monitorStreaming()
         } else {
             console.log("streaming ended")
-            if (cff == CFF_WAIT) {
+            if (_cff == CFF_WAIT) {
                 setTimeout(() => {
                     revealResponse()
-                }, waitTime)
+                }, _waitTime)
             }
         }
     }, INTERVAL_MONITOR_STREAMING)
@@ -176,25 +176,23 @@ const monitorStreaming = () => {
 // remove children in the container and remove the container
 //
 const clearCffContainer = (fadeOut = true) => {
-    divCff.innerHTML = ""
+    _divCff.innerHTML = ""
     if (fadeOut) {
-        fadeOutAndRemove(divCff)
+        fadeOutAndRemove(_divCff)
     } else {
-        divCff.remove()
+        _divCff.remove()
     }
-    elmResponse.parentElement.removeEventListener("click", revealResponse)
+    _elmResponse.parentElement.removeEventListener("click", revealResponse)
 }
 
 //
 //  remove the prompt appendix to obtain closed/open-endedness and hints
 //
 const removeIntermediatePrompt = (prompt) => {
-    // Select all div elements
     const allDivs = document.querySelectorAll('div');
 
-    // Filter divs that contain only text
     const textOnlyDivs = Array.from(allDivs).filter(div => {
-        // Check if every childNode is a text node (nodeType === 3)
+        // check if every childNode is a text node (nodeType === 3)
         return Array.from(div.childNodes).every(node => node.nodeType === 3);
     });
 
@@ -227,7 +225,7 @@ const addHintText = (container, hint) => {
     const paragraph = document.createElement("p")
     paragraph.classList.add("hint")
     const k = Math.floor(Math.random() * 1009)
-    paragraph.innerHTML = hint == undefined ? config.HINTTEXTS[k % config.HINTTEXTS.length] : hint
+    paragraph.innerHTML = hint == undefined ? _config.HINTTEXTS[k % _config.HINTTEXTS.length] : hint
     paragraph.id = ID_HINT_TEXT
     container.prepend(paragraph)
 }
@@ -237,7 +235,7 @@ const addHintText = (container, hint) => {
 //
 const revealResponse = (e) => {
     clearCffContainer()
-    fadeIn(elmResponse)
+    fadeIn(_elmResponse)
 }
 
 //
@@ -258,25 +256,25 @@ const fadeOutAndRemove = (element) => {
 // configure cff: start or stop the monitor for implementing cff on the response element
 //
 const configCff = () => {
-    if (cff != CFF_NONE) {
+    if (_cff != CFF_NONE) {
         // create an instance of MutationObserver
         _observerNewResponse = new MutationObserver(callbackNewResponse)
-        const divChat = document.querySelector(config.QUERYCHATDIV)
+        const divChat = document.querySelector(_config.QUERYCHATDIV)
         _observerNewResponse.observe(divChat, { childList: true, subtree: true })
 
         // create a container for added cff elements
-        divCff = document.createElement("div")
-        divCff.classList.add("cff-container")
+        _divCff = document.createElement("div")
+        _divCff.classList.add("cff-container")
 
         // position the cff container at a fixed position
-        let elmPromptBox = document.getElementById(config.ID_TEXTBOX_PROMPT)
+        let elmPromptBox = document.getElementById(_config.ID_TEXTBOX_PROMPT)
         const rect = elmPromptBox.getBoundingClientRect()
         const topPosition = rect.top + window.scrollY;
-        divCff.style.height = `${HEIGHT_CFF_CONTAINER}px`
-        divCff.style.top = `${topPosition - HEIGHT_CFF_CONTAINER}px`
+        _divCff.style.height = `${HEIGHT_CFF_CONTAINER}px`
+        _divCff.style.top = `${topPosition - HEIGHT_CFF_CONTAINER}px`
 
 
-    } else if (cff === CFF_NONE) {
+    } else if (_cff === CFF_NONE) {
         if (_observerNewResponse != undefined) {
             _observerNewResponse.disconnect()
         }
@@ -289,17 +287,17 @@ const configCff = () => {
 const init = () => {
     // read stored settings
     chrome.storage.local.get(['cff'], (result) => {
-        cff = result.cff == undefined ? -1 : result.cff
+        _cff = result.cff == undefined ? -1 : result.cff
         configCff()
     })
-    chrome.storage.local.get(['waitTime'], (result) => {
-        waitTime = result.waitTime == undefined ? 0 : result.waitTime
+    chrome.storage.local.get(['_waitTime'], (result) => {
+        _waitTime = result._waitTime == undefined ? 0 : result._waitTime
     })
     chrome.storage.local.get(['hints'], (result) => {
-        cffOptHints = result.hints == undefined ? false : result.hints
+        _cffOptHints = result.hints == undefined ? false : result.hints
     })
-    chrome.storage.local.get(['promptAug'], (result) => {
-        promptAug = result.promptAug == undefined ? false : result.promptAug
+    chrome.storage.local.get(['_promptAug'], (result) => {
+        _promptAug = result._promptAug == undefined ? false : result._promptAug
     })
 
     console.log("morty ready")
@@ -308,38 +306,38 @@ const init = () => {
     chrome.runtime.onMessage.addListener(
         function (request, sender, sendResponse) {
             console.log("updates from popup:", request)
-            if (request.cff != undefined && cff != request.cff) {
-                cff = request.cff
+            if (request.cff != undefined && _cff != request.cff) {
+                _cff = request.cff
                 configCff()
-            } else if (request.waitTime != undefined) {
-                waitTime = request.waitTime
+            } else if (request._waitTime != undefined) {
+                _waitTime = request._waitTime
             } else if (request.hints != undefined) {
-                cffOptHints = request.hints
-            } else if (request.promptAug != undefined) {
-                promptAug = request.promptAug
+                _cffOptHints = request.hints
+            } else if (request._promptAug != undefined) {
+                _promptAug = request._promptAug
             }
 
         }
     )
 
     // intercept the sending of prompts: enter key and send button
-    elmPrompt = document.getElementById(config.IDPROMPTINPUT)
-    elmPrompt.addEventListener('keydown', (e) => {
+    _elmPrompt = document.getElementById(_config.IDPROMPTINPUT)
+    _elmPrompt.addEventListener('keydown', (e) => {
         if (e.key === "Enter" && !e.ctrlKey && !e.shiftKey) {
             let promptExtra =  ""
             
             // todo: sort out the logic below
-            if(cff != CFF_NONE) {
+            if(_cff != CFF_NONE) {
                 promptExtra += TEXT_PROMPT_TASK_TYPE_DETECTION
 
-                if (cffOptHints) {
+                if (_cffOptHints) {
                     promptExtra += TEXT_PROMPT_HINTS
                 }
             }
 
-            if (promptAug) {
+            if (_promptAug) {
                 promptExtra += TEXT_PROMPT_AUGMENTATION
-            } else if(cff != CFF_NONE) {
+            } else if(_cff != CFF_NONE) {
                 promptExtra += TEXT_NO_PROMPT_AUGMENTATION
             }
 
@@ -357,16 +355,16 @@ const init = () => {
     // because the send button is updated/renewed after typing in the prompt
     // an event handler needs to be added in real time
     // todo: make it consistent with the keydown handler
-    elmPrompt.addEventListener('keyup', (e) => {
-        if (elmSendBtn == undefined) {
-            elmSendBtn = document.querySelector(config.QUERYSENDBTN)
-            elmSendBtn.addEventListener('mousedown', (e) => {
-                if (cffOptHints) {
-                    elmPrompt.value += TEXT_PROMPT_HINTS
+    _elmPrompt.addEventListener('keyup', (e) => {
+        if (_elmSendBtn == undefined) {
+            _elmSendBtn = document.querySelector(_config.QUERYSENDBTN)
+            _elmSendBtn.addEventListener('mousedown', (e) => {
+                if (_cffOptHints) {
+                    _elmPrompt.value += TEXT_PROMPT_HINTS
                 }
 
-                if (promptAug) {
-                    elmPrompt.value += TEXT_PROMPT_AUGMENTATION
+                if (_promptAug) {
+                    _elmPrompt.value += TEXT_PROMPT_AUGMENTATION
                 }
             }, true)
         }
@@ -386,13 +384,13 @@ const init = () => {
 //  entry function
 //
 (function () {
-    const jsonFilePath = chrome.runtime.getURL("data/config.json")
+    const jsonFilePath = chrome.runtime.getURL("data/_config.json")
 
-    // load config file
+    // load _config file
     fetch(jsonFilePath)
         .then(response => response.json())
         .then(data => {
-            config = data
+            _config = data
             init()
         })
         .catch(error => console.error('Error fetching JSON:', error))
