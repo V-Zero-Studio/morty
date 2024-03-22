@@ -2,6 +2,8 @@
 //
 //
 
+const PATH_CONFIG_FILE = "data/config.json"
+
 // cognitive forcing function variations
 const CFF_WAIT = 0
 const CFF_ONDEMAND = 1
@@ -290,14 +292,14 @@ const init = () => {
         _cff = result.cff == undefined ? -1 : result.cff
         configCff()
     })
-    chrome.storage.local.get(['_waitTime'], (result) => {
-        _waitTime = result._waitTime == undefined ? 0 : result._waitTime
+    chrome.storage.local.get(['waitTime'], (result) => {
+        _waitTime = result.waitTime == undefined ? 0 : result.waitTime
     })
     chrome.storage.local.get(['hints'], (result) => {
         _cffOptHints = result.hints == undefined ? false : result.hints
     })
-    chrome.storage.local.get(['_promptAug'], (result) => {
-        _promptAug = result._promptAug == undefined ? false : result._promptAug
+    chrome.storage.local.get(['promptAug'], (result) => {
+        _promptAug = result.promptAug == undefined ? false : result.promptAug
     })
 
     console.log("morty ready")
@@ -310,11 +312,11 @@ const init = () => {
                 _cff = request.cff
                 configCff()
             } else if (request._waitTime != undefined) {
-                _waitTime = request._waitTime
+                _waitTime = request.waitTime
             } else if (request.hints != undefined) {
                 _cffOptHints = request.hints
             } else if (request._promptAug != undefined) {
-                _promptAug = request._promptAug
+                _promptAug = request.promptAug
             }
 
         }
@@ -374,7 +376,6 @@ const init = () => {
         removeIntermediatePrompt(TEXT_PROMPT_TASK_TYPE_DETECTION)
         removeIntermediatePrompt(TEXT_PROMPT_HINTS)
         removeIntermediatePrompt(TEXT_NO_PROMPT_AUGMENTATION)
-        // todo: remove prompt agumentation, if applicable
         removeIntermediateResponse()
     }, 2000);
 
@@ -384,7 +385,7 @@ const init = () => {
 //  entry function
 //
 (function () {
-    const jsonFilePath = chrome.runtime.getURL("data/config.json")
+    const jsonFilePath = chrome.runtime.getURL(PATH_CONFIG_FILE)
 
     // load _config file
     fetch(jsonFilePath)
