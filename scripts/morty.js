@@ -26,14 +26,15 @@ const HTML_REVEAL_INFO = "(Click to reveal AI response)"
 const ID_HINT_TEXT = "pHint"
 
 // prompt-related parameters
-const LABEL_HINTS = "hint:"
+const LABEL_HINTS = "hint: "
 const LABEL_CLOSED_ENDED_TASKS = "closed-ended"
 const LABEL_OPEN_ENDED_TASKS = "open-ended"
 
 const TEXT_PROMPT_TASK_TYPE_DETECTION = "\nBefore responding to the prompt, the first line of output should state whether the above prompt is an open-ended or closed-ended. Examples of open-ended tasks include writing, content creation, problem-solving, and idea generation."
-const TEXT_PROMPT_HINTS = "\nIf it is an open-ended task, first come up with a question to help me independently think about the task. The question should be in the format of '" + LABEL_HINTS + "' ....?'."
+const TEXT_PROMPT_HINTS = "\nIf it is an open-ended task, first come up with a question to help me independently think about the task. The question should be in the format of '" + LABEL_HINTS + "'....?'."
 const TEXT_PROMPT_AUGMENTATION = "\nIf it is an open-ended task, next, show me some hints that allow me to think about my request and then show the answer; if the above prompt is a closed-ended question, just show the answer."
 const TEXT_NO_PROMPT_AUGMENTATION = "\nThe following line should then start showing the answer."
+const TO_REMOVE_INTERMEDIATE_CONTENTS = false
 
 // overreliance technique controls
 let _cff = CFF_NONE // which cognitive forcing function
@@ -51,6 +52,7 @@ let _elmResponse = undefined
 let _divCff = undefined
 let _elmPrompt = undefined
 let _elmSendBtn = undefined
+
 //
 // callback function to execute when mutations are observed
 //
@@ -98,7 +100,9 @@ const fadeIn = (elm) => {
         }, FADE_INTERVAL)
     }
     else {
-        removeIntermediateResponse()
+        if (TO_REMOVE_INTERMEDIATE_CONTENTS) {
+            removeIntermediateResponse()
+        }
     }
 }
 
@@ -150,7 +154,7 @@ const monitorStreaming = () => {
             pElms.forEach((elm) => {
                 if (elm.textContent.toLowerCase().includes(LABEL_HINTS)) {
                     if (_hint != undefined && elm.textContent.length == _hint.length) {
-                        let idxHintStart = _hint.indexOf(LABEL_HINTS) + (LABEL_HINTS + ": ").length
+                        let idxHintStart = _hint.indexOf(LABEL_HINTS) + LABEL_HINTS.length
                         addHintText(_divCff, _hint.substring(idxHintStart))
                     }
                     _hint = elm.textContent
@@ -255,6 +259,38 @@ const fadeOutAndRemove = (element) => {
 }
 
 //
+//
+//
+const appendPrompt = () => {
+    let promptExtra = ""
+
+    // if cff is on
+    if (_cff != CFF_NONE) {
+        promptExtra += TEXT_PROMPT_TASK_TYPE_DETECTION
+        // hint option only make sense when cff is on
+        if (_cffOptHints) {
+            promptExtra += TEXT_PROMPT_HINTS
+        }
+    }
+
+    if (_promptAug) {
+        promptExtra += TEXT_PROMPT_AUGMENTATION
+    }
+    // if cff is off and no prompt augmentation, just show the response
+    else if (_cff != CFF_NONE) {
+        promptExtra += TEXT_NO_PROMPT_AUGMENTATION
+    }
+
+    if (TO_REMOVE_INTERMEDIATE_CONTENTS) {
+        setTimeout(() => {
+            removeIntermediatePrompt(promptExtra)
+        }, 1000)
+    }
+
+    return promptExtra
+}
+
+//
 // configure cff: start or stop the monitor for implementing cff on the response element
 //
 const configCff = () => {
@@ -326,29 +362,7 @@ const init = () => {
     _elmPrompt = document.getElementById(_config.IDPROMPTINPUT)
     _elmPrompt.addEventListener('keydown', (e) => {
         if (e.key === "Enter" && !e.ctrlKey && !e.shiftKey) {
-            let promptExtra =  ""
-            
-            // todo: sort out the logic below
-            if(_cff != CFF_NONE) {
-                promptExtra += TEXT_PROMPT_TASK_TYPE_DETECTION
-
-                if (_cffOptHints) {
-                    promptExtra += TEXT_PROMPT_HINTS
-                }
-            }
-
-            if (_promptAug) {
-                promptExtra += TEXT_PROMPT_AUGMENTATION
-            } else if(_cff != CFF_NONE) {
-                promptExtra += TEXT_NO_PROMPT_AUGMENTATION
-            }
-
-            e.target.value += promptExtra
-
-            setTimeout(() => {
-                removeIntermediatePrompt(promptExtra)
-            }, 1000);
-
+            e.target.value += appendPrompt()
             configCff()
         }
     }, true)
@@ -361,24 +375,20 @@ const init = () => {
         if (_elmSendBtn == undefined) {
             _elmSendBtn = document.querySelector(_config.QUERYSENDBTN)
             _elmSendBtn.addEventListener('mousedown', (e) => {
-                if (_cffOptHints) {
-                    _elmPrompt.value += TEXT_PROMPT_HINTS
-                }
-
-                if (_promptAug) {
-                    _elmPrompt.value += TEXT_PROMPT_AUGMENTATION
-                }
+                _elmPrompt.value += appendPrompt()
+                configCff()
             }, true)
         }
     })
 
-    setTimeout(() => {
-        removeIntermediatePrompt(TEXT_PROMPT_TASK_TYPE_DETECTION)
-        removeIntermediatePrompt(TEXT_PROMPT_HINTS)
-        removeIntermediatePrompt(TEXT_NO_PROMPT_AUGMENTATION)
-        removeIntermediateResponse()
-    }, 2000);
-
+    if (TO_REMOVE_INTERMEDIATE_CONTENTS) {
+        setTimeout(() => {
+            removeIntermediatePrompt(TEXT_PROMPT_TASK_TYPE_DETECTION)
+            removeIntermediatePrompt(TEXT_PROMPT_HINTS)
+            removeIntermediatePrompt(TEXT_NO_PROMPT_AUGMENTATION)
+            removeIntermediateResponse()
+        }, 2000);
+    }
 }
 
 //
