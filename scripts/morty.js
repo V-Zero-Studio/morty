@@ -13,9 +13,9 @@ const CFF_NONE = -1
 const HEIGHT_CFF_CONTAINER = 100
 
 // design parameters for cff_wait
-const FADE_RATIO = 1.25
-const FADE_OPACITY = 0.05
-const FADE_INTERVAL = 100
+const FADE_RATIO = 1.25 // how fast the covered response area fades
+const FADE_OPACITY = 0.05 // the lowest opacity
+const FADE_INTERVAL = 100 // smoothness of fading
 
 // design parameters for cff_ondemand
 // const ID_BTN_REVEAL = "btnReveal"
@@ -30,11 +30,16 @@ const LABEL_HINTS = "hint: "
 const LABEL_CLOSED_ENDED_TASKS = "closed-ended"
 const LABEL_OPEN_ENDED_TASKS = "open-ended"
 
+// appended prompt to ask for task type -- open vs. close ended
 const TEXT_PROMPT_TASK_TYPE_DETECTION = "\nBefore responding to the prompt, the first line of output should state whether the above prompt is an open-ended or closed-ended. Examples of open-ended tasks include writing, content creation, problem-solving, and idea generation."
+// appended prompt for hint
 const TEXT_PROMPT_HINTS = "\nIf it is an open-ended task, first come up with a question to help me independently think about the task. The question should be in the format of '" + LABEL_HINTS + "'....?'."
+// potentially customizable prompt augmentation
 const TEXT_PROMPT_AUGMENTATION = "\nIf it is an open-ended task, next, show me some hints that allow me to think about my request and then show the answer; if the above prompt is a closed-ended question, just show the answer."
+// final line if no prompt augmentation; just show the response
 const TEXT_NO_PROMPT_AUGMENTATION = "\nThe following line should then start showing the answer."
-const TO_REMOVE_INTERMEDIATE_CONTENTS = false
+// whether to remove the intermediate prompts/response as a result of the above
+let _toRemoveIntermediateContents = false
 
 // overreliance technique controls
 let _cff = CFF_NONE // which cognitive forcing function
@@ -72,7 +77,7 @@ const callbackNewResponse = (mutationsList, observer) => {
                     })
                     _elmResponse = elements[elements.length - 1]
 
-                    doCff()
+                    setupCffElements()
                     monitorTaskTypeInfo()
 
                     // reset the send button element b/c it will change in the next prompt
@@ -100,10 +105,24 @@ const fadeIn = (elm) => {
         }, FADE_INTERVAL)
     }
     else {
-        if (TO_REMOVE_INTERMEDIATE_CONTENTS) {
+        if (_toRemoveIntermediateContents) {
             removeIntermediateResponse()
         }
     }
+}
+
+//
+// fade out and remove an element
+//
+const fadeOutAndRemove = (element) => {
+    // apply the fade-out class
+    element.classList.add('fade-out')
+
+    // listen for the end of the animation
+    element.addEventListener('animationend', function () {
+        element.classList.remove('fade-out')
+        element.remove()
+    });
 }
 
 //
@@ -122,40 +141,20 @@ const monitorTaskTypeInfo = () => {
 }
 
 //
-// set up the cff elements
-//
-const doCff = () => {
-    _elmResponse.style.opacity = FADE_OPACITY.toString()
-    clearCffContainer(false)
-    _elmResponse.parentElement.appendChild(_divCff)
-
-    if (_cffOptHints) {
-        _hint = undefined
-    }
-
-    if (_cff == CFF_ONDEMAND) {
-        const spanRevealInfo = document.createElement('span')
-        spanRevealInfo.classList.add("reveal")
-        spanRevealInfo.innerHTML = HTML_REVEAL_INFO
-        _divCff.appendChild(spanRevealInfo)
-        _elmResponse.parentElement.addEventListener("click", revealResponse)
-    }
-}
-
-//
 //  a recurring function to monitor if streaming ends,
 //  in which case certain element marked as streaming can no longer be found
 //
 const monitorStreaming = () => {
     setTimeout(() => {
-        // detecting AI-generated hints
+        // detecting if AI-generated hints has not been created
         if (_cffOptHints && document.getElementById(ID_HINT_TEXT) == undefined) {
             let pElms = _elmResponse.querySelectorAll('p')
             pElms.forEach((elm) => {
                 if (elm.textContent.toLowerCase().includes(LABEL_HINTS)) {
+                    // if length doesn't change, that means the hints has been fully streamed
                     if (_hint != undefined && elm.textContent.length == _hint.length) {
                         let idxHintStart = _hint.indexOf(LABEL_HINTS) + LABEL_HINTS.length
-                        addHintText(_divCff, _hint.substring(idxHintStart))
+                        setupHintElements(_divCff, _hint.substring(idxHintStart))
                     }
                     _hint = elm.textContent
                 }
@@ -225,9 +224,31 @@ const removeIntermediateResponse = () => {
 }
 
 //
+// set up the cff elements
+//
+const setupCffElements = () => {
+    _elmResponse.style.opacity = FADE_OPACITY.toString()
+    clearCffContainer(false)
+    _elmResponse.parentElement.appendChild(_divCff)
+
+    if (_cffOptHints) {
+        _hint = undefined
+    }
+
+    if (_cff == CFF_ONDEMAND) {
+        const spanRevealInfo = document.createElement('span')
+        spanRevealInfo.classList.add("reveal")
+        spanRevealInfo.innerHTML = HTML_REVEAL_INFO
+        _divCff.appendChild(spanRevealInfo)
+        _elmResponse.parentElement.addEventListener("click", revealResponse)
+    }
+}
+
+
+//
 // add hint text over the response area that triggers users to think
 //
-const addHintText = (container, hint) => {
+const setupHintElements = (container, hint) => {
     const paragraph = document.createElement("p")
     paragraph.classList.add("hint")
     const k = Math.floor(Math.random() * 1009)
@@ -245,21 +266,7 @@ const revealResponse = (e) => {
 }
 
 //
-// fade out and remove an element
-//
-const fadeOutAndRemove = (element) => {
-    // apply the fade-out class
-    element.classList.add('fade-out')
-
-    // listen for the end of the animation
-    element.addEventListener('animationend', function () {
-        element.classList.remove('fade-out')
-        element.remove()
-    });
-}
-
-//
-//
+//  append prompt to the user-input prompt (necessary hack for implementing cff and hint)
 //
 const appendPrompt = () => {
     let promptExtra = ""
@@ -276,12 +283,13 @@ const appendPrompt = () => {
     if (_promptAug) {
         promptExtra += TEXT_PROMPT_AUGMENTATION
     }
+
     // if cff is off and no prompt augmentation, just show the response
     else if (_cff != CFF_NONE) {
         promptExtra += TEXT_NO_PROMPT_AUGMENTATION
     }
 
-    if (TO_REMOVE_INTERMEDIATE_CONTENTS) {
+    if (_toRemoveIntermediateContents) {
         setTimeout(() => {
             removeIntermediatePrompt(promptExtra)
         }, 1000)
@@ -304,7 +312,7 @@ const configCff = () => {
         _divCff = document.createElement("div")
         _divCff.classList.add("cff-container")
 
-        // position the cff container at a fixed position
+        // position the cff container at a fixed position above the prompt input box
         let elmPromptBox = document.getElementById(_config.ID_TEXTBOX_PROMPT)
         const rect = elmPromptBox.getBoundingClientRect()
         const topPosition = rect.top + window.scrollY;
@@ -362,7 +370,9 @@ const init = () => {
     _elmPrompt = document.getElementById(_config.IDPROMPTINPUT)
     _elmPrompt.addEventListener('keydown', (e) => {
         if (e.key === "Enter" && !e.ctrlKey && !e.shiftKey) {
-            e.target.value += appendPrompt()
+            if (_cff != CFF_NONE) {
+                e.target.value += appendPrompt()
+            }
             configCff()
         }
     }, true)
@@ -370,18 +380,21 @@ const init = () => {
     // add prompt augmentation to the send button
     // because the send button is updated/renewed after typing in the prompt
     // an event handler needs to be added in real time
-    // todo: make it consistent with the keydown handler
     _elmPrompt.addEventListener('keyup', (e) => {
         if (_elmSendBtn == undefined) {
             _elmSendBtn = document.querySelector(_config.QUERYSENDBTN)
             _elmSendBtn.addEventListener('mousedown', (e) => {
-                _elmPrompt.value += appendPrompt()
+                if (_cff != CFF_NONE) {
+                    _elmPrompt.value += appendPrompt()
+                }
                 configCff()
             }, true)
         }
     })
 
-    if (TO_REMOVE_INTERMEDIATE_CONTENTS) {
+    // intermediate prompts and responses will be retrieved from server
+    // we can remove them manually
+    if (_toRemoveIntermediateContents) {
         setTimeout(() => {
             removeIntermediatePrompt(TEXT_PROMPT_TASK_TYPE_DETECTION)
             removeIntermediatePrompt(TEXT_PROMPT_HINTS)
