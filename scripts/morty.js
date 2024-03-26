@@ -18,8 +18,6 @@ const FADE_OPACITY = 0.05 // the lowest opacity
 const FADE_INTERVAL = 100 // smoothness of fading
 
 // design parameters for cff_ondemand
-// const ID_BTN_REVEAL = "btnReveal"
-const TEXT_BTN_REVEAL = "Click to See AI Response"
 const HTML_REVEAL_INFO = "(Click to reveal AI response)"
 
 // design parameters for showing hints
@@ -368,10 +366,14 @@ const init = () => {
 
     // intercept the sending of prompts: enter key and send button
     _elmPrompt = document.getElementById(_config.IDPROMPTINPUT)
+
     _elmPrompt.addEventListener('keydown', (e) => {
         if (e.key === "Enter" && !e.ctrlKey && !e.shiftKey) {
             if (_cff != CFF_NONE) {
-                e.target.value += appendPrompt()
+                const promptExtra = appendPrompt()
+                if (e.target.value.indexOf(promptExtra) < 0) {
+                    e.target.value += promptExtra
+                }
             }
             configCff()
         }
@@ -380,6 +382,7 @@ const init = () => {
     // add prompt augmentation to the send button
     // because the send button is updated/renewed after typing in the prompt
     // an event handler needs to be added in real time
+    // todo: consider remove this event listener
     _elmPrompt.addEventListener('keyup', (e) => {
         if (_elmSendBtn == undefined) {
             _elmSendBtn = document.querySelector(_config.QUERYSENDBTN)
@@ -391,6 +394,9 @@ const init = () => {
             }, true)
         }
     })
+
+
+
 
     // intermediate prompts and responses will be retrieved from server
     // we can remove them manually
@@ -416,6 +422,18 @@ const init = () => {
         .then(data => {
             _config = data
             init()
+
+            // todo: explain
+            setTimeout(() => {
+                document.querySelectorAll('a').forEach(elmA => {
+                    elmA.addEventListener('click', (e) => {
+                        setTimeout(() => {
+                            init()
+                            console.log("re-init-ed")
+                        }, 1000)
+                    })
+                })
+            }, 1000)
         })
         .catch(error => console.error('Error fetching JSON:', error))
 
