@@ -48,7 +48,6 @@ let _hint = undefined
 
 // others
 const INTERVAL_MONITOR_STREAMING = 2000 // ms
-
 let _config = {}
 let _observerNewResponse = undefined
 let _elmResponse = undefined
@@ -69,10 +68,12 @@ const callbackNewResponse = (mutationsList, observer) => {
                     console.log("streaming starts")
                     monitorStreaming()
 
+                    // reset all previous response elements to full opacity
                     var elements = document.querySelectorAll(_config.QUERYELMRESPONSE)
                     elements.forEach((value, index, array) => {
                         array[index].style.opacity = 1
                     })
+
                     _elmResponse = elements[elements.length - 1]
 
                     setupCffElements()
@@ -395,9 +396,6 @@ const init = () => {
         }
     })
 
-
-
-
     // intermediate prompts and responses will be retrieved from server
     // we can remove them manually
     if (_toRemoveIntermediateContents) {
@@ -423,7 +421,7 @@ const init = () => {
             _config = data
             init()
 
-            // todo: explain
+            // clicking an <a/> will lose some event handlers so need to re-init everything
             setTimeout(() => {
                 document.querySelectorAll('a').forEach(elmA => {
                     elmA.addEventListener('click', (e) => {
