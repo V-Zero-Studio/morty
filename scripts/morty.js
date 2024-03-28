@@ -40,8 +40,8 @@ const TEXT_NO_PROMPT_AUGMENTATION = "\nThe following line should then start show
 let _toRemoveIntermediateContents = false
 
 // overreliance technique controls
-let _cff = CFF_NONE // which cognitive forcing function
-let _cffOptHints = false // whether to show hints when blocking the response
+let _cff = CFF_ONDEMAND // which cognitive forcing function
+let _cffOptHints = true // whether to show hints when blocking the response
 let _promptAug = false   // whether to augment prompt to prevent overreliance
 let _waitTime = 0 // additional wait time after screening is finished
 let _hint = undefined
