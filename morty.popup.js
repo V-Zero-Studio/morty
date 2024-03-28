@@ -71,19 +71,19 @@ const sendSettingUpdate = (settings) => {
     })
 
     // prompt augmentation setting
-    chrome.storage.local.get(['promptAug'], (result) => {
-        let promptAugValue = result.promptAug == undefined ? false : result.promptAug
-        const checkboxPromptAug = document.getElementById("prompt-augmentation")
-        if (checkboxPromptAug != null) {
-            // add event handler
-            checkboxPromptAug.addEventListener("change", (e) => {
-                let objPromptAug = { promptAug: e.target.checked }
-                chrome.storage.local.set(objPromptAug)
-                sendSettingUpdate(objPromptAug)
-            })
+    // chrome.storage.local.get(['promptAug'], (result) => {
+    //     let promptAugValue = result.promptAug == undefined ? false : result.promptAug
+    //     const checkboxPromptAug = document.getElementById("prompt-augmentation")
+    //     if (checkboxPromptAug != null) {
+    //         // add event handler
+    //         checkboxPromptAug.addEventListener("change", (e) => {
+    //             let objPromptAug = { promptAug: e.target.checked }
+    //             chrome.storage.local.set(objPromptAug)
+    //             sendSettingUpdate(objPromptAug)
+    //         })
 
-            // restore value
-            checkboxPromptAug.checked = promptAugValue
-        }
-    })
+    //         // restore value
+    //         checkboxPromptAug.checked = promptAugValue
+    //     }
+    // })
 })()
