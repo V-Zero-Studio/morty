@@ -383,13 +383,15 @@ const init = () => {
     // add prompt augmentation to the send button
     // because the send button is updated/renewed after typing in the prompt
     // an event handler needs to be added in real time
-    // todo: consider remove this event listener
     _elmPrompt.addEventListener('keyup', (e) => {
         if (_elmSendBtn == undefined) {
             _elmSendBtn = document.querySelector(_config.QUERYSENDBTN)
-            _elmSendBtn.addEventListener('mousedown', (e) => {
+            _elmSendBtn.addEventListener('click', (e) => {
                 if (_cff != CFF_NONE) {
-                    _elmPrompt.value += appendPrompt()
+                    const promptExtra = appendPrompt()
+                    if(_elmPrompt.value.indexOf(promptExtra) < 0) {
+                        _elmPrompt.value += promptExtra
+                    }
                 }
                 configCff()
             }, true)
