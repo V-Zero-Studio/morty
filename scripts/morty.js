@@ -352,15 +352,17 @@ const attachEventListeners = () => {
     _elmPrompt.addEventListener('keyup', (e) => {
         if (_elmSendBtn == undefined) {
             _elmSendBtn = document.querySelector(_config.QUERYSENDBTN)
-            _elmSendBtn.addEventListener('click', (e) => {
-                if (_on && _cff != CFF_NONE) {
-                    const promptExtra = appendPrompt()
-                    if(_elmPrompt.value.indexOf(promptExtra) < 0) {
-                        _elmPrompt.value += promptExtra
+            if(_elmSendBtn != undefined) {
+                _elmSendBtn.addEventListener('click', (e) => {
+                    if (_on && _cff != CFF_NONE) {
+                        const promptExtra = appendPrompt()
+                        if(_elmPrompt.value.indexOf(promptExtra) < 0) {
+                            _elmPrompt.value += promptExtra
+                        }
                     }
-                }
-                configCff()
-            }, true)
+                    configCff()
+                }, true)
+            }
         }
     })
 }
