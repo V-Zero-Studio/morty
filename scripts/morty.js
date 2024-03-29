@@ -45,6 +45,7 @@ let _cffOptHints = true // whether to show hints when blocking the response
 let _promptAug = false   // whether to augment prompt to prevent overreliance
 let _waitTime = 0 // additional wait time after screening is finished
 let _hint = undefined
+let _on = true
 
 // others
 const INTERVAL_MONITOR_STREAMING = 2000 // ms
@@ -334,7 +335,7 @@ const attachEventListeners = () => {
     _elmPrompt = document.getElementById(_config.IDPROMPTINPUT)
 
     _elmPrompt.addEventListener('keydown', (e) => {
-        if (e.key === "Enter" && !e.ctrlKey && !e.shiftKey) {
+        if (_on && e.key === "Enter" && !e.shiftKey) {
             if (_cff != CFF_NONE) {
                 const promptExtra = appendPrompt()
                 if (e.target.value.indexOf(promptExtra) < 0) {
@@ -352,7 +353,7 @@ const attachEventListeners = () => {
         if (_elmSendBtn == undefined) {
             _elmSendBtn = document.querySelector(_config.QUERYSENDBTN)
             _elmSendBtn.addEventListener('click', (e) => {
-                if (_cff != CFF_NONE) {
+                if (_on && _cff != CFF_NONE) {
                     const promptExtra = appendPrompt()
                     if(_elmPrompt.value.indexOf(promptExtra) < 0) {
                         _elmPrompt.value += promptExtra
@@ -415,6 +416,17 @@ const init = () => {
             removeIntermediateResponse()
         }, 2000);
     }
+
+    // create on-web-page ui
+    const btnSwitch = document.createElement('img')
+    btnSwitch.src = chrome.runtime.getURL('morty_icon.png')
+    btnSwitch.alt = 'Toggle Button'
+    btnSwitch.classList.add("switch")
+    btnSwitch.addEventListener('click', (e) => {
+        _on = !_on
+        btnSwitch.style.filter = _on ? '' : 'grayscale(100%)'
+    })
+    document.body.appendChild(btnSwitch)
 }
 
 //

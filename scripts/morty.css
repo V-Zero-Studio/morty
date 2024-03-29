@@ -45,5 +45,6 @@ span.reveal {
   position: fixed;
   bottom: 20px;
   right: 20px;
+  width: 30px;
   z-index: 1000;
 }
