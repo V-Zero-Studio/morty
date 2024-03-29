@@ -5,7 +5,7 @@
     "version": "1.0",
     "action": {
         "default_popup": "morty.html",
-        "default_icon": "morty_icon.001.png"
+        "default_icon": "morty_icon.png"
     },
     "content_scripts": [
         {
