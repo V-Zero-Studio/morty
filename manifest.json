@@ -3,9 +3,13 @@
     "name": "MORTY",
     "description": "Mitigating OverReliance on inTelligent sYstems",
     "version": "1.0",
+    "icons": {
+        "16": "assets/icon16.png",
+        "48": "assets/icon48.png",
+        "128": "assets/icon128.png"
+      },
     "action": {
-        "default_popup": "morty.html",
-        "default_icon": "morty_icon.png"
+        "default_popup": "morty.html"
     },
     "content_scripts": [
         {
@@ -27,7 +31,7 @@
     "web_accessible_resources": [
         {
             "resources": [
-                "data/config.json", "morty_icon.png"
+                "data/config.json", "assets/icon48.png"
             ],
             "matches": [
                 "<all_urls>"

@@ -421,7 +421,7 @@ const init = () => {
 
     // create on-web-page ui
     const btnSwitch = document.createElement('img')
-    btnSwitch.src = chrome.runtime.getURL('morty_icon.png')
+    btnSwitch.src = chrome.runtime.getURL(_config.URL_ICON)
     btnSwitch.alt = 'Toggle Button'
     btnSwitch.classList.add("switch")
     btnSwitch.addEventListener('click', (e) => {
