@@ -1,9 +1,9 @@
 {
-    "KEYWORDSTREAMING": "result-streaming",
-    "IDPROMPTINPUT": "prompt-textarea",
-    "QUERYSENDBTN": "[data-testid=\"send-button\"]",
-    "QUERYCHATDIV": "[role=\"presentation\"]",
-    "QUERYELMRESPONSE": "[data-message-author-role=\"assistant\"]",
+    "KEYWORD_STREAMING": "result-streaming",
+    "ID_PROMPT_INPUT": "prompt-textarea",
+    "QUERY_SEND_BTN": "[data-testid=\"send-button\"]",
+    "QUERY_CHAT_DIV": "[role=\"presentation\"]",
+    "QUERY_ELM_RESPONSE": "[data-message-author-role=\"assistant\"]",
     "ID_TEXTBOX_PROMPT": "prompt-textarea",
     "URL_ICON": "assets/icon48.png"
 }

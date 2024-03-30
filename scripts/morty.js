@@ -63,14 +63,14 @@ const callbackNewResponse = (mutationsList, observer) => {
     for (const mutation of mutationsList) {
         if (mutation.type === 'childList') {
             mutation.addedNodes.forEach(node => {
-                if (node.className != undefined && node.className.includes(_config.KEYWORDSTREAMING)) {
+                if (node.className != undefined && node.className.includes(_config.KEYWORD_STREAMING)) {
                     _observerNewResponse.disconnect()
 
                     console.log("streaming starts")
                     monitorStreaming()
 
                     // reset all previous response elements to full opacity
-                    var elements = document.querySelectorAll(_config.QUERYELMRESPONSE)
+                    var elements = document.querySelectorAll(_config.QUERY_ELM_RESPONSE)
                     elements.forEach((value, index, array) => {
                         array[index].style.opacity = 1
                     })
@@ -162,7 +162,7 @@ const monitorStreaming = () => {
         }
 
         // indicator of streaming ended
-        var elements = document.querySelectorAll('[class*="' + _config.KEYWORDSTREAMING + '"')
+        var elements = document.querySelectorAll('[class*="' + _config.KEYWORD_STREAMING + '"')
         if (elements.length > 0) {
             monitorStreaming()
         } else {
@@ -305,7 +305,7 @@ const configCff = () => {
     if (_cff != CFF_NONE) {
         // create an instance of MutationObserver
         _observerNewResponse = new MutationObserver(callbackNewResponse)
-        const divChat = document.querySelector(_config.QUERYCHATDIV)
+        const divChat = document.querySelector(_config.QUERY_CHAT_DIV)
         _observerNewResponse.observe(divChat, { childList: true, subtree: true })
 
         // create a container for added cff elements
@@ -332,7 +332,7 @@ const configCff = () => {
 //
 const attachEventListeners = () => {
     // intercept the sending of prompts: enter key and send button
-    _elmPrompt = document.getElementById(_config.IDPROMPTINPUT)
+    _elmPrompt = document.getElementById(_config.ID_PROMPT_INPUT)
 
     _elmPrompt.addEventListener('keydown', (e) => {
         if (_on && e.key === "Enter" && !e.shiftKey) {
@@ -351,7 +351,7 @@ const attachEventListeners = () => {
     // an event handler needs to be added in real time
     _elmPrompt.addEventListener('keyup', (e) => {
         if (_elmSendBtn == undefined) {
-            _elmSendBtn = document.querySelector(_config.QUERYSENDBTN)
+            _elmSendBtn = document.querySelector(_config.QUERY_SEND_BTN)
             if(_elmSendBtn != undefined) {
                 _elmSendBtn.addEventListener('click', (e) => {
                     if (_on && _cff != CFF_NONE) {
