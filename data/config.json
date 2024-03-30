@@ -5,23 +5,5 @@
     "QUERYCHATDIV": "[role=\"presentation\"]",
     "QUERYELMRESPONSE": "[data-message-author-role=\"assistant\"]",
     "ID_TEXTBOX_PROMPT": "prompt-textarea",
-    "URL_ICON": "assets/icon48.png",
-    "HINTTEXTS": [
-        "How do you think ChatGPT's response'd be?",
-        "If you have to answer this on your own, what'd it be?",
-        "Can you break it down into smaller questions?",
-        "Why are you asking this?",
-        "How else can you find out answers to this question?",
-        "What methods could you use to verify the accuracy of ChatGPT's information?",
-        "What follow-up questions could you ask to gain a deeper understanding of ChatGPT's answers?",
-        "What would be a logical first step to research this question?",
-        "Can you predict any counterarguments or different perspectives on this topic?",
-        "What keywords would you use to search for more information on this subject?",
-        "What similar questions can you think of that might lead you to the answer?",
-        "How would you explain this topic to someone else without prior knowledge?",
-        "What specific details or examples could you request to support ChatGPT's explanation?",
-        "How might you use ChatGPT's response as a starting point for a deeper dive into related topics?",
-        "What creative approaches could you take to explore this topic beyond traditional research methods?",
-        "What are the limitations of ChatGPT's knowledge base, and how does that affect its responses?"
-    ]
+    "URL_ICON": "assets/icon48.png"
 }
