@@ -44,7 +44,7 @@ span.reveal {
 .switch {
   position: fixed;
   bottom: 20px;
-  right: 20px;
+  right: 50px;
   width: 30px;
   z-index: 1000;
 }

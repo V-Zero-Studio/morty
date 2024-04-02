@@ -328,7 +328,7 @@ const configCff = () => {
 }
 
 //
-//
+// attach event listenrs to prompt textbox to append cff inducing prompts
 //
 const attachEventListeners = () => {
     // intercept the sending of prompts: enter key and send button
@@ -457,5 +457,4 @@ const init = () => {
             }, 1000)
         })
         .catch(error => console.error('Error fetching JSON:', error))
-
 })()
