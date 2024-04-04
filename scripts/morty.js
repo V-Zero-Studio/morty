@@ -77,8 +77,10 @@ const callbackNewResponse = (mutationsList, observer) => {
 
                     _elmResponse = elements[elements.length - 1]
 
-                    setupCffElements()
-                    monitorTaskTypeInfo()
+                    if (_on) {
+                        setupCffElements()
+                        monitorTaskTypeInfo()
+                    }
 
                     // reset the send button element b/c it will change in the next prompt
                     _elmSendBtn = undefined
@@ -352,11 +354,11 @@ const attachEventListeners = () => {
     _elmPrompt.addEventListener('keyup', (e) => {
         if (_elmSendBtn == undefined) {
             _elmSendBtn = document.querySelector(_config.QUERY_SEND_BTN)
-            if(_elmSendBtn != undefined) {
+            if (_elmSendBtn != undefined) {
                 _elmSendBtn.addEventListener('click', (e) => {
                     if (_on && _cff != CFF_NONE) {
                         const promptExtra = appendPrompt()
-                        if(_elmPrompt.value.indexOf(promptExtra) < 0) {
+                        if (_elmPrompt.value.indexOf(promptExtra) < 0) {
                             _elmPrompt.value += promptExtra
                         }
                     }
