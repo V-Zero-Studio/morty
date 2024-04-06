@@ -313,6 +313,7 @@ const configCff = () => {
         // create a container for added cff elements
         _divCff = document.createElement("div")
         _divCff.classList.add("cff-container")
+        _divCff.classList.add(document.documentElement.getAttribute("class"))
 
         // position the cff container at a fixed position above the prompt input box
         let elmPromptBox = document.getElementById(_config.ID_TEXTBOX_PROMPT)

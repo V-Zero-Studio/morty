@@ -8,7 +8,6 @@
   align-items: center; /* Aligns children vertically in the center */
   justify-content: center; /* Optional, for horizontal centering */
   max-width: 640px;
-  background-color: white;
 }
 
 .cff-container-obselete {
