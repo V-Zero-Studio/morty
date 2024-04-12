@@ -28,6 +28,11 @@ const LABEL_HINTS = "hint: "
 const LABEL_CLOSED_ENDED_TASKS = "closed-ended"
 const LABEL_OPEN_ENDED_TASKS = "open-ended"
 
+// default values
+const CFF_DEFAULT = 1
+const WAITTIME_DEFAULT = 0
+const HINTs_DEFAULT = true
+
 // appended prompt to ask for task type -- open vs. close ended
 const TEXT_PROMPT_TASK_TYPE_DETECTION = "\nBefore responding to the prompt, the first line of output should state whether the above prompt is an open-ended or closed-ended. Examples of open-ended tasks include writing, content creation, problem-solving, and idea generation."
 // appended prompt for hint
@@ -42,7 +47,7 @@ let _toRemoveIntermediateContents = false
 // overreliance technique controls
 let _cff = CFF_ONDEMAND // which cognitive forcing function
 let _cffOptHints = true // whether to show hints when blocking the response
-let _promptAug = false   // whether to augment prompt to prevent overreliance
+// let _promptAug = false   // whether to augment prompt to prevent overreliance
 let _waitTime = 0 // additional wait time after screening is finished
 let _hint = undefined
 let _on = true
@@ -285,9 +290,9 @@ const appendPrompt = () => {
         }
     }
 
-    if (_promptAug) {
-        promptExtra += TEXT_PROMPT_AUGMENTATION
-    }
+    // if (_promptAug) {
+    //     promptExtra += TEXT_PROMPT_AUGMENTATION
+    // }
 
     // if cff is off and no prompt augmentation, just show the response
     else if (_cff != CFF_NONE) {
@@ -324,7 +329,6 @@ const configCff = () => {
         const topPosition = rect.top + window.scrollY;
         _divCff.style.height = `${HEIGHT_CFF_CONTAINER}px`
         _divCff.style.top = `${topPosition - HEIGHT_CFF_CONTAINER}px`
-
 
     } else if (_cff === CFF_NONE) {
         if (_observerNewResponse != undefined) {
@@ -379,18 +383,18 @@ const attachEventListeners = () => {
 const init = () => {
     // read stored settings
     chrome.storage.local.get(['cff'], (result) => {
-        _cff = result.cff == undefined ? -1 : result.cff
+        _cff = result.cff == undefined ? CFF_DEFAULT : result.cff
         configCff()
     })
     chrome.storage.local.get(['waitTime'], (result) => {
-        _waitTime = result.waitTime == undefined ? 0 : result.waitTime
+        _waitTime = result.waitTime == undefined ? WAITTIME_DEFAULT : result.waitTime
     })
     chrome.storage.local.get(['hints'], (result) => {
-        _cffOptHints = result.hints == undefined ? false : result.hints
+        _cffOptHints = result.hints == undefined ? HINTs_DEFAULT : result.hints
     })
-    chrome.storage.local.get(['promptAug'], (result) => {
-        _promptAug = result.promptAug == undefined ? false : result.promptAug
-    })
+    // chrome.storage.local.get(['promptAug'], (result) => {
+    //     _promptAug = result.promptAug == undefined ? false : result.promptAug
+    // })
 
     console.log("morty ready")
 
@@ -405,9 +409,10 @@ const init = () => {
                 _waitTime = request.waitTime
             } else if (request.hints != undefined) {
                 _cffOptHints = request.hints
-            } else if (request._promptAug != undefined) {
-                _promptAug = request.promptAug
-            }
+            } 
+            // else if (request._promptAug != undefined) {
+            //     _promptAug = request.promptAug
+            // }
 
         }
     )

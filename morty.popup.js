@@ -2,6 +2,11 @@
 // morty.popup.js
 //
 
+// default values
+const CFF_DEFAULT = 1
+const WAITTIME_DEFAULT = 0
+const HINTs_DEFAULT = true
+
 //
 // send setting updates to the content script
 //
@@ -19,7 +24,7 @@ const sendSettingUpdate = (settings) => {
 (function () {
     // cff setting
     chrome.storage.local.get(['cff'], (result) => {
-        let cffValue = result.cff == undefined ? -1 : result.cff
+        let cffValue = result.cff == undefined ? CFF_DEFAULT : result.cff
         const radiosCff = document.getElementsByName("cff")
         for (let radio of radiosCff) {
             // add event handler
@@ -38,7 +43,7 @@ const sendSettingUpdate = (settings) => {
 
     // more wait time setting
     chrome.storage.local.get(['waitTime'], (result) => {
-        let waitTimeValue = result.waitTime == undefined ? 0 : result.waitTime
+        let waitTimeValue = result.waitTime == undefined ? WAITTIME_DEFAULT : result.waitTime
         const inputMoreWait = document.getElementById("waitTime")
         if (inputMoreWait != null) {
             // add event handler
@@ -55,7 +60,7 @@ const sendSettingUpdate = (settings) => {
 
     // hints setting
     chrome.storage.local.get(['hints'], (result) => {
-        let hintValue = result.hints == undefined ? false : result.hints
+        let hintValue = result.hints == undefined ? HINTs_DEFAULT : result.hints
         const checkboxHints = document.getElementById("hints")
         if (checkboxHints != null) {
             // add event handler
