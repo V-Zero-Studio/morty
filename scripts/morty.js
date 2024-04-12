@@ -56,6 +56,9 @@ let _divCff = undefined
 let _elmPrompt = undefined
 let _elmSendBtn = undefined
 
+// TODO : find a bette way to let user choose how to add extra prompt
+let _useCustomChatGPT = true
+
 //
 // callback function to execute when mutations are observed
 //
@@ -339,7 +342,7 @@ const attachEventListeners = () => {
 
     _elmPrompt.addEventListener('keydown', (e) => {
         if (_on && e.key === "Enter" && !e.shiftKey) {
-            if (_cff != CFF_NONE) {
+            if (_cff != CFF_NONE && !_useCustomChatGPT) {
                 const promptExtra = appendPrompt()
                 if (e.target.value.indexOf(promptExtra) < 0) {
                     e.target.value += promptExtra
@@ -357,7 +360,7 @@ const attachEventListeners = () => {
             _elmSendBtn = document.querySelector(_config.QUERY_SEND_BTN)
             if (_elmSendBtn != undefined) {
                 _elmSendBtn.addEventListener('click', (e) => {
-                    if (_on && _cff != CFF_NONE) {
+                    if (_on && _cff != CFF_NONE && !_useCustomChatGPT) {
                         const promptExtra = appendPrompt()
                         if (_elmPrompt.value.indexOf(promptExtra) < 0) {
                             _elmPrompt.value += promptExtra
