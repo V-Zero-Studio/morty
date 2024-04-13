@@ -37,8 +37,6 @@ const HINTs_DEFAULT = true
 const TEXT_PROMPT_TASK_TYPE_DETECTION = "\nBefore responding to the prompt, the first line of output should state whether the above prompt is an open-ended or closed-ended. Examples of open-ended tasks include writing, content creation, problem-solving, and idea generation."
 // appended prompt for hint
 const TEXT_PROMPT_HINTS = "\nIf it is an open-ended task, first come up with a question to help me independently think about the task. The question should be in the format of '" + LABEL_HINTS + "'....?'."
-// potentially customizable prompt augmentation
-const TEXT_PROMPT_AUGMENTATION = "\nIf it is an open-ended task, next, show me some hints that allow me to think about my request and then show the answer; if the above prompt is a closed-ended question, just show the answer."
 // final line if no prompt augmentation; just show the response
 const TEXT_NO_PROMPT_AUGMENTATION = "\nThe following line should then start showing the answer."
 // whether to remove the intermediate prompts/response as a result of the above
@@ -47,7 +45,6 @@ let _toRemoveIntermediateContents = false
 // overreliance technique controls
 let _cff = CFF_ONDEMAND // which cognitive forcing function
 let _cffOptHints = true // whether to show hints when blocking the response
-// let _promptAug = false   // whether to augment prompt to prevent overreliance
 let _waitTime = 0 // additional wait time after screening is finished
 let _hint = undefined
 let _on = true
@@ -284,25 +281,19 @@ const appendPrompt = () => {
     // if cff is on
     if (_cff != CFF_NONE) {
         promptExtra += TEXT_PROMPT_TASK_TYPE_DETECTION
+
         // hint option only make sense when cff is on
         if (_cffOptHints) {
             promptExtra += TEXT_PROMPT_HINTS
         }
-    }
 
-    // if (_promptAug) {
-    //     promptExtra += TEXT_PROMPT_AUGMENTATION
-    // }
-
-    // if cff is off and no prompt augmentation, just show the response
-    else if (_cff != CFF_NONE) {
         promptExtra += TEXT_NO_PROMPT_AUGMENTATION
-    }
 
-    if (_toRemoveIntermediateContents) {
-        setTimeout(() => {
-            removeIntermediatePrompt(promptExtra)
-        }, 1000)
+        if (_toRemoveIntermediateContents) {
+            setTimeout(() => {
+                removeIntermediatePrompt(promptExtra)
+            }, 1000)
+        }
     }
 
     return promptExtra
@@ -392,9 +383,6 @@ const init = () => {
     chrome.storage.local.get(['hints'], (result) => {
         _cffOptHints = result.hints == undefined ? HINTs_DEFAULT : result.hints
     })
-    // chrome.storage.local.get(['promptAug'], (result) => {
-    //     _promptAug = result.promptAug == undefined ? false : result.promptAug
-    // })
 
     console.log("morty ready")
 
@@ -409,10 +397,7 @@ const init = () => {
                 _waitTime = request.waitTime
             } else if (request.hints != undefined) {
                 _cffOptHints = request.hints
-            } 
-            // else if (request._promptAug != undefined) {
-            //     _promptAug = request.promptAug
-            // }
+            }
 
         }
     )
