@@ -33,6 +33,8 @@ const CFF_DEFAULT = 1
 const WAITTIME_DEFAULT = 0
 const HINTs_DEFAULT = true
 
+const CONFI_QUESTION_PROMPT = "How confident are you if you were to respond to this prompt without ChatGPT's help?"
+
 // appended prompt to ask for task type -- open vs. close ended
 const TEXT_PROMPT_TASK_TYPE_DETECTION = "\nBefore responding to the prompt, the first line of output should state whether the above prompt is an open-ended or closed-ended. Examples of open-ended tasks include writing, content creation, problem-solving, and idea generation."
 // appended prompt for hint
@@ -84,6 +86,7 @@ const callbackNewResponse = (mutationsList, observer) => {
 
                     if (_on) {
                         setupCffElements()
+                        setupConfElements(_divCff)
                         monitorTaskTypeInfo()
                     }
 
@@ -251,7 +254,6 @@ const setupCffElements = () => {
     }
 }
 
-
 //
 // add hint text over the response area that triggers users to think
 //
@@ -261,6 +263,15 @@ const setupHintElements = (container, hint) => {
     const k = Math.floor(Math.random() * 1009)
     paragraph.innerHTML = hint == undefined ? _config.HINTTEXTS[k % _config.HINTTEXTS.length] : hint
     paragraph.id = ID_HINT_TEXT
+    container.prepend(paragraph)
+}
+
+//
+//
+//
+const setupConfElements = (container) => {
+    const paragraph = document.createElement("p") 
+    paragraph.innerHTML = CONFI_QUESTION_PROMPT
     container.prepend(paragraph)
 }
 
