@@ -270,9 +270,6 @@ const setupHintElements = (container, hint) => {
 //
 //
 const setupConfElements = (container) => {
-    // const paragraph = document.createElement("p") 
-    // paragraph.innerHTML = CONFI_QUESTION_PROMPT
-
     const divRating = document.createElement("div")
     const ratingHtmlUrl = chrome.runtime.getURL("scripts/rating.html")
     fetch(ratingHtmlUrl).
