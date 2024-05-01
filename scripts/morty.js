@@ -270,9 +270,21 @@ const setupHintElements = (container, hint) => {
 //
 //
 const setupConfElements = (container) => {
-    const paragraph = document.createElement("p") 
-    paragraph.innerHTML = CONFI_QUESTION_PROMPT
-    container.prepend(paragraph)
+    // const paragraph = document.createElement("p") 
+    // paragraph.innerHTML = CONFI_QUESTION_PROMPT
+
+    const divRating = document.createElement("div")
+    const ratingHtmlUrl = chrome.runtime.getURL("scripts/rating.html")
+    fetch(ratingHtmlUrl).
+    then(response => response.text()) // Get the response text
+    .then(html => {
+        divRating.innerHTML = html; // Insert HTML into the DOM
+    })
+    .catch(err => {
+        console.error('Failed to load page: ', err);
+        document.getElementById('contentArea').innerHTML = 'Failed to load content.';
+    });
+    container.prepend(divRating)
 }
 
 //
