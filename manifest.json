@@ -31,7 +31,7 @@
     "web_accessible_resources": [
         {
             "resources": [
-                "data/config.json", "assets/icon48.png", "scripts/rating.html", "scripts/rating.js"
+                "data/config.json", "assets/icon48.png"
             ],
             "matches": [
                 "<all_urls>"
