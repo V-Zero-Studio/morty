@@ -250,7 +250,8 @@ const setupCffElements = () => {
         spanRevealInfo.classList.add("reveal")
         spanRevealInfo.innerHTML = HTML_REVEAL_INFO
         _divCff.appendChild(spanRevealInfo)
-        _elmResponse.parentElement.addEventListener("click", revealResponse)
+        // _elmResponse.parentElement.
+        spanRevealInfo.addEventListener("click", revealResponse)
     }
 }
 
@@ -270,18 +271,72 @@ const setupHintElements = (container, hint) => {
 //
 //
 const setupConfElements = (container) => {
-    const divRating = document.createElement("div")
-    const ratingHtmlUrl = chrome.runtime.getURL("scripts/rating.html")
-    fetch(ratingHtmlUrl).
-    then(response => response.text()) // Get the response text
-    .then(html => {
-        divRating.innerHTML = html; // Insert HTML into the DOM
-    })
-    .catch(err => {
-        console.error('Failed to load page: ', err);
-        document.getElementById('contentArea').innerHTML = 'Failed to load content.';
-    });
+    const divRating = createConfRatingUI()
+    // const ratingHtmlUrl = chrome.runtime.getURL("scripts/rating.html")
+    // fetch(ratingHtmlUrl).
+    // then(response => response.text()) // Get the response text
+    // .then(html => {
+    //     divRating.innerHTML = html; // Insert HTML into the DOM
+    // })
+    // .catch(err => {
+    //     console.error('Failed to load page: ', err);
+    //     document.getElementById('contentArea').innerHTML = 'Failed to load content.';
+    // });
     container.prepend(divRating)
+
+    // const ratingJsUrl = chrome.runtime.getURL("scripts/rating.js")
+    // var th = document.getElementsByTagName('body')[0];
+    // var s = document.createElement('script');
+    // s.setAttribute('type', 'text/javascript');
+    // s.setAttribute('src', ratingJsUrl);
+    // th.appendChild(s);
+}
+
+const createConfRatingUI = () => {
+    const divRating = document.createElement("div")
+
+    const pRatingQuestion = document.createElement("p")
+    pRatingQuestion.innerHTML = CONFI_QUESTION_PROMPT
+    divRating.appendChild(pRatingQuestion)
+
+    const divDots = document.createElement("div")
+
+    for (let i = 1; i <= 5; i++) {
+        const spanDot = document.createElement("span")
+        spanDot.classList.add("dot")
+        spanDot.addEventListener("click", () => { updateLabel(i) })
+        divDots.appendChild(spanDot)
+    }
+
+    const spanConf = document.createElement("span")
+    spanConf.setAttribute("id", "label")
+    divDots.appendChild(spanConf)
+
+    divRating.appendChild(divDots)
+
+    return divRating
+}
+
+const updateLabel = (level) => {
+    console.log("updating label")
+    var labels = [
+        "Not confident at all",
+        "Slightly confident",
+        "Moderately confident",
+        "Very confident",
+        "Extremely confident"
+    ];
+    document.getElementById("label").innerHTML = labels[level - 1];
+
+    // Update dot appearance
+    var dots = document.getElementsByClassName("dot");
+    for (var i = 0; i < dots.length; i++) {
+        if (i < level) {
+            dots[i].classList.add("selected");
+        } else {
+            dots[i].classList.remove("selected");
+        }
+    }
 }
 
 //
