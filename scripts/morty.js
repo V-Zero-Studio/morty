@@ -107,6 +107,7 @@ const fadeIn = (elm) => {
     if (elm == undefined) {
         return
     }
+
     const opacity = parseFloat(elm.style.opacity)
     if (opacity < 1) {
         elm.style.opacity = (opacity * FADE_RATIO).toString()
@@ -182,6 +183,8 @@ const monitorStreaming = () => {
                     revealResponse()
                 }, _waitTime)
             }
+
+            addPostResponse()
         }
     }, INTERVAL_MONITOR_STREAMING)
 
@@ -268,31 +271,9 @@ const setupHintElements = (container, hint) => {
 }
 
 //
-//
+// set up confidence rating elements
 //
 const setupConfElements = (container) => {
-    const divRating = createConfRatingUI()
-    // const ratingHtmlUrl = chrome.runtime.getURL("scripts/rating.html")
-    // fetch(ratingHtmlUrl).
-    // then(response => response.text()) // Get the response text
-    // .then(html => {
-    //     divRating.innerHTML = html; // Insert HTML into the DOM
-    // })
-    // .catch(err => {
-    //     console.error('Failed to load page: ', err);
-    //     document.getElementById('contentArea').innerHTML = 'Failed to load content.';
-    // });
-    container.prepend(divRating)
-
-    // const ratingJsUrl = chrome.runtime.getURL("scripts/rating.js")
-    // var th = document.getElementsByTagName('body')[0];
-    // var s = document.createElement('script');
-    // s.setAttribute('type', 'text/javascript');
-    // s.setAttribute('src', ratingJsUrl);
-    // th.appendChild(s);
-}
-
-const createConfRatingUI = () => {
     const divRating = document.createElement("div")
 
     const pRatingQuestion = document.createElement("p")
@@ -313,10 +294,14 @@ const createConfRatingUI = () => {
     divDots.appendChild(spanConf)
 
     divRating.appendChild(divDots)
+    
+    container.prepend(divRating)
 
-    return divRating
 }
 
+// 
+//  event handler to update the visual of confidence rating UI
+//
 const updateLabel = (level) => {
     console.log("updating label")
     var labels = [
@@ -345,6 +330,29 @@ const updateLabel = (level) => {
 const revealResponse = (e) => {
     clearCffContainer()
     fadeIn(_elmResponse)
+}
+
+//
+//
+//
+const addPostResponse = () => {
+    const divPostResponse = document.createElement("div")
+    divPostResponse.appendChild(document.createElement("hr"))
+    const pAgreementQuestion = document.createElement("p")
+    pAgreementQuestion.innerHTML = "Which part(s) of ChatGPT response do you most agree with?"
+    divPostResponse.appendChild(pAgreementQuestion)
+    _elmResponse.appendChild(divPostResponse)
+
+    // const ratingHtmlUrl = chrome.runtime.getURL("scripts/rating.html")
+    // fetch(ratingHtmlUrl).
+    // then(response => response.text()) // Get the response text
+    // .then(html => {
+    //     divRating.innerHTML = html; // Insert HTML into the DOM
+    // })
+    // .catch(err => {
+    //     console.error('Failed to load page: ', err);
+    //     document.getElementById('contentArea').innerHTML = 'Failed to load content.';
+    // });
 }
 
 //
