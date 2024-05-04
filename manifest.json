@@ -20,8 +20,8 @@
                 "scripts/morty.css"
             ],
             "matches": [
-                "https://chat.openai.com/",
-                "https://chat.openai.com/c/*"
+                "https://chatgpt.com/",
+                "https://chatgpt.com/c/*"
             ]
         }
     ],
@@ -31,7 +31,7 @@
     "web_accessible_resources": [
         {
             "resources": [
-                "data/config.json", "assets/icon48.png"
+                "data/config.json", "assets/icon48.png", "scripts/agreement.html"
             ],
             "matches": [
                 "<all_urls>"

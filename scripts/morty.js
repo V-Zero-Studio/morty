@@ -303,7 +303,6 @@ const setupConfElements = (container) => {
 //  event handler to update the visual of confidence rating UI
 //
 const updateLabel = (level) => {
-    console.log("updating label")
     var labels = [
         "Not confident at all",
         "Slightly confident",
@@ -337,22 +336,19 @@ const revealResponse = (e) => {
 //
 const addPostResponse = () => {
     const divPostResponse = document.createElement("div")
-    divPostResponse.appendChild(document.createElement("hr"))
-    const pAgreementQuestion = document.createElement("p")
-    pAgreementQuestion.innerHTML = "Which part(s) of ChatGPT response do you most agree with?"
-    divPostResponse.appendChild(pAgreementQuestion)
-    _elmResponse.appendChild(divPostResponse)
+    const agreementHTML = chrome.runtime.getURL("scripts/agreement.html")
+    fetch(agreementHTML).
+    then(response => response.text()) // Get the response text
+    .then(html => {
+        const classHTML = document.documentElement.getAttribute("class")
+        html = html.replace("class", "class='" + classHTML + ":bg-transparent'")
+        divPostResponse.innerHTML = html; // Insert HTML into the DOM
+    })
+    .catch(err => {
+        console.error('Failed to load page: ', err);
+    });
 
-    // const ratingHtmlUrl = chrome.runtime.getURL("scripts/rating.html")
-    // fetch(ratingHtmlUrl).
-    // then(response => response.text()) // Get the response text
-    // .then(html => {
-    //     divRating.innerHTML = html; // Insert HTML into the DOM
-    // })
-    // .catch(err => {
-    //     console.error('Failed to load page: ', err);
-    //     document.getElementById('contentArea').innerHTML = 'Failed to load content.';
-    // });
+    _elmResponse.appendChild(divPostResponse)
 }
 
 //
