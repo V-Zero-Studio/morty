@@ -61,3 +61,8 @@ span.reveal {
 .selected {
   background-color: #076486; /* Green */
 }
+
+textarea.post-response {
+  padding-top: 0px;
+  line-height: normal;
+}

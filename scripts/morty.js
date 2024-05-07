@@ -83,6 +83,9 @@ const callbackNewResponse = (mutationsList, observer) => {
                     })
 
                     _elmResponse = elements[elements.length - 1]
+                    _elmResponse.style.overflow = "auto"
+                    // todo: make the value into constants
+                    _elmResponse.style.height = "300px"
 
                     if (_on) {
                         setupCffElements()
@@ -184,7 +187,7 @@ const monitorStreaming = () => {
                 }, _waitTime)
             }
 
-            addPostResponse()
+            setupPostResponseElements()
         }
     }, INTERVAL_MONITOR_STREAMING)
 
@@ -334,20 +337,31 @@ const revealResponse = (e) => {
 //
 //
 //
-const addPostResponse = () => {
+const setupPostResponseElements = () => {
     const divPostResponse = document.createElement("div")
-    const agreementHTML = chrome.runtime.getURL("scripts/agreement.html")
-    fetch(agreementHTML).
-    then(response => response.text()) // Get the response text
-    .then(html => {
-        const classHTML = document.documentElement.getAttribute("class")
-        html = html.replace("class", "class='" + classHTML + ":bg-transparent'")
-        divPostResponse.innerHTML = html; // Insert HTML into the DOM
-    })
-    .catch(err => {
-        console.error('Failed to load page: ', err);
-    });
 
+    // post response question
+    const spanPostResponseQuestion = document.createElement("span")
+    spanPostResponseQuestion.innerHTML = "Which part(s) of ChatGPT response do you most agree with?"
+    divPostResponse.appendChild(spanPostResponseQuestion)
+
+    // text area to respond
+    const textareaPostResponseAnswer = document.createElement("textarea")
+    const classHTML = document.documentElement.getAttribute("class")
+    textareaPostResponseAnswer.classList.add(classHTML + ":bg-transparent")
+    textareaPostResponseAnswer.classList.add("post-response")
+    textareaPostResponseAnswer.setAttribute("rows", "3")
+    textareaPostResponseAnswer.setAttribute("cols", "60")
+    textareaPostResponseAnswer.onkeydown = (e) => {
+        if(e.key === "Enter") {
+            e.target.readOnly = true
+        }
+    }
+    textareaPostResponseAnswer.onclick = (e) => {
+        e.target.readOnly = false
+    }
+    divPostResponse.appendChild(textareaPostResponseAnswer)
+    
     _elmResponse.appendChild(divPostResponse)
 }
 
