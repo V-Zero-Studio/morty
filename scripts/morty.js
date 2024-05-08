@@ -355,11 +355,15 @@ const setupPostResponseElements = () => {
     textareaPostResponseAnswer.onkeydown = (e) => {
         if(e.key === "Enter") {
             e.target.readOnly = true
+            e.target.classList.add("read-only")
         }
     }
-    textareaPostResponseAnswer.onclick = (e) => {
+    textareaPostResponseAnswer.addEventListener("click", (e) => {
         e.target.readOnly = false
-    }
+        e.target.classList.remove("read-only")
+        e.stopPropagation()
+    }, true)
+
     divPostResponse.appendChild(textareaPostResponseAnswer)
     
     _elmResponse.appendChild(divPostResponse)

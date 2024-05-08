@@ -63,6 +63,13 @@ span.reveal {
 }
 
 textarea.post-response {
-  padding-top: 0px;
+  padding: 0px;
   line-height: normal;
+}
+
+textarea.read-only {
+  border: none;
+  outline: none;
+  resize: none;
+  background: transparent;
 }
