@@ -90,7 +90,7 @@ const callbackNewResponse = (mutationsList, observer) => {
                     if (_on) {
                         setupCffElements()
                         setupConfElements(_divCff)
-                        monitorTaskTypeInfo()
+                        // monitorTaskTypeInfo()
                     }
 
                     // reset the send button element b/c it will change in the next prompt
