@@ -340,6 +340,10 @@ const revealResponse = (e) => {
 const setupPostResponseElements = () => {
     const divPostResponse = document.createElement("div")
 
+    divPostResponse.appendChild(document.createElement("br"))
+    divPostResponse.appendChild(document.createElement("hr"))
+    divPostResponse.appendChild(document.createElement("br"))
+
     // post response question
     const spanPostResponseQuestion = document.createElement("span")
     spanPostResponseQuestion.innerHTML = "Which part(s) of ChatGPT response do you most agree with?"
