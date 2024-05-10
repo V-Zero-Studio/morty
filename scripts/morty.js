@@ -56,6 +56,7 @@ const INTERVAL_MONITOR_STREAMING = 2000 // ms
 let _config = {}
 let _observerNewResponse = undefined
 let _elmResponse = undefined
+let _divPostResponse = undefined
 let _divCff = undefined
 let _elmPrompt = undefined
 let _elmSendBtn = undefined
@@ -256,7 +257,6 @@ const setupCffElements = () => {
         spanRevealInfo.classList.add("reveal")
         spanRevealInfo.innerHTML = HTML_REVEAL_INFO
         _divCff.appendChild(spanRevealInfo)
-        // _elmResponse.parentElement.
         spanRevealInfo.addEventListener("click", revealResponse)
     }
 }
@@ -332,22 +332,24 @@ const updateLabel = (level) => {
 const revealResponse = (e) => {
     clearCffContainer()
     fadeIn(_elmResponse)
+    fadeIn(_divPostResponse)
 }
 
 //
 //
 //
 const setupPostResponseElements = () => {
-    const divPostResponse = document.createElement("div")
+    _divPostResponse = document.createElement("div")
+    // _divPostResponse.classList.add("post-response")
 
-    divPostResponse.appendChild(document.createElement("br"))
-    divPostResponse.appendChild(document.createElement("hr"))
-    divPostResponse.appendChild(document.createElement("br"))
+    _divPostResponse.appendChild(document.createElement("br"))
+    _divPostResponse.appendChild(document.createElement("hr"))
+    _divPostResponse.appendChild(document.createElement("br"))
 
     // post response question
     const spanPostResponseQuestion = document.createElement("span")
     spanPostResponseQuestion.innerHTML = "Which part(s) of ChatGPT response do you most agree with?"
-    divPostResponse.appendChild(spanPostResponseQuestion)
+    _divPostResponse.appendChild(spanPostResponseQuestion)
 
     // text area to respond
     const textareaPostResponseAnswer = document.createElement("textarea")
@@ -368,9 +370,12 @@ const setupPostResponseElements = () => {
         e.stopPropagation()
     }, true)
 
-    divPostResponse.appendChild(textareaPostResponseAnswer)
+    _divPostResponse.appendChild(textareaPostResponseAnswer)
     
-    _elmResponse.appendChild(divPostResponse)
+    // _elmResponse.appendChild(_divPostResponse)
+    _divPostResponse.style.opacity = _elmResponse.style.opacity
+    _elmResponse.parentNode.insertBefore(_divPostResponse, _elmResponse.nextSibling);
+
 }
 
 //

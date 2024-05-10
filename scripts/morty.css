@@ -67,6 +67,14 @@ textarea.post-response {
   line-height: normal;
 }
 
+div.post-response{
+  position: absolute;
+  bottom: 0; /* Align to the bottom of the parent */
+  right: 0; /* Align to the right of the parent */
+  margin-bottom: -20px; /* example to move up */
+  margin-right: -50px; /* example to move left */
+}
+
 textarea.read-only {
   border: none;
   outline: none;
