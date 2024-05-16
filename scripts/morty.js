@@ -84,9 +84,9 @@ const callbackNewResponse = (mutationsList, observer) => {
                     })
 
                     _elmResponse = elements[elements.length - 1]
-                    _elmResponse.style.overflow = "auto"
+                    // _elmResponse.style.overflow = "auto"
                     // todo: make the value into constants
-                    _elmResponse.style.height = "300px"
+                    // _elmResponse.style.height = "300px"
 
                     if (_on) {
                         setupCffElements()
@@ -353,7 +353,7 @@ const setupPostResponseElements = () => {
 
     // text area to respond
     const textareaPostResponseAnswer = document.createElement("textarea")
-    const classHTML = document.documentElement.getAttribute("class")
+    const classHTML = document.documentElement.getAttribute("class").indexOf("dark") > -1 ? "dark" : "light"
     textareaPostResponseAnswer.classList.add(classHTML + ":bg-transparent")
     textareaPostResponseAnswer.classList.add("post-response")
     textareaPostResponseAnswer.setAttribute("rows", "3")
@@ -418,7 +418,9 @@ const configCff = () => {
         // create a container for added cff elements
         _divCff = document.createElement("div")
         _divCff.classList.add("cff-container")
-        _divCff.classList.add(document.documentElement.getAttribute("class"))
+        
+        // todo: make this line more elegant
+        _divCff.classList.add(document.documentElement.getAttribute("class").indexOf("dark") > -1 ? "dark" : "light")
 
         // position the cff container at a fixed position above the prompt input box
         let elmPromptBox = document.getElementById(_config.ID_TEXTBOX_PROMPT)
