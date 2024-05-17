@@ -11,6 +11,7 @@ const CFF_NONE = -1
 
 // design parameters for cff
 const HEIGHT_CFF_CONTAINER = 100
+const HEIGHT_POST_RESPONSE = 150
 
 // design parameters for cff_wait
 const FADE_RATIO = 1.25 // how fast the covered response area fades
@@ -340,14 +341,14 @@ const revealResponse = (e) => {
 //
 const setupPostResponseElements = () => {
     _divPostResponse = document.createElement("div")
-    // _divPostResponse.classList.add("post-response")
+    _divPostResponse.classList.add("post-response")
 
     _divPostResponse.appendChild(document.createElement("br"))
     _divPostResponse.appendChild(document.createElement("hr"))
     _divPostResponse.appendChild(document.createElement("br"))
 
     // post response question
-    const spanPostResponseQuestion = document.createElement("span")
+    const spanPostResponseQuestion = document.createElement("div")
     spanPostResponseQuestion.innerHTML = "Which part(s) of ChatGPT response do you most agree with?"
     _divPostResponse.appendChild(spanPostResponseQuestion)
 
@@ -372,9 +373,17 @@ const setupPostResponseElements = () => {
 
     _divPostResponse.appendChild(textareaPostResponseAnswer)
     
-    // _elmResponse.appendChild(_divPostResponse)
+    // position the cff container at a fixed position above the prompt input box
+    let elmPromptBox = document.getElementById(_config.ID_TEXTBOX_PROMPT)
+    let rect = elmPromptBox.getBoundingClientRect()
+    let topPosition = rect.top + window.scrollY;
+    _divPostResponse.style.height = `${HEIGHT_POST_RESPONSE}px`
+    _divPostResponse.style.top = `${topPosition - HEIGHT_POST_RESPONSE}px`
+
     _divPostResponse.style.opacity = _elmResponse.style.opacity
-    _elmResponse.parentNode.insertBefore(_divPostResponse, _elmResponse.nextSibling);
+    _elmResponse.parentNode.insertBefore(_divPostResponse, _elmResponse.nextSibling)
+    // _elmResponse.parentElement.appendChild(_divPostResponse)
+
 
 }
 
@@ -424,8 +433,8 @@ const configCff = () => {
 
         // position the cff container at a fixed position above the prompt input box
         let elmPromptBox = document.getElementById(_config.ID_TEXTBOX_PROMPT)
-        const rect = elmPromptBox.getBoundingClientRect()
-        const topPosition = rect.top + window.scrollY;
+        let rect = elmPromptBox.getBoundingClientRect()
+        let topPosition = rect.top + window.scrollY;
         _divCff.style.height = `${HEIGHT_CFF_CONTAINER}px`
         _divCff.style.top = `${topPosition - HEIGHT_CFF_CONTAINER}px`
 

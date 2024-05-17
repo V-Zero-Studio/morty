@@ -10,6 +10,7 @@
   max-width: 640px;
 }
 
+/* todo: remove this */
 .cff-container-obselete {
   display: flex;
   flex-direction: column;
@@ -68,11 +69,14 @@ textarea.post-response {
 }
 
 div.post-response{
-  position: absolute;
-  bottom: 0; /* Align to the bottom of the parent */
-  right: 0; /* Align to the right of the parent */
-  margin-bottom: -20px; /* example to move up */
-  margin-right: -50px; /* example to move left */
+  position: fixed;
+  align-items: center; /* Aligns children vertically in the center */
+  justify-content: center; /* Optional, for horizontal centering */
+  /* position: absolute; */
+  /* bottom: 0;  Align to the bottom of the parent */
+  /* right: 0;  Align to the right of the parent */
+  /* margin-bottom: -20px;  example to move up */
+  /* margin-right: -50px;  example to move left */
 }
 
 textarea.read-only {
