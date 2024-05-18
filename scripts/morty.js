@@ -11,7 +11,7 @@ const CFF_NONE = -1
 
 // design parameters for cff
 const HEIGHT_CFF_CONTAINER = 100
-const HEIGHT_POST_RESPONSE = 150
+const HEIGHT_POST_RESPONSE = 300
 
 // design parameters for cff_wait
 const FADE_RATIO = 1.25 // how fast the covered response area fades
@@ -374,11 +374,22 @@ const setupPostResponseElements = () => {
     _divPostResponse.appendChild(textareaPostResponseAnswer)
     
     // position the cff container at a fixed position above the prompt input box
-    let elmPromptBox = document.getElementById(_config.ID_TEXTBOX_PROMPT)
-    let rect = elmPromptBox.getBoundingClientRect()
-    let topPosition = rect.top + window.scrollY;
-    _divPostResponse.style.height = `${HEIGHT_POST_RESPONSE}px`
-    _divPostResponse.style.top = `${topPosition - HEIGHT_POST_RESPONSE}px`
+    // let elmPromptBox = document.getElementById(_config.ID_TEXTBOX_PROMPT)
+    // let rect = elmPromptBox.getBoundingClientRect()
+    // let topPosition = rect.top + window.scrollY;
+    // _divPostResponse.style.height = `${HEIGHT_POST_RESPONSE}px`
+    // _divPostResponse.style.top = `${topPosition - HEIGHT_POST_RESPONSE}px`
+
+    // const observerPostResponse = new MutationObserver(() => {
+    //     let elmPromptBox = document.getElementById(_config.ID_TEXTBOX_PROMPT)
+    //     let rect = elmPromptBox.getBoundingClientRect()
+    //     const topPosition = rect.top + window.scrollY;
+    //     const bottomValue = parseInt(window.getComputedStyle(_divPostResponse).bottom, 10);
+    //     if (bottomValue > topPosition) {
+    //         _divPostResponse.style.bottom = topPosition + 'px';
+    //     }
+    // })
+    // observerPostResponse.observe(_divPostResponse, { attributes: true, attributeFilter: ['style'] });
 
     _divPostResponse.style.opacity = _elmResponse.style.opacity
     _elmResponse.parentNode.insertBefore(_divPostResponse, _elmResponse.nextSibling)
