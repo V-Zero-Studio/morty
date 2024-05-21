@@ -343,9 +343,9 @@ const setupPostResponseElements = () => {
     _divPostResponse = document.createElement("div")
     _divPostResponse.classList.add("post-response")
 
-    _divPostResponse.appendChild(document.createElement("br"))
-    _divPostResponse.appendChild(document.createElement("hr"))
-    _divPostResponse.appendChild(document.createElement("br"))
+    // _divPostResponse.appendChild(document.createElement("br"))
+    // _divPostResponse.appendChild(document.createElement("hr"))
+    // _divPostResponse.appendChild(document.createElement("br"))
 
     // post response question
     const spanPostResponseQuestion = document.createElement("div")
@@ -361,8 +361,10 @@ const setupPostResponseElements = () => {
     textareaPostResponseAnswer.setAttribute("cols", "60")
     textareaPostResponseAnswer.onkeydown = (e) => {
         if(e.key === "Enter") {
-            e.target.readOnly = true
-            e.target.classList.add("read-only")
+            fadeOutAndRemove(_divPostResponse)
+            // todo: do the following when click anywhere outside
+            // e.target.readOnly = true
+            // e.target.classList.add("read-only")
         }
     }
     textareaPostResponseAnswer.addEventListener("click", (e) => {
@@ -374,7 +376,7 @@ const setupPostResponseElements = () => {
     _divPostResponse.appendChild(textareaPostResponseAnswer)
     
     // position the cff container at a fixed position above the prompt input box
-    // let elmPromptBox = document.getElementById(_config.ID_TEXTBOX_PROMPT)
+    let elmPromptBox = document.getElementById(_config.ID_TEXTBOX_PROMPT)
     // let rect = elmPromptBox.getBoundingClientRect()
     // let topPosition = rect.top + window.scrollY;
     // _divPostResponse.style.height = `${HEIGHT_POST_RESPONSE}px`
@@ -392,9 +394,9 @@ const setupPostResponseElements = () => {
     // observerPostResponse.observe(_divPostResponse, { attributes: true, attributeFilter: ['style'] });
 
     _divPostResponse.style.opacity = _elmResponse.style.opacity
-    _elmResponse.parentNode.insertBefore(_divPostResponse, _elmResponse.nextSibling)
+    // _elmResponse.parentNode.insertBefore(_divPostResponse, _elmResponse.nextSibling)
     // _elmResponse.parentElement.appendChild(_divPostResponse)
-
+    elmPromptBox.parentNode.insertBefore(_divPostResponse, elmPromptBox)
 
 }
 

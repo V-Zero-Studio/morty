@@ -63,7 +63,7 @@ div.post-response{
   /* position: fixed; */
   align-items: center; /* Aligns children vertically in the center */
   justify-content: center; /* Optional, for horizontal centering */
-  padding-top: 50px;
+  /* padding-top: 50px; */
 }
 
 textarea.read-only {
