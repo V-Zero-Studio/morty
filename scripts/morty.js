@@ -343,30 +343,18 @@ const setupPostResponseElements = () => {
     _divPostResponse = document.createElement("div")
     _divPostResponse.classList.add("post-response")
 
-    // _divPostResponse.appendChild(document.createElement("br"))
-    // _divPostResponse.appendChild(document.createElement("hr"))
-    // _divPostResponse.appendChild(document.createElement("br"))
-
-    // post response question
-    // const spanPostResponseQuestion = document.createElement("div")
-    // spanPostResponseQuestion.innerHTML = "Which part(s) of ChatGPT response do you most agree with?"
-    // _divPostResponse.appendChild(spanPostResponseQuestion)
-
-    // text area to respond
     const textareaPostResponseAnswer = document.createElement("textarea")
     const classHTML = document.documentElement.getAttribute("class").indexOf("dark") > -1 ? "dark" : "light"
     textareaPostResponseAnswer.classList.add(classHTML + ":bg-transparent")
     textareaPostResponseAnswer.classList.add("post-response")
-    // textareaPostResponseAnswer.setAttribute("rows", "3")
     textareaPostResponseAnswer.setAttribute("cols", "60")
-    // make the placeholder text a constant
+    // todo: make the placeholder text a constant
     textareaPostResponseAnswer.setAttribute("placeholder", "Which part(s) of ChatGPT response do you most agree with?")
     textareaPostResponseAnswer.onkeydown = (e) => {
         if (e.key === "Enter") {
             fadeOutAndRemove(_divPostResponse)
             // todo: do the following when click anywhere outside
             e.target.readOnly = true
-            // e.target.classList.add("read-only")
         }
     }
     textareaPostResponseAnswer.addEventListener("click", (e) => {
@@ -378,28 +366,11 @@ const setupPostResponseElements = () => {
 
     _divPostResponse.appendChild(textareaPostResponseAnswer)
 
-    // position the cff container at a fixed position above the prompt input box
     let elmPromptBox = document.getElementById(_config.ID_TEXTBOX_PROMPT)
-    // let rect = elmPromptBox.getBoundingClientRect()
-    // let topPosition = rect.top + window.scrollY;
-    // _divPostResponse.style.height = `${HEIGHT_POST_RESPONSE}px`
-    // _divPostResponse.style.top = `${topPosition - HEIGHT_POST_RESPONSE}px`
-
-    // const observerPostResponse = new MutationObserver(() => {
-    //     let elmPromptBox = document.getElementById(_config.ID_TEXTBOX_PROMPT)
-    //     let rect = elmPromptBox.getBoundingClientRect()
-    //     const topPosition = rect.top + window.scrollY;
-    //     const bottomValue = parseInt(window.getComputedStyle(_divPostResponse).bottom, 10);
-    //     if (bottomValue > topPosition) {
-    //         _divPostResponse.style.bottom = topPosition + 'px';
-    //     }
-    // })
-    // observerPostResponse.observe(_divPostResponse, { attributes: true, attributeFilter: ['style'] });
-
     _divPostResponse.style.opacity = _elmResponse.style.opacity
-    // _elmResponse.parentNode.insertBefore(_divPostResponse, _elmResponse.nextSibling)
-    // _elmResponse.parentElement.appendChild(_divPostResponse)
     elmPromptBox.parentNode.insertBefore(_divPostResponse, elmPromptBox)
+
+    // force focus on the post response area
     setTimeout(() => {
         textareaPostResponseAnswer.focus()
     }, 1000);

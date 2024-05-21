@@ -64,15 +64,6 @@ textarea.post-response {
 }
 
 div.post-response{
-  /* position: fixed; */
   align-items: center; /* Aligns children vertically in the center */
   justify-content: center; /* Optional, for horizontal centering */
-  /* padding-top: 50px; */
 }
-
-/* textarea.read-only {
-  border: none;
-  outline: none;
-  resize: none;
-  background: transparent;
-} */
