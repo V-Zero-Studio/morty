@@ -298,7 +298,7 @@ const setupConfElements = (container) => {
     divDots.appendChild(spanConf)
 
     divRating.appendChild(divDots)
-    
+
     container.prepend(divRating)
 
 }
@@ -348,22 +348,24 @@ const setupPostResponseElements = () => {
     // _divPostResponse.appendChild(document.createElement("br"))
 
     // post response question
-    const spanPostResponseQuestion = document.createElement("div")
-    spanPostResponseQuestion.innerHTML = "Which part(s) of ChatGPT response do you most agree with?"
-    _divPostResponse.appendChild(spanPostResponseQuestion)
+    // const spanPostResponseQuestion = document.createElement("div")
+    // spanPostResponseQuestion.innerHTML = "Which part(s) of ChatGPT response do you most agree with?"
+    // _divPostResponse.appendChild(spanPostResponseQuestion)
 
     // text area to respond
     const textareaPostResponseAnswer = document.createElement("textarea")
     const classHTML = document.documentElement.getAttribute("class").indexOf("dark") > -1 ? "dark" : "light"
     textareaPostResponseAnswer.classList.add(classHTML + ":bg-transparent")
     textareaPostResponseAnswer.classList.add("post-response")
-    textareaPostResponseAnswer.setAttribute("rows", "3")
+    // textareaPostResponseAnswer.setAttribute("rows", "3")
     textareaPostResponseAnswer.setAttribute("cols", "60")
+    // make the placeholder text a constant
+    textareaPostResponseAnswer.setAttribute("placeholder", "Which part(s) of ChatGPT response do you most agree with?")
     textareaPostResponseAnswer.onkeydown = (e) => {
-        if(e.key === "Enter") {
+        if (e.key === "Enter") {
             fadeOutAndRemove(_divPostResponse)
             // todo: do the following when click anywhere outside
-            // e.target.readOnly = true
+            e.target.readOnly = true
             // e.target.classList.add("read-only")
         }
     }
@@ -372,9 +374,10 @@ const setupPostResponseElements = () => {
         e.target.classList.remove("read-only")
         e.stopPropagation()
     }, true)
+    
 
     _divPostResponse.appendChild(textareaPostResponseAnswer)
-    
+
     // position the cff container at a fixed position above the prompt input box
     let elmPromptBox = document.getElementById(_config.ID_TEXTBOX_PROMPT)
     // let rect = elmPromptBox.getBoundingClientRect()
@@ -397,6 +400,9 @@ const setupPostResponseElements = () => {
     // _elmResponse.parentNode.insertBefore(_divPostResponse, _elmResponse.nextSibling)
     // _elmResponse.parentElement.appendChild(_divPostResponse)
     elmPromptBox.parentNode.insertBefore(_divPostResponse, elmPromptBox)
+    setTimeout(() => {
+        textareaPostResponseAnswer.focus()
+    }, 1000);
 
 }
 
@@ -440,7 +446,7 @@ const configCff = () => {
         // create a container for added cff elements
         _divCff = document.createElement("div")
         _divCff.classList.add("cff-container")
-        
+
         // todo: make this line more elegant
         _divCff.classList.add(document.documentElement.getAttribute("class").indexOf("dark") > -1 ? "dark" : "light")
 
