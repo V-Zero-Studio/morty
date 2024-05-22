@@ -340,40 +340,41 @@ const revealResponse = (e) => {
 //
 //
 const setupPostResponseElements = () => {
-    _divPostResponse = document.createElement("div")
-    _divPostResponse.classList.add("post-response")
+    // _divPostResponse = document.createElement("div")
+    // _divPostResponse.classList.add("post-response")
 
-    const textareaPostResponseAnswer = document.createElement("textarea")
-    const classHTML = document.documentElement.getAttribute("class").indexOf("dark") > -1 ? "dark" : "light"
-    textareaPostResponseAnswer.classList.add(classHTML + ":bg-transparent")
-    textareaPostResponseAnswer.classList.add("post-response")
-    textareaPostResponseAnswer.setAttribute("cols", "60")
-    // todo: make the placeholder text a constant
-    textareaPostResponseAnswer.setAttribute("placeholder", "Which part(s) of ChatGPT response do you most agree with?")
-    textareaPostResponseAnswer.onkeydown = (e) => {
-        if (e.key === "Enter") {
-            fadeOutAndRemove(_divPostResponse)
-            // todo: do the following when click anywhere outside
-            e.target.readOnly = true
-        }
-    }
-    textareaPostResponseAnswer.addEventListener("click", (e) => {
-        e.target.readOnly = false
-        e.target.classList.remove("read-only")
-        e.stopPropagation()
-    }, true)
+    // const textareaPostResponseAnswer = document.createElement("textarea")
+    // const classHTML = document.documentElement.getAttribute("class").indexOf("dark") > -1 ? "dark" : "light"
+    // textareaPostResponseAnswer.classList.add(classHTML + ":bg-transparent")
+    // textareaPostResponseAnswer.classList.add("post-response")
+    // textareaPostResponseAnswer.setAttribute("cols", "60")
+    // // todo: make the placeholder text a constant
+    // textareaPostResponseAnswer.setAttribute("placeholder", "Which part(s) of ChatGPT response do you most agree with?")
+    // textareaPostResponseAnswer.onkeydown = (e) => {
+    //     if (e.key === "Enter") {
+    //         fadeOutAndRemove(_divPostResponse)
+    //         // todo: do the following when click anywhere outside
+    //         e.target.readOnly = true
+    //     }
+    // }
+    // textareaPostResponseAnswer.addEventListener("click", (e) => {
+    //     e.target.readOnly = false
+    //     e.target.classList.remove("read-only")
+    //     e.stopPropagation()
+    // }, true)
     
 
-    _divPostResponse.appendChild(textareaPostResponseAnswer)
+    // _divPostResponse.appendChild(textareaPostResponseAnswer)
 
     let elmPromptBox = document.getElementById(_config.ID_TEXTBOX_PROMPT)
-    _divPostResponse.style.opacity = _elmResponse.style.opacity
-    elmPromptBox.parentNode.insertBefore(_divPostResponse, elmPromptBox)
+    elmPromptBox.setAttribute("placeholder", "Tell ChatGPT which part(s) of its response you most disagree with")
+    // _divPostResponse.style.opacity = _elmResponse.style.opacity
+    // elmPromptBox.parentNode.insertBefore(_divPostResponse, elmPromptBox)
 
-    // force focus on the post response area
-    setTimeout(() => {
-        textareaPostResponseAnswer.focus()
-    }, 1000);
+    // // force focus on the post response area
+    // setTimeout(() => {
+    //     elmPromptBox.focus()
+    // }, 1000);
 
 }
 
