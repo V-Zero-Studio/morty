@@ -72,7 +72,7 @@ const callbackNewResponse = (mutationsList, observer) => {
     for (const mutation of mutationsList) {
         if (mutation.type === 'childList') {
             mutation.addedNodes.forEach(node => {
-                if (node.className != undefined && node.className.includes(_config.KEYWORD_STREAMING)) {
+                if (node.className != undefined && typeof node.className.includes == "function" && node.className.includes(_config.KEYWORD_STREAMING)) {
                     _observerNewResponse.disconnect()
 
                     console.log("streaming starts")
@@ -362,7 +362,7 @@ const setupPostResponseElements = () => {
     //     e.target.classList.remove("read-only")
     //     e.stopPropagation()
     // }, true)
-    
+
 
     // _divPostResponse.appendChild(textareaPostResponseAnswer)
 
