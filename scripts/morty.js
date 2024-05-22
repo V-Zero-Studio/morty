@@ -367,14 +367,18 @@ const setupPostResponseElements = () => {
     // _divPostResponse.appendChild(textareaPostResponseAnswer)
 
     let elmPromptBox = document.getElementById(_config.ID_TEXTBOX_PROMPT)
+    let placeholderOriginal = elmPromptBox.getAttribute("placeholder")
     elmPromptBox.setAttribute("placeholder", "Tell ChatGPT which part(s) of its response you most disagree with")
     // _divPostResponse.style.opacity = _elmResponse.style.opacity
     // elmPromptBox.parentNode.insertBefore(_divPostResponse, elmPromptBox)
 
     // // force focus on the post response area
+    elmPromptBox.addEventListener("click", () => {
+        elmPromptBox.setAttribute("placeholder", placeholderOriginal)
+    })
     // setTimeout(() => {
-    //     elmPromptBox.focus()
-    // }, 1000);
+    //     elmPromptBox.setAttribute("placeholder", placeholderOriginal)
+    // }, 10000);
 
 }
 
