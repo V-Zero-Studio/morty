@@ -42,6 +42,8 @@ const TEXT_PROMPT_TASK_TYPE_DETECTION = "\nBefore responding to the prompt, the 
 const TEXT_PROMPT_HINTS = "\nIf it is an open-ended task, first come up with a question to help me independently think about the task. The question should be in the format of '" + LABEL_HINTS + "'....?'."
 // final line if no prompt augmentation; just show the response
 const TEXT_NO_PROMPT_AUGMENTATION = "\nThe following line should then start showing the answer."
+// question to prompt users' disagreement with AI
+const TEXT_POST_RESPONSE = "Tell ChatGPT which part(s) of its response you most disagree with"
 // whether to remove the intermediate prompts/response as a result of the above
 let _toRemoveIntermediateContents = false
 
@@ -85,14 +87,11 @@ const callbackNewResponse = (mutationsList, observer) => {
                     })
 
                     _elmResponse = elements[elements.length - 1]
-                    // _elmResponse.style.overflow = "auto"
                     // todo: make the value into constants
-                    // _elmResponse.style.height = "300px"
 
                     if (_on) {
                         setupCffElements()
                         setupConfElements(_divCff)
-                        // monitorTaskTypeInfo()
                     }
 
                     // reset the send button element b/c it will change in the next prompt
@@ -340,46 +339,12 @@ const revealResponse = (e) => {
 //
 //
 const setupPostResponseElements = () => {
-    // _divPostResponse = document.createElement("div")
-    // _divPostResponse.classList.add("post-response")
-
-    // const textareaPostResponseAnswer = document.createElement("textarea")
-    // const classHTML = document.documentElement.getAttribute("class").indexOf("dark") > -1 ? "dark" : "light"
-    // textareaPostResponseAnswer.classList.add(classHTML + ":bg-transparent")
-    // textareaPostResponseAnswer.classList.add("post-response")
-    // textareaPostResponseAnswer.setAttribute("cols", "60")
-    // // todo: make the placeholder text a constant
-    // textareaPostResponseAnswer.setAttribute("placeholder", "Which part(s) of ChatGPT response do you most agree with?")
-    // textareaPostResponseAnswer.onkeydown = (e) => {
-    //     if (e.key === "Enter") {
-    //         fadeOutAndRemove(_divPostResponse)
-    //         // todo: do the following when click anywhere outside
-    //         e.target.readOnly = true
-    //     }
-    // }
-    // textareaPostResponseAnswer.addEventListener("click", (e) => {
-    //     e.target.readOnly = false
-    //     e.target.classList.remove("read-only")
-    //     e.stopPropagation()
-    // }, true)
-
-
-    // _divPostResponse.appendChild(textareaPostResponseAnswer)
-
     let elmPromptBox = document.getElementById(_config.ID_TEXTBOX_PROMPT)
     let placeholderOriginal = elmPromptBox.getAttribute("placeholder")
-    elmPromptBox.setAttribute("placeholder", "Tell ChatGPT which part(s) of its response you most disagree with")
-    // _divPostResponse.style.opacity = _elmResponse.style.opacity
-    // elmPromptBox.parentNode.insertBefore(_divPostResponse, elmPromptBox)
-
-    // // force focus on the post response area
+    elmPromptBox.setAttribute("placeholder", TEXT_POST_RESPONSE)
     elmPromptBox.addEventListener("click", () => {
         elmPromptBox.setAttribute("placeholder", placeholderOriginal)
     })
-    // setTimeout(() => {
-    //     elmPromptBox.setAttribute("placeholder", placeholderOriginal)
-    // }, 10000);
-
 }
 
 //
