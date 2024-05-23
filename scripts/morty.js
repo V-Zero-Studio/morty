@@ -308,6 +308,7 @@ const setupConfElements = (container) => {
 //  event handler to update the visual of confidence rating UI
 //
 const updateLabel = (level) => {
+    // todo: store these labels in config
     var labels = [
         "Not confident at all",
         "Slightly confident",

@@ -51,7 +51,7 @@ span.reveal {
   cursor: pointer;
 }
 .selected {
-  background-color: #076486; /* Green */
+  background-color: #4a4b4c; /* Green */
 }
 
 textarea.post-response {
