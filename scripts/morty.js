@@ -63,6 +63,7 @@ let _divPostResponse = undefined
 let _divCff = undefined
 let _elmPrompt = undefined
 let _elmSendBtn = undefined
+let _placeholderPrompt = undefined
 
 // TODO : find a bette way to let user choose how to add extra prompt
 let _useCustomChatGPT = true
@@ -341,10 +342,10 @@ const revealResponse = (e) => {
 //
 const setupPostResponseElements = () => {
     let elmPromptBox = document.getElementById(_config.ID_TEXTBOX_PROMPT)
-    let placeholderOriginal = elmPromptBox.getAttribute("placeholder")
+    // let placeholderOriginal = elmPromptBox.getAttribute("placeholder")
     elmPromptBox.setAttribute("placeholder", TEXT_POST_RESPONSE)
     elmPromptBox.addEventListener("click", () => {
-        elmPromptBox.setAttribute("placeholder", placeholderOriginal)
+        elmPromptBox.setAttribute("placeholder", _placeholderPrompt)
     })
 }
 
@@ -503,6 +504,10 @@ const init = () => {
         btnSwitch.style.filter = _on ? '' : 'grayscale(100%)'
     })
     document.body.appendChild(btnSwitch)
+
+    // extract the default placeholder in the prompt box
+    let elmPromptBox = document.getElementById(_config.ID_TEXTBOX_PROMPT)
+    _placeholderPrompt = elmPromptBox.getAttribute("placeholder")
 }
 
 //
@@ -516,6 +521,8 @@ const init = () => {
         .then(response => response.json())
         .then(data => {
             _config = data
+
+            // initialization routines
             init()
 
             // clicking an <a/> will lose some event handlers so need to re-init everything
