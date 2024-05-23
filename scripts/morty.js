@@ -87,7 +87,6 @@ const callbackNewResponse = (mutationsList, observer) => {
                     })
 
                     _elmResponse = elements[elements.length - 1]
-                    // todo: make the value into constants
 
                     if (_on) {
                         setupCffElements()
@@ -188,7 +187,9 @@ const monitorStreaming = () => {
                 }, _waitTime)
             }
 
-            setupPostResponseElements()
+            if (_on) {
+                setupPostResponseElements()
+            }
         }
     }, INTERVAL_MONITOR_STREAMING)
 
