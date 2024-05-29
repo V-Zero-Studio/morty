@@ -290,8 +290,10 @@ const setupConfElements = (container) => {
     for (let i = 1; i <= 5; i++) {
         const spanDot = document.createElement("span")
         spanDot.classList.add("dot")
-        spanDot.addEventListener("click", () => { 
+        spanDot.addEventListener("mouseover", () => { 
             updateLabel(i) 
+        })
+        spanDot.addEventListener("click", () => { 
             revealResponse()
         })
         divDots.appendChild(spanDot)
@@ -336,7 +338,7 @@ const updateLabel = (level) => {
 // reveal ai response
 //
 const revealResponse = () => {
-    clearCffContainer()
+    clearCffContainer(true)
     fadeIn(_elmResponse)
     fadeIn(_divPostResponse)
 }
