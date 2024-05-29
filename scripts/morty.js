@@ -200,7 +200,7 @@ const monitorStreaming = () => {
 // remove children in the container and remove the container
 //
 const clearCffContainer = (fadeOut = true) => {
-    _divCff.innerHTML = ""
+    // _divCff.innerHTML = ""
     if (fadeOut) {
         fadeOutAndRemove(_divCff)
     } else {
