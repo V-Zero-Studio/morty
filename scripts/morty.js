@@ -29,6 +29,15 @@ const LABEL_HINTS = "hint: "
 const LABEL_CLOSED_ENDED_TASKS = "closed-ended"
 const LABEL_OPEN_ENDED_TASKS = "open-ended"
 
+// users' confidence levels
+const CONFIDENCE_LEVELS = [
+    "Not confident at all",
+    "Slightly confident",
+    "Moderately confident",
+    "Very confident",
+    "Extremely confident"
+];
+
 // default values
 const CFF_DEFAULT = 1
 const WAITTIME_DEFAULT = 0
@@ -313,23 +322,14 @@ const setupConfElements = (container) => {
 //  event handler to update the visual of confidence rating UI
 //
 const updateLabel = (level) => {
-    // todo: store these labels in config
-    var labels = [
-        "Not confident at all",
-        "Slightly confident",
-        "Moderately confident",
-        "Very confident",
-        "Extremely confident"
-    ];
-    document.getElementById("label").innerHTML = labels[level - 1];
+    document.getElementById("label").innerHTML = CONFIDENCE_LEVELS[level - 1]
 
-    // Update dot appearance
-    var dots = document.getElementsByClassName("dot");
+    var dots = document.getElementsByClassName("dot")
     for (var i = 0; i < dots.length; i++) {
         if (i < level) {
-            dots[i].classList.add("selected");
+            dots[i].classList.add("selected")
         } else {
-            dots[i].classList.remove("selected");
+            dots[i].classList.remove("selected")
         }
     }
 }
