@@ -73,6 +73,7 @@ let _divCff = undefined
 let _elmPrompt = undefined
 let _elmSendBtn = undefined
 let _placeholderPrompt = undefined
+let _confidence = undefined
 
 // TODO : find a bette way to let user choose how to add extra prompt
 let _useCustomChatGPT = true
@@ -288,6 +289,7 @@ const setupHintElements = (container, hint) => {
 // set up confidence rating elements
 //
 const setupConfElements = (container) => {
+    _confidence = undefined
     const divRating = document.createElement("div")
 
     const pRatingQuestion = document.createElement("p")
@@ -299,10 +301,13 @@ const setupConfElements = (container) => {
     for (let i = 1; i <= 5; i++) {
         const spanDot = document.createElement("span")
         spanDot.classList.add("dot")
-        spanDot.addEventListener("mouseover", () => { 
-            updateLabel(i) 
+        spanDot.addEventListener("mouseover", (e) => { 
+            if(_confidence == undefined) {
+                updateLabel(i) 
+            }
         })
-        spanDot.addEventListener("click", () => { 
+        spanDot.addEventListener("click", (e) => { 
+            _confidence = i
             revealResponse()
         })
         divDots.appendChild(spanDot)
