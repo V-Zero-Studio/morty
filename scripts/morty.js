@@ -396,8 +396,8 @@ const configCff = () => {
         _divCff = document.createElement("div")
         _divCff.classList.add("cff-container")
 
-        // todo: make this line more elegant
-        _divCff.classList.add(document.documentElement.getAttribute("class").indexOf("dark") > -1 ? "dark" : "light")
+        const isDarkMode = document.documentElement.getAttribute("class").indexOf("dark") > -1
+        _divCff.classList.add(isDarkMode ? "dark" : "light")
 
         // position the cff container at a fixed position above the prompt input box
         let elmPromptBox = document.getElementById(_config.ID_TEXTBOX_PROMPT)
