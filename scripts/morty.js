@@ -43,7 +43,9 @@ const CFF_DEFAULT = 1
 const WAITTIME_DEFAULT = 0
 const HINTs_DEFAULT = true
 
+// confidence in agreement related
 const CONFI_QUESTION_PROMPT = "How confident are you if you were to respond to this prompt without ChatGPT's help?"
+const TIMEOUT_PLACEHOLDER_RESET = 30000
 
 // appended prompt to ask for task type -- open vs. close ended
 const TEXT_PROMPT_TASK_TYPE_DETECTION = "\nBefore responding to the prompt, the first line of output should state whether the above prompt is an open-ended or closed-ended. Examples of open-ended tasks include writing, content creation, problem-solving, and idea generation."
@@ -358,6 +360,9 @@ const setupPostResponseElements = () => {
     elmPromptBox.addEventListener("click", () => {
         elmPromptBox.setAttribute("placeholder", _placeholderPrompt)
     })
+    setTimeout(() => {
+        elmPromptBox.setAttribute("placeholder", _placeholderPrompt)
+    }, TIMEOUT_PLACEHOLDER_RESET);
 }
 
 //
