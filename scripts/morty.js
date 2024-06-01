@@ -291,40 +291,12 @@ const setupHintElements = (container, hint) => {
 const setupConfElements = (container) => {
     _confidence = undefined
     const divRating = _setupRatingUI("labelConfidence", CONFI_QUESTION_PROMPT, CONFIDENCE_LEVELS)
-    
-    // document.createElement("div")
-
-    // const pRatingQuestion = document.createElement("p")
-    // pRatingQuestion.innerHTML = CONFI_QUESTION_PROMPT
-    // divRating.appendChild(pRatingQuestion)
-
-    // const divDots = document.createElement("div")
-
-    // for (let i = 1; i <= 5; i++) {
-    //     const spanDot = document.createElement("span")
-    //     spanDot.classList.add("dot")
-    //     spanDot.addEventListener("mouseover", (e) => {
-    //         if (_confidence == undefined) {
-    //             updateConfidenceLabel(i)
-    //         }
-    //     })
-    //     spanDot.addEventListener("click", (e) => {
-    //         _confidence = i
-    //         revealResponse()
-    //     })
-    //     divDots.appendChild(spanDot)
-    // }
-
-    // const spanConf = document.createElement("span")
-    // spanConf.setAttribute("id", "label")
-    // divDots.appendChild(spanConf)
-
-    // divRating.appendChild(divDots)
-
     container.prepend(divRating)
-
 }
 
+//
+//
+// 
 const _setupRatingUI = (id, question, labelsRating) => {
     const divRating = document.createElement("div")
 
@@ -372,18 +344,18 @@ const _setupRatingUI = (id, question, labelsRating) => {
 // 
 //  event handler to update the visual of confidence rating UI
 //
-const updateConfidenceLabel = (level) => {
-    document.getElementById("label").innerHTML = CONFIDENCE_LEVELS[level - 1]
+// const updateConfidenceLabel = (level) => {
+//     document.getElementById("label").innerHTML = CONFIDENCE_LEVELS[level - 1]
 
-    var dots = document.getElementsByClassName("dot")
-    for (var i = 0; i < dots.length; i++) {
-        if (i < level) {
-            dots[i].classList.add("selected")
-        } else {
-            dots[i].classList.remove("selected")
-        }
-    }
-}
+//     var dots = document.getElementsByClassName("dot")
+//     for (var i = 0; i < dots.length; i++) {
+//         if (i < level) {
+//             dots[i].classList.add("selected")
+//         } else {
+//             dots[i].classList.remove("selected")
+//         }
+//     }
+// }
 
 //
 // reveal ai response
@@ -391,7 +363,6 @@ const updateConfidenceLabel = (level) => {
 const revealResponse = () => {
     clearCffContainer(true)
     fadeIn(_elmResponse)
-    // fadeIn(_divPostResponse)
 }
 
 //
