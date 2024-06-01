@@ -15,8 +15,8 @@
 }
 
 .fade-out {
-  animation: fadeOutAnimation 2s forwards;
-  -webkit-animation: fadeOutAnimation 2s forwards;
+  animation: fadeOutAnimation 0.5s forwards;
+  -webkit-animation: fadeOutAnimation 0.5s forwards;
 }
 
 @keyframes fadeOutAnimation {

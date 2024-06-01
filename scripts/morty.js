@@ -30,13 +30,24 @@ const HTML_REVEAL_INFO = "(Click to reveal AI response)"
 // const LABEL_OPEN_ENDED_TASKS = "open-ended"
 
 // users' confidence levels
+const CONFI_QUESTION_PROMPT = "How confident are you if you were to respond to this prompt without ChatGPT's help?"
 const CONFIDENCE_LEVELS = [
     "Not confident at all",
     "Slightly confident",
     "Moderately confident",
     "Very confident",
     "Extremely confident"
-];
+]
+
+// 
+const AGREEMENT_QUESTION_PROMPT = "Do you agree with ChatGPT's response?"
+const AGREEMENT_LEVELS = [
+    "Totally disagree",
+    "Somewhat disagree",
+    "Neither agree nor disagree",
+    "Somewhat agree",
+    "Totally agree"
+]
 
 // default values
 const CFF_DEFAULT = 1
@@ -44,7 +55,7 @@ const CFF_DEFAULT = 1
 // const HINTs_DEFAULT = true
 
 // confidence in agreement related
-const CONFI_QUESTION_PROMPT = "How confident are you if you were to respond to this prompt without ChatGPT's help?"
+
 const TIMEOUT_PLACEHOLDER_RESET = 30000
 
 // appended prompt to ask for task type -- open vs. close ended
@@ -312,7 +323,7 @@ const _setupRatingUI = (id, question, labelsRating) => {
         const spanDot = document.createElement("span")
         spanDot.classList.add("dot")
         spanDot.addEventListener("mouseover", (e) => {
-            if (_confidence == undefined) {
+            // if (_confidence == undefined) {
                 document.getElementById(id).innerHTML = labelsRating[i]
 
                 var dots = document.getElementsByClassName("dot")
@@ -323,10 +334,10 @@ const _setupRatingUI = (id, question, labelsRating) => {
                         dots[j].classList.remove("selected")
                     }
                 }
-            }
+            // }
         })
         spanDot.addEventListener("click", (e) => {
-            _confidence = i
+            // _confidence = i
             revealResponse()
         })
         divDots.appendChild(spanDot)
@@ -383,9 +394,11 @@ const setupPostResponseElements = () => {
     // EXPERIMENTAL AREA
     const toolbar = document.querySelectorAll(_config.QUERY_TOOLBAR)[0]
 
-    const divAgreementRating = document.createElement("div")
-    divAgreementRating.innerHTML = "Do you agree with ChatGPT's response?"
+    // const divAgreementRating = document.createElement("div")
+    // divAgreementRating.innerHTML = "Do you agree with ChatGPT's response?"
 
+    const divAgreementRating = _setupRatingUI("labelAgreement", AGREEMENT_QUESTION_PROMPT, AGREEMENT_LEVELS)
+    
     toolbar.appendChild(divAgreementRating)
 }
 
