@@ -130,11 +130,11 @@ const fadeIn = (elm) => {
             fadeIn(elm)
         }, FADE_INTERVAL)
     }
-    else {
-        if (_toRemoveIntermediateContents) {
-            removeIntermediateResponse()
-        }
-    }
+    // else {
+    //     if (_toRemoveIntermediateContents) {
+    //         removeIntermediateResponse()
+    //     }
+    // }
 }
 
 //
@@ -290,20 +290,67 @@ const setupHintElements = (container, hint) => {
 //
 const setupConfElements = (container) => {
     _confidence = undefined
+    const divRating = _setupRatingUI("labelConfidence", CONFI_QUESTION_PROMPT, CONFIDENCE_LEVELS)
+    
+    // document.createElement("div")
+
+    // const pRatingQuestion = document.createElement("p")
+    // pRatingQuestion.innerHTML = CONFI_QUESTION_PROMPT
+    // divRating.appendChild(pRatingQuestion)
+
+    // const divDots = document.createElement("div")
+
+    // for (let i = 1; i <= 5; i++) {
+    //     const spanDot = document.createElement("span")
+    //     spanDot.classList.add("dot")
+    //     spanDot.addEventListener("mouseover", (e) => {
+    //         if (_confidence == undefined) {
+    //             updateConfidenceLabel(i)
+    //         }
+    //     })
+    //     spanDot.addEventListener("click", (e) => {
+    //         _confidence = i
+    //         revealResponse()
+    //     })
+    //     divDots.appendChild(spanDot)
+    // }
+
+    // const spanConf = document.createElement("span")
+    // spanConf.setAttribute("id", "label")
+    // divDots.appendChild(spanConf)
+
+    // divRating.appendChild(divDots)
+
+    container.prepend(divRating)
+
+}
+
+const _setupRatingUI = (id, question, labelsRating) => {
     const divRating = document.createElement("div")
 
+    // the question
     const pRatingQuestion = document.createElement("p")
-    pRatingQuestion.innerHTML = CONFI_QUESTION_PROMPT
+    pRatingQuestion.innerHTML = question
     divRating.appendChild(pRatingQuestion)
 
+    // the rating options
     const divDots = document.createElement("div")
 
-    for (let i = 1; i <= 5; i++) {
+    for (let i = 0; i < labelsRating.length; i++) {
         const spanDot = document.createElement("span")
         spanDot.classList.add("dot")
         spanDot.addEventListener("mouseover", (e) => {
             if (_confidence == undefined) {
-                updateConfidenceLabel(i)
+                document.getElementById(id).innerHTML = labelsRating[i]
+
+                var dots = document.getElementsByClassName("dot")
+                for (var j = 0; j < dots.length; j++) {
+                    if (j <= i) {
+                        dots[j].classList.add("selected")
+                    } else {
+                        dots[j].classList.remove("selected")
+                    }
+                }
             }
         })
         spanDot.addEventListener("click", (e) => {
@@ -314,13 +361,12 @@ const setupConfElements = (container) => {
     }
 
     const spanConf = document.createElement("span")
-    spanConf.setAttribute("id", "label")
+    spanConf.setAttribute("id", id)
     divDots.appendChild(spanConf)
 
     divRating.appendChild(divDots)
 
-    container.prepend(divRating)
-
+    return divRating
 }
 
 // 
@@ -361,6 +407,15 @@ const setupPostResponseElements = () => {
     setTimeout(() => {
         elmPromptBox.setAttribute("placeholder", _placeholderPrompt)
     }, TIMEOUT_PLACEHOLDER_RESET);
+
+
+    // EXPERIMENTAL AREA
+    const toolbar = document.querySelectorAll(_config.QUERY_TOOLBAR)[0]
+
+    const divAgreementRating = document.createElement("div")
+    divAgreementRating.innerHTML = "Do you agree with ChatGPT's response?"
+
+    toolbar.appendChild(divAgreementRating)
 }
 
 //
