@@ -40,11 +40,11 @@ const CONFIDENCE_LEVELS = [
 ]
 
 // 
-const AGREEMENT_QUESTION_PROMPT = "Do you agree with ChatGPT's response?"
+const AGREEMENT_QUESTION_PROMPT = "Do you agree with ChatGPT?"
 const AGREEMENT_LEVELS = [
     "Totally disagree",
     "Somewhat disagree",
-    "Neither agree nor disagree",
+    "Not sure",
     "Somewhat agree",
     "Totally agree"
 ]
@@ -308,8 +308,15 @@ const setupConfElements = (container) => {
 //
 //
 // 
-const _setupRatingUI = (id, question, labelsRating) => {
+// todo: move the style to .css
+const _setupRatingUI = (id, question, labelsRating, row=false) => {
     const divRating = document.createElement("div")
+
+    if(row) {
+        divRating.style.display = "flex"
+        divRating.style.flexDirection = "row"
+        divRating.style.paddingRight = "5px"
+    }
 
     // the question
     const pRatingQuestion = document.createElement("p")
@@ -318,6 +325,9 @@ const _setupRatingUI = (id, question, labelsRating) => {
 
     // the rating options
     const divDots = document.createElement("div")
+
+    divDots.style.display = "flex"
+    divDots.style.flexDirection = "row"
 
     for (let i = 0; i < labelsRating.length; i++) {
         const spanDot = document.createElement("span")
@@ -345,6 +355,8 @@ const _setupRatingUI = (id, question, labelsRating) => {
 
     const spanConf = document.createElement("span")
     spanConf.setAttribute("id", id)
+    spanConf.style.marginLeft = "5px"
+    spanConf.style.marginBottom = "5px"
     divDots.appendChild(spanConf)
 
     divRating.appendChild(divDots)
@@ -397,7 +409,7 @@ const setupPostResponseElements = () => {
     // const divAgreementRating = document.createElement("div")
     // divAgreementRating.innerHTML = "Do you agree with ChatGPT's response?"
 
-    const divAgreementRating = _setupRatingUI("labelAgreement", AGREEMENT_QUESTION_PROMPT, AGREEMENT_LEVELS)
+    const divAgreementRating = _setupRatingUI("labelAgreement", AGREEMENT_QUESTION_PROMPT, AGREEMENT_LEVELS, true)
     
     toolbar.appendChild(divAgreementRating)
 }
