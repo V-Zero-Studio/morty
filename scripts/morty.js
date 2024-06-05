@@ -309,10 +309,10 @@ const setupConfElements = (container) => {
 //
 // 
 // todo: move the style to .css
-const _setupRatingUI = (id, question, labelsRating, row=false) => {
+const _setupRatingUI = (id, question, labelsRating, row = false, onRated = undefined) => {
     const divRating = document.createElement("div")
 
-    if(row) {
+    if (row) {
         divRating.style.display = "flex"
         divRating.style.flexDirection = "row"
         divRating.style.paddingRight = "5px"
@@ -334,21 +334,23 @@ const _setupRatingUI = (id, question, labelsRating, row=false) => {
         spanDot.classList.add("dot")
         spanDot.addEventListener("mouseover", (e) => {
             // if (_confidence == undefined) {
-                document.getElementById(id).innerHTML = labelsRating[i]
+            document.getElementById(id).innerHTML = labelsRating[i]
 
-                var dots = document.getElementsByClassName("dot")
-                for (var j = 0; j < dots.length; j++) {
-                    if (j <= i) {
-                        dots[j].classList.add("selected")
-                    } else {
-                        dots[j].classList.remove("selected")
-                    }
+            var dots = document.getElementsByClassName("dot")
+            for (var j = 0; j < dots.length; j++) {
+                if (j <= i) {
+                    dots[j].classList.add("selected")
+                } else {
+                    dots[j].classList.remove("selected")
                 }
+            }
             // }
         })
         spanDot.addEventListener("click", (e) => {
-            // _confidence = i
             revealResponse()
+            if (onRated) {
+                onRated(i * 1.0 / labelsRating.length)
+            }
         })
         divDots.appendChild(spanDot)
     }
@@ -394,7 +396,7 @@ const revealResponse = () => {
 const setupPostResponseElements = () => {
     let elmPromptBox = document.getElementById(_config.ID_TEXTBOX_PROMPT)
     // let placeholderOriginal = elmPromptBox.getAttribute("placeholder")
-    elmPromptBox.setAttribute("placeholder", TEXT_POST_RESPONSE)
+
     elmPromptBox.addEventListener("click", () => {
         elmPromptBox.setAttribute("placeholder", _placeholderPrompt)
     })
@@ -409,8 +411,12 @@ const setupPostResponseElements = () => {
     // const divAgreementRating = document.createElement("div")
     // divAgreementRating.innerHTML = "Do you agree with ChatGPT's response?"
 
-    const divAgreementRating = _setupRatingUI("labelAgreement", AGREEMENT_QUESTION_PROMPT, AGREEMENT_LEVELS, true)
-    
+    const divAgreementRating = _setupRatingUI("labelAgreement", AGREEMENT_QUESTION_PROMPT, AGREEMENT_LEVELS, true, (ratingNormalized) => {
+        if (ratingNormalized < 0.5) {
+            elmPromptBox.setAttribute("placeholder", TEXT_POST_RESPONSE)
+        }
+    })
+
     toolbar.appendChild(divAgreementRating)
 }
 
