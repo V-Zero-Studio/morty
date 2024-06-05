@@ -50,7 +50,9 @@ span.reveal {
   background-color: #bbb;
   border-radius: 50%;
   display: inline-block;
-  margin: 3px;
+  margin-right: 3px;
+  margin-left: 3px;
+  margin-top: 5px;
   cursor: pointer;
 }
 .selected {

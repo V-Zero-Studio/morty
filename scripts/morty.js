@@ -315,12 +315,12 @@ const _setupRatingUI = (id, question, labelsRating, row = false, onRated = undef
     if (row) {
         divRating.style.display = "flex"
         divRating.style.flexDirection = "row"
-        divRating.style.paddingRight = "5px"
     }
 
     // the question
     const pRatingQuestion = document.createElement("p")
     pRatingQuestion.innerHTML = question
+    pRatingQuestion.style.marginRight = "5px"
     divRating.appendChild(pRatingQuestion)
 
     // the rating options
@@ -358,7 +358,6 @@ const _setupRatingUI = (id, question, labelsRating, row = false, onRated = undef
     const spanConf = document.createElement("span")
     spanConf.setAttribute("id", id)
     spanConf.style.marginLeft = "5px"
-    spanConf.style.marginBottom = "5px"
     divDots.appendChild(spanConf)
 
     divRating.appendChild(divDots)
