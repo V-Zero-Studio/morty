@@ -413,6 +413,8 @@ const setupPostResponseElements = () => {
     const divAgreementRating = _setupRatingUI("labelAgreement", AGREEMENT_QUESTION_PROMPT, AGREEMENT_LEVELS, true, (ratingNormalized) => {
         if (ratingNormalized < 0.5) {
             elmPromptBox.setAttribute("placeholder", TEXT_POST_RESPONSE)
+        } else {
+            elmPromptBox.setAttribute("placeholder", _placeholderPrompt)
         }
     })
 
