@@ -399,9 +399,9 @@ const setupPostResponseElements = () => {
     elmPromptBox.addEventListener("click", () => {
         elmPromptBox.setAttribute("placeholder", _placeholderPrompt)
     })
-    setTimeout(() => {
-        elmPromptBox.setAttribute("placeholder", _placeholderPrompt)
-    }, TIMEOUT_PLACEHOLDER_RESET);
+    // setTimeout(() => {
+    //     elmPromptBox.setAttribute("placeholder", _placeholderPrompt)
+    // }, TIMEOUT_PLACEHOLDER_RESET);
 
 
     // EXPERIMENTAL AREA
