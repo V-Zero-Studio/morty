@@ -84,7 +84,7 @@ let _elmResponse = undefined
 // let _divPostResponse = undefined
 let _divCff = undefined
 let _elmPrompt = undefined
-// let _elmSendBtn = undefined
+let _elmSendBtn = undefined
 let _placeholderPrompt = undefined
 let _confidence = undefined
 
@@ -117,7 +117,7 @@ const callbackNewResponse = (mutationsList, observer) => {
                     }
 
                     // reset the send button element b/c it will change in the next prompt
-                    // _elmSendBtn = undefined
+                    _elmSendBtn = undefined
 
                     return
                 }
@@ -203,7 +203,7 @@ const monitorStreaming = () => {
         if (elements.length > 0) {
             monitorStreaming()
         } else {
-            console.log("streaming ended")
+            console.log("streaming ends")
             // if (_cff == CFF_WAIT) {
             //     setTimeout(() => {
             //         revealResponse()
@@ -287,14 +287,14 @@ const setupCffElements = () => {
 //
 // add hint text over the response area that triggers users to think
 //
-const setupHintElements = (container, hint) => {
-    const paragraph = document.createElement("p")
-    paragraph.classList.add("hint")
-    const k = Math.floor(Math.random() * 1009)
-    paragraph.innerHTML = hint == undefined ? _config.HINTTEXTS[k % _config.HINTTEXTS.length] : hint
-    paragraph.id = ID_HINT_TEXT
-    container.prepend(paragraph)
-}
+// const setupHintElements = (container, hint) => {
+//     const paragraph = document.createElement("p")
+//     paragraph.classList.add("hint")
+//     const k = Math.floor(Math.random() * 1009)
+//     paragraph.innerHTML = hint == undefined ? _config.HINTTEXTS[k % _config.HINTTEXTS.length] : hint
+//     paragraph.id = ID_HINT_TEXT
+//     container.prepend(paragraph)
+// }
 
 //
 // set up confidence rating elements
@@ -479,45 +479,45 @@ const configCff = () => {
     // }
 }
 
-//
+
 // attach event listenrs to prompt textbox to append cff inducing prompts
-//
-// const attachEventListeners = () => {
-//     // intercept the sending of prompts: enter key and send button
-//     _elmPrompt = document.getElementById(_config.ID_PROMPT_INPUT)
 
-//     _elmPrompt.addEventListener('keydown', (e) => {
-//         if (_on && e.key === "Enter" && !e.shiftKey) {
-//             if (_cff != CFF_NONE && !_useCustomChatGPT) {
-//                 const promptExtra = appendPrompt()
-//                 if (e.target.value.indexOf(promptExtra) < 0) {
-//                     e.target.value += promptExtra
-//                 }
-//             }
-//             configCff()
-//         }
-//     }, true)
+const attachEventListeners = () => {
+    // intercept the sending of prompts: enter key and send button
+    _elmPrompt = document.getElementById(_config.ID_PROMPT_INPUT)
 
-//     // add prompt augmentation to the send button
-//     // because the send button is updated/renewed after typing in the prompt
-//     // an event handler needs to be added in real time
-//     _elmPrompt.addEventListener('keyup', (e) => {
-//         if (_elmSendBtn == undefined) {
-//             _elmSendBtn = document.querySelector(_config.QUERY_SEND_BTN)
-//             if (_elmSendBtn != undefined) {
-//                 _elmSendBtn.addEventListener('click', (e) => {
-//                     if (_on && _cff != CFF_NONE && !_useCustomChatGPT) {
-//                         const promptExtra = appendPrompt()
-//                         if (_elmPrompt.value.indexOf(promptExtra) < 0) {
-//                             _elmPrompt.value += promptExtra
-//                         }
-//                     }
-//                     configCff()
-//                 }, true)
-//             }
-//         }
-//     })
-// }
+    _elmPrompt.addEventListener('keydown', (e) => {
+        if (_on && e.key === "Enter" && !e.shiftKey) {
+            // if (_cff != CFF_NONE && !_useCustomChatGPT) {
+            //     const promptExtra = appendPrompt()
+            //     if (e.target.value.indexOf(promptExtra) < 0) {
+            //         e.target.value += promptExtra
+            //     }
+            // }
+            configCff()
+        }
+    }, true)
+
+    // add prompt augmentation to the send button
+    // because the send button is updated/renewed after typing in the prompt
+    // an event handler needs to be added in real time
+    _elmPrompt.addEventListener('keyup', (e) => {
+        if (_elmSendBtn == undefined) {
+            _elmSendBtn = document.querySelector(_config.QUERY_SEND_BTN)
+            if (_elmSendBtn != undefined) {
+                _elmSendBtn.addEventListener('click', (e) => {
+                    // if (_on && _cff != CFF_NONE && !_useCustomChatGPT) {
+                    //     const promptExtra = appendPrompt()
+                    //     if (_elmPrompt.value.indexOf(promptExtra) < 0) {
+                    //         _elmPrompt.value += promptExtra
+                    //     }
+                    // }
+                    configCff()
+                }, true)
+            }
+        }
+    })
+}
 
 //
 // initialization
@@ -553,7 +553,7 @@ const init = () => {
     //     }
     // )
 
-    // attachEventListeners()
+    attachEventListeners()
 
     // intermediate prompts and responses will be retrieved from server
     // we can remove them manually
