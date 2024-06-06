@@ -211,7 +211,13 @@ const monitorStreaming = () => {
             // }
 
             if (_on) {
-                setupPostResponseElements()
+                // if the cff container has not been clear, don't set up post response yet;
+                // instead, set it up when a user clicks to reveal response
+                if (document.getElementsByClassName("cff-container").length <= 0) {
+                    setupPostResponseElements()
+                } else {
+                    _elmResponse.parentElement.addEventListener("click", setupPostResponseElements)
+                }
             }
         }
     }, INTERVAL_MONITOR_STREAMING)
