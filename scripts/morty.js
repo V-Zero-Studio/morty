@@ -87,7 +87,7 @@ let _elmPrompt = undefined
 let _elmSendBtn = undefined
 let _placeholderPrompt = undefined
 let _confidence = undefined
-
+let _divAgreementRating = undefined
 // let _useCustomChatGPT = true
 
 //
@@ -118,6 +118,9 @@ const callbackNewResponse = (mutationsList, observer) => {
 
                     // reset the send button element b/c it will change in the next prompt
                     _elmSendBtn = undefined
+
+                    // remove the diagreement rating ui
+                    // _divAgreementRating.remove()
 
                     return
                 }
@@ -338,11 +341,12 @@ const _setupRatingUI = (id, question, labelsRating, row = false, onRated = undef
     for (let i = 0; i < labelsRating.length; i++) {
         const spanDot = document.createElement("span")
         spanDot.classList.add("dot")
+        spanDot.setAttribute("name", id + "-dot")
         spanDot.addEventListener("mouseover", (e) => {
             // if (_confidence == undefined) {
-            document.getElementById(id).innerHTML = labelsRating[i]
+            document.getElementById(id + "-span").innerHTML = labelsRating[i]
 
-            var dots = document.getElementsByClassName("dot")
+            var dots = document.getElementsByName(id + "-dot")
             for (var j = 0; j < dots.length; j++) {
                 if (j <= i) {
                     dots[j].classList.add("selected")
@@ -362,7 +366,7 @@ const _setupRatingUI = (id, question, labelsRating, row = false, onRated = undef
     }
 
     const spanConf = document.createElement("span")
-    spanConf.setAttribute("id", id)
+    spanConf.setAttribute("id", id + "-span")
     spanConf.style.marginLeft = "5px"
     divDots.appendChild(spanConf)
 
@@ -413,18 +417,15 @@ const setupPostResponseElements = () => {
     // EXPERIMENTAL AREA
     const toolbar = document.querySelectorAll(_config.QUERY_TOOLBAR)[0]
 
-    // const divAgreementRating = document.createElement("div")
-    // divAgreementRating.innerHTML = "Do you agree with ChatGPT's response?"
 
-    const divAgreementRating = _setupRatingUI("labelAgreement", AGREEMENT_QUESTION_PROMPT, AGREEMENT_LEVELS, true, (ratingNormalized) => {
-        if (ratingNormalized < 0.5) {
-            elmPromptBox.setAttribute("placeholder", TEXT_POST_RESPONSE)
-        } else {
-            elmPromptBox.setAttribute("placeholder", _placeholderPrompt)
-        }
-    })
+    document.getElementsByName("labelAgreement" + "-dot").forEach(elm => elm.classList.remove('selected'));
+    const label = document.getElementById("labelAgreement" + "-span")
+    if (label != null) { 
+        label.innerHTML = "" 
+    }
 
-    toolbar.appendChild(divAgreementRating)
+
+    toolbar.appendChild(_divAgreementRating)
 }
 
 //
@@ -586,6 +587,14 @@ const init = () => {
     // extract the default placeholder in the prompt box
     let elmPromptBox = document.getElementById(_config.ID_TEXTBOX_PROMPT)
     _placeholderPrompt = elmPromptBox.getAttribute("placeholder")
+
+    _divAgreementRating = _setupRatingUI("labelAgreement", AGREEMENT_QUESTION_PROMPT, AGREEMENT_LEVELS, true, (ratingNormalized) => {
+        if (ratingNormalized < 0.5) {
+            elmPromptBox.setAttribute("placeholder", TEXT_POST_RESPONSE)
+        } else {
+            elmPromptBox.setAttribute("placeholder", _placeholderPrompt)
+        }
+    })
 }
 
 //
