@@ -265,13 +265,22 @@ const revealResponse = () => {
 //
 //
 //
-const setupPostResponseElements = () => {
-    let elmPromptBox = document.getElementById(_config.ID_TEXTBOX_PROMPT)
-    // let placeholderOriginal = elmPromptBox.getAttribute("placeholder")
+const _prefixPrompt = (e) => {
+    e.target.value = e.target.getAttribute("placeholder") + " "
+    const textLength = e.target.value.length
+    e.target.setSelectionRange(textLength, textLength)
+    e.target.setAttribute("placeholder", _placeholderPrompt)
+}
 
-    elmPromptBox.addEventListener("click", () => {
-        elmPromptBox.setAttribute("placeholder", _placeholderPrompt)
-    })
+//
+//
+//
+const setupPostResponseElements = () => {
+    // let elmPromptBox = document.getElementById(_config.ID_TEXTBOX_PROMPT)
+
+    // elmPromptBox.addEventListener("click", () => {
+        // elmPromptBox.setAttribute("placeholder", _placeholderPrompt)
+    // })
 
     // EXPERIMENTAL AREA
     const toolbar = document.querySelectorAll(_config.QUERY_TOOLBAR)[0]
@@ -279,8 +288,8 @@ const setupPostResponseElements = () => {
 
     document.getElementsByName("labelAgreement" + "-dot").forEach(elm => elm.classList.remove('selected'));
     const label = document.getElementById("labelAgreement" + "-span")
-    if (label != null) { 
-        label.innerHTML = "" 
+    if (label != null) {
+        label.innerHTML = ""
     }
 
     toolbar.appendChild(_divAgreementRating)
@@ -362,11 +371,17 @@ const init = () => {
     let elmPromptBox = document.getElementById(_config.ID_TEXTBOX_PROMPT)
     _placeholderPrompt = elmPromptBox.getAttribute("placeholder")
 
+    // set up the disagreement rating ui
     _divAgreementRating = _setupRatingUI("labelAgreement", AGREEMENT_QUESTION_PROMPT, AGREEMENT_LEVELS, true, (idxRating) => {
+        let elmPromptBox = document.getElementById(_config.ID_TEXTBOX_PROMPT)
         const ratingNormalized = idxRating * 1.0 / AGREEMENT_LEVELS.length
         const placeholder = "I " + AGREEMENT_LEVELS[idxRating].toLowerCase() + " because"
         if (ratingNormalized < 0.5) {
             elmPromptBox.setAttribute("placeholder", placeholder)
+            elmPromptBox.addEventListener("click", _prefixPrompt)
+            setTimeout(() => {
+                elmPromptBox.removeEventListener("click", _prefixPrompt)
+            }, TIMEOUT_PLACEHOLDER_RESET);
         } else {
             elmPromptBox.setAttribute("placeholder", _placeholderPrompt)
         }
