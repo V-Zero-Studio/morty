@@ -35,7 +35,7 @@ const AGREEMENT_QUESTION_PROMPT = "Do you agree with ChatGPT?"
 const AGREEMENT_LEVELS = [
     "Totally disagree",
     "Somewhat disagree",
-    "Not sure",
+    "Doubt it",
     "Somewhat agree",
     "Totally agree"
 ]
@@ -224,7 +224,6 @@ const _setupRatingUI = (id, question, labelsRating, row = false, onRated = undef
         spanDot.classList.add("dot")
         spanDot.setAttribute("name", id + "-dot")
         spanDot.addEventListener("mouseover", (e) => {
-            // if (_confidence == undefined) {
             document.getElementById(id + "-span").innerHTML = labelsRating[i]
 
             var dots = document.getElementsByName(id + "-dot")
@@ -235,12 +234,11 @@ const _setupRatingUI = (id, question, labelsRating, row = false, onRated = undef
                     dots[j].classList.remove("selected")
                 }
             }
-            // }
         })
         spanDot.addEventListener("click", (e) => {
             revealResponse()
             if (onRated) {
-                onRated(i * 1.0 / labelsRating.length)
+                onRated(i)
             }
         })
         divDots.appendChild(spanDot)
@@ -364,9 +362,11 @@ const init = () => {
     let elmPromptBox = document.getElementById(_config.ID_TEXTBOX_PROMPT)
     _placeholderPrompt = elmPromptBox.getAttribute("placeholder")
 
-    _divAgreementRating = _setupRatingUI("labelAgreement", AGREEMENT_QUESTION_PROMPT, AGREEMENT_LEVELS, true, (ratingNormalized) => {
+    _divAgreementRating = _setupRatingUI("labelAgreement", AGREEMENT_QUESTION_PROMPT, AGREEMENT_LEVELS, true, (idxRating) => {
+        const ratingNormalized = idxRating * 1.0 / AGREEMENT_LEVELS.length
+        const placeholder = "I " + AGREEMENT_LEVELS[idxRating].toLowerCase() + " because"
         if (ratingNormalized < 0.5) {
-            elmPromptBox.setAttribute("placeholder", TEXT_POST_RESPONSE)
+            elmPromptBox.setAttribute("placeholder", placeholder)
         } else {
             elmPromptBox.setAttribute("placeholder", _placeholderPrompt)
         }
