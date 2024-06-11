@@ -279,7 +279,7 @@ const _setupPostResponseElements = () => {
     // let elmPromptBox = document.getElementById(_config.ID_TEXTBOX_PROMPT)
 
     // elmPromptBox.addEventListener("click", () => {
-        // elmPromptBox.setAttribute("placeholder", _placeholderPrompt)
+    // elmPromptBox.setAttribute("placeholder", _placeholderPrompt)
     // })
 
     // EXPERIMENTAL AREA
@@ -329,6 +329,7 @@ const attachEventListeners = () => {
     // intercept the sending of prompts: enter key and send button
     _elmPrompt = document.getElementById(_config.ID_PROMPT_INPUT)
 
+    // todo: explain with comments
     _elmPrompt.addEventListener('keydown', (e) => {
         if (_on && e.key === "Enter" && !e.shiftKey) {
             configCff()
@@ -404,6 +405,13 @@ const init = () => {
         .then(data => {
             _config = data
             init()
+
+            document.addEventListener('DOMContentLoaded', () => {
+                document.getElementsByTagName("nav").forEach(elm => {
+                    elm.addEventListener("click", attachEventListeners)
+                })
+            })
+
         })
         .catch(error => console.error('Error fetching JSON:', error))
 })()
