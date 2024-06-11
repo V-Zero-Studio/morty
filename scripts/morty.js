@@ -149,9 +149,9 @@ const monitorStreaming = () => {
                 // if the cff container has not been clear, don't set up post response yet;
                 // instead, set it up when a user clicks to reveal response
                 if (document.getElementsByClassName("cff-container").length <= 0) {
-                    setupPostResponseElements()
+                    _setupPostResponseElements()
                 } else {
-                    _elmResponse.parentElement.addEventListener("click", setupPostResponseElements)
+                    _elmResponse.parentElement.addEventListener("click", _setupPostResponseElements)
                 }
             }
         }
@@ -275,7 +275,7 @@ const _prefixPrompt = (e) => {
 //
 //
 //
-const setupPostResponseElements = () => {
+const _setupPostResponseElements = () => {
     // let elmPromptBox = document.getElementById(_config.ID_TEXTBOX_PROMPT)
 
     // elmPromptBox.addEventListener("click", () => {
@@ -293,6 +293,10 @@ const setupPostResponseElements = () => {
     }
 
     toolbar.appendChild(_divAgreementRating)
+
+    // in case this is triggered by clicking the reveal response option
+    // enable such handler only once
+    _elmResponse.parentElement.removeEventListener("click", _setupPostResponseElements)
 }
 
 //
