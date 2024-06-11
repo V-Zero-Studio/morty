@@ -361,19 +361,13 @@ const attachEventListeners = () => {
     //     }
     // })
 
-    document.addEventListener('keyup', function(event) {
-        if(event.target.id === _config.ID_PROMPT_INPUT){
-            // console.log("prompt box!")
-            if (_elmSendBtn == undefined) {
-                _elmSendBtn = document.querySelector(_config.QUERY_SEND_BTN)
-                if (_elmSendBtn != undefined) {
-                    _elmSendBtn.addEventListener('click', (e) => {
-                        configCff()
-                    }, true)
-                }
-            }
-        }
-    });
+    // document.addEventListener('click', function(event) {
+    //     const id = event.target.parentNode.getAttribute("data-testid")
+    //     console.log(id)
+    //     if (id === "fruitjuice-send-button") {
+    //         configCff()
+    //     }
+    // });
 }
 
 //
