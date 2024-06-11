@@ -22,6 +22,7 @@ const HTML_REVEAL_INFO = "(Click to reveal AI response)"
 
 // users' confidence levels
 const CONFI_QUESTION_PROMPT = "How confident are you if you were to respond to this prompt without ChatGPT's help?"
+// todo: extreme seems too extreme
 const CONFIDENCE_LEVELS = [
     "Not confident at all",
     "Slightly confident",
@@ -60,6 +61,7 @@ let _elmSendBtn = undefined
 let _placeholderPrompt = undefined
 let _confidence = undefined
 let _divAgreementRating = undefined
+// let _observePromptBox = undefined
 
 //
 // callback function to execute when mutations are observed
@@ -330,25 +332,48 @@ const attachEventListeners = () => {
     _elmPrompt = document.getElementById(_config.ID_PROMPT_INPUT)
 
     // todo: explain with comments
-    _elmPrompt.addEventListener('keydown', (e) => {
-        if (_on && e.key === "Enter" && !e.shiftKey) {
-            configCff()
+    // _elmPrompt.addEventListener('keydown', (e) => {
+    //     if (_on && e.key === "Enter" && !e.shiftKey) {
+    //         configCff()
+    //     }
+    // }, true)
+
+    document.addEventListener('keydown', function(event) {
+        if(event.target.id === _config.ID_PROMPT_INPUT){
+            // console.log("prompt box!")
+            if (_on && event.key === "Enter" && !event.shiftKey) {
+                configCff()
+            }
         }
-    }, true)
+    });
 
     // add prompt augmentation to the send button
     // because the send button is updated/renewed after typing in the prompt
     // an event handler needs to be added in real time
-    _elmPrompt.addEventListener('keyup', (e) => {
-        if (_elmSendBtn == undefined) {
-            _elmSendBtn = document.querySelector(_config.QUERY_SEND_BTN)
-            if (_elmSendBtn != undefined) {
-                _elmSendBtn.addEventListener('click', (e) => {
-                    configCff()
-                }, true)
+    // _elmPrompt.addEventListener('keyup', (e) => {
+    //     if (_elmSendBtn == undefined) {
+    //         _elmSendBtn = document.querySelector(_config.QUERY_SEND_BTN)
+    //         if (_elmSendBtn != undefined) {
+    //             _elmSendBtn.addEventListener('click', (e) => {
+    //                 configCff()
+    //             }, true)
+    //         }
+    //     }
+    // })
+
+    document.addEventListener('keyup', function(event) {
+        if(event.target.id === _config.ID_PROMPT_INPUT){
+            // console.log("prompt box!")
+            if (_elmSendBtn == undefined) {
+                _elmSendBtn = document.querySelector(_config.QUERY_SEND_BTN)
+                if (_elmSendBtn != undefined) {
+                    _elmSendBtn.addEventListener('click', (e) => {
+                        configCff()
+                    }, true)
+                }
             }
         }
-    })
+    });
 }
 
 //
@@ -360,6 +385,13 @@ const init = () => {
     console.log("morty ready")
 
     attachEventListeners()
+
+    // _observePromptBox = new MutationObserver((mutationsList, observer) => {
+    //     console.log("prompt box changed")
+    // })
+    // const elmPrompt = document.getElementById(_config.ID_PROMPT_INPUT)
+    // _observePromptBox.observe(elmPrompt.parentElement, { childList: true, subtree: true })
+
 
     // create on-web-page ui
     const btnSwitch = document.createElement('img')
@@ -397,6 +429,14 @@ const init = () => {
 //  entry function
 //
 (function () {
+    // document.addEventListener('DOMContentLoaded', () => {
+    //     document.getElementsByTagName("nav").forEach(elm => {
+    //         elm.addEventListener("click", attachEventListeners)
+    //     })
+    // })
+
+    
+
     const jsonFilePath = chrome.runtime.getURL(PATH_CONFIG_FILE)
 
     // load _config file
@@ -404,14 +444,9 @@ const init = () => {
         .then(response => response.json())
         .then(data => {
             _config = data
+
+            // todo: try moving this into DOMContentLoaded handler
             init()
-
-            document.addEventListener('DOMContentLoaded', () => {
-                document.getElementsByTagName("nav").forEach(elm => {
-                    elm.addEventListener("click", attachEventListeners)
-                })
-            })
-
         })
         .catch(error => console.error('Error fetching JSON:', error))
 })()

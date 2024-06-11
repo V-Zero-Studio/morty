@@ -8,9 +8,6 @@
         "48": "assets/icon48.png",
         "128": "assets/icon128.png"
       },
-    "disabled_action": {
-        "default_popup": "morty.html"
-    },
     "content_scripts": [
         {
             "js": [
