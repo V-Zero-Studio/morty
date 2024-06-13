@@ -361,13 +361,11 @@ const attachEventListeners = () => {
     //     }
     // })
 
-    // document.addEventListener('click', function(event) {
-    //     const id = event.target.parentNode.getAttribute("data-testid")
-    //     console.log(id)
-    //     if (id === "fruitjuice-send-button") {
-    //         configCff()
-    //     }
-    // });
+    document.addEventListener('click', function(event) {
+        if (event.target.tagName === "svg") {
+            configCff()
+        }
+    });
 }
 
 //
