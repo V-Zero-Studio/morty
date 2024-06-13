@@ -92,9 +92,6 @@ const callbackNewResponse = (mutationsList, observer) => {
                     // reset the send button element b/c it will change in the next prompt
                     _elmSendBtn = undefined
 
-                    // remove the diagreement rating ui
-                    // _divAgreementRating.remove()
-
                     return
                 }
             })
@@ -264,7 +261,7 @@ const revealResponse = () => {
 }
 
 //
-//
+//  use a textarea's placeholder as a prefilled prefix for the text to be entered
 //
 const _prefixPrompt = (e) => {
     e.target.value = e.target.getAttribute("placeholder") + " "
@@ -274,18 +271,10 @@ const _prefixPrompt = (e) => {
 }
 
 //
-//
+//  set up post response ui elements for mitigation 
 //
 const _setupPostResponseElements = () => {
-    // let elmPromptBox = document.getElementById(_config.ID_TEXTBOX_PROMPT)
-
-    // elmPromptBox.addEventListener("click", () => {
-    // elmPromptBox.setAttribute("placeholder", _placeholderPrompt)
-    // })
-
-    // EXPERIMENTAL AREA
     const toolbar = document.querySelectorAll(_config.QUERY_TOOLBAR)[0]
-
 
     document.getElementsByName("labelAgreement" + "-dot").forEach(elm => elm.classList.remove('selected'));
     const label = document.getElementById("labelAgreement" + "-span")
@@ -325,48 +314,6 @@ const configCff = () => {
 }
 
 
-// attach event listenrs to prompt textbox to append cff inducing prompts
-const attachEventListeners = () => {
-    // intercept the sending of prompts: enter key and send button
-    _elmPrompt = document.getElementById(_config.ID_PROMPT_INPUT)
-
-    // todo: explain with comments
-    // _elmPrompt.addEventListener('keydown', (e) => {
-    //     if (_on && e.key === "Enter" && !e.shiftKey) {
-    //         configCff()
-    //     }
-    // }, true)
-
-    document.addEventListener('keydown', function(event) {
-        if(event.target.id === _config.ID_PROMPT_INPUT){
-            // console.log("prompt box!")
-            if (_on && event.key === "Enter" && !event.shiftKey) {
-                configCff()
-            }
-        }
-    });
-
-    // add prompt augmentation to the send button
-    // because the send button is updated/renewed after typing in the prompt
-    // an event handler needs to be added in real time
-    // _elmPrompt.addEventListener('keyup', (e) => {
-    //     if (_elmSendBtn == undefined) {
-    //         _elmSendBtn = document.querySelector(_config.QUERY_SEND_BTN)
-    //         if (_elmSendBtn != undefined) {
-    //             _elmSendBtn.addEventListener('click', (e) => {
-    //                 configCff()
-    //             }, true)
-    //         }
-    //     }
-    // })
-
-    document.addEventListener('click', function(event) {
-        if (event.target.tagName === "svg") {
-            configCff()
-        }
-    });
-}
-
 //
 // initialization
 //
@@ -375,14 +322,24 @@ const init = () => {
 
     console.log("morty ready")
 
-    attachEventListeners()
+    // intercept the sending of prompts: enter key and send button
+    _elmPrompt = document.getElementById(_config.ID_PROMPT_INPUT)
 
-    // _observePromptBox = new MutationObserver((mutationsList, observer) => {
-    //     console.log("prompt box changed")
-    // })
-    // const elmPrompt = document.getElementById(_config.ID_PROMPT_INPUT)
-    // _observePromptBox.observe(elmPrompt.parentElement, { childList: true, subtree: true })
+    // trigger mitigation from enter key press to send prompt
+    document.addEventListener('keydown', function (event) {
+        if (event.target.id === _config.ID_PROMPT_INPUT) {
+            if (_on && event.key === "Enter" && !event.shiftKey) {
+                configCff()
+            }
+        }
+    });
 
+    // trigger mitigation from pressing send button
+    document.addEventListener('click', function (event) {
+        if (event.target.tagName === "svg") {
+            configCff()
+        }
+    });
 
     // create on-web-page ui
     const btnSwitch = document.createElement('img')
@@ -421,14 +378,6 @@ const init = () => {
 //  entry function
 //
 (function () {
-    // document.addEventListener('DOMContentLoaded', () => {
-    //     document.getElementsByTagName("nav").forEach(elm => {
-    //         elm.addEventListener("click", attachEventListeners)
-    //     })
-    // })
-
-    
-
     const jsonFilePath = chrome.runtime.getURL(PATH_CONFIG_FILE)
 
     // load _config file
