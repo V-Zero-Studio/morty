@@ -193,7 +193,7 @@ const setupCffElements = () => {
 //
 const setupConfElements = (container) => {
     _confidence = undefined
-    const divRating = _setupRatingUI("labelConfidence", CONFI_QUESTION_PROMPT, CONFIDENCE_LEVELS)
+    const divRating = _setupRatingUI("labelConfidence", CONFI_QUESTION_PROMPT, CONFIDENCE_LEVELS, false, revealResponse)
     container.prepend(divRating)
 }
 
@@ -238,7 +238,6 @@ const _setupRatingUI = (id, question, labelsRating, row = false, onRated = undef
             }
         })
         spanDot.addEventListener("click", (e) => {
-            revealResponse()
             if (onRated) {
                 onRated(i)
             }
@@ -407,6 +406,7 @@ const init = () => {
         const placeholder = "I " + AGREEMENT_LEVELS[idxRating].toLowerCase() + " because"
         if (ratingNormalized < 0.5) {
             elmPromptBox.setAttribute("placeholder", placeholder)
+            // clicking the prompt box will use the placeholder as the prefix to prefill the prompt
             elmPromptBox.addEventListener("click", _prefixPrompt)
             setTimeout(() => {
                 elmPromptBox.removeEventListener("click", _prefixPrompt)
