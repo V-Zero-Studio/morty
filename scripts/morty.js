@@ -61,7 +61,7 @@ let _elmSendBtn = undefined
 let _placeholderPrompt = undefined
 let _confidence = undefined
 let _divAgreementRating = undefined
-// let _observePromptBox = undefined
+let _isFollowUp = false
 
 //
 // callback function to execute when mutations are observed
@@ -85,8 +85,10 @@ const callbackNewResponse = (mutationsList, observer) => {
                     _elmResponse = elements[elements.length - 1]
 
                     if (_on) {
-                        setupCffElements()
-                        setupConfElements(_divCff)
+                        if(!_isFollowUp) {
+                            setupCffElements()
+                            setupConfElements(_divCff)
+                        }
                     }
 
                     // reset the send button element b/c it will change in the next prompt
@@ -152,6 +154,8 @@ const monitorStreaming = () => {
                 } else {
                     _elmResponse.parentElement.addEventListener("click", _setupPostResponseElements)
                 }
+
+                _isFollowUp = false
             }
         }
     }, INTERVAL_MONITOR_STREAMING)
@@ -290,6 +294,22 @@ const _setupPostResponseElements = () => {
 }
 
 //
+//
+//
+const isFollowUp = (prompt) => {
+    // console.info(prompt)
+    for (idx in AGREEMENT_LEVELS) {
+        if (idx <= AGREEMENT_LEVELS.length / 2) {
+            if (prompt.includes("I " + AGREEMENT_LEVELS[idx].toLowerCase())) {
+                return true
+            }
+        }
+    }
+
+    return false
+}
+
+//
 // configure cff: start or stop the monitor for implementing cff on the response element
 //
 const configCff = () => {
@@ -318,7 +338,7 @@ const configCff = () => {
 // initialization
 //
 const init = () => {
-    configCff()
+    // configCff()
 
     console.log("morty ready")
 
@@ -329,13 +349,15 @@ const init = () => {
     document.addEventListener('keydown', function (event) {
         if (event.target.id === _config.ID_PROMPT_INPUT) {
             if (_on && event.key === "Enter" && !event.shiftKey) {
+                _isFollowUp = isFollowUp(event.target.value)
                 configCff()
             }
         }
-    });
+    }, true)
 
     // trigger mitigation from pressing send button
     document.addEventListener('click', function (event) {
+        // todo: detect if it is follow up
         if (event.target.tagName === "svg") {
             configCff()
         }
