@@ -35,7 +35,7 @@ const AGREEMENT_QUESTION_PROMPT = "Do you agree with ChatGPT?"
 const AGREEMENT_LEVELS = [
     "Totally disagree",
     "Somewhat disagree",
-    "Doubt it",
+    "Have doubt",
     "Somewhat agree",
     "Totally agree"
 ]
@@ -180,12 +180,13 @@ const setupCffElements = () => {
     _elmResponse.style.opacity = FADE_OPACITY.toString()
     clearCffContainer(false)
     _elmResponse.parentElement.appendChild(_divCff)
+    _elmResponse.parentElement.addEventListener("click", revealResponse)
 
     const spanRevealInfo = document.createElement('span')
     spanRevealInfo.classList.add("reveal")
     spanRevealInfo.innerHTML = HTML_REVEAL_INFO
     _divCff.appendChild(spanRevealInfo)
-    spanRevealInfo.addEventListener("click", revealResponse)
+    
 }
 
 //
@@ -392,11 +393,13 @@ const init = () => {
             // clicking the prompt box will use the placeholder as the prefix to prefill the prompt
             elmPromptBox.addEventListener("click", prefixPrompt)
             
+            // remove it after a timeout, assuming the user would have ignored it by then
             setTimeout(() => {
                 elmPromptBox.removeEventListener("click", prefixPrompt)
             }, TIMEOUT_PLACEHOLDER_RESET);
         } else {
             elmPromptBox.setAttribute("placeholder", _placeholderPrompt)
+            elmPromptBox.removeEventListener("click", prefixPrompt)
         }
     })
 }
