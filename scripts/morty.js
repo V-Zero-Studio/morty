@@ -194,7 +194,7 @@ const setupCffElements = () => {
 //
 const setupConfElements = (container) => {
     _confidence = undefined
-    const divRating = setupRatingUI("labelConfidence", CONFI_QUESTION_PROMPT, CONFIDENCE_LEVELS, false, revealResponse)
+    const divRating = setupRatingUI("labelConfidence", CONFI_QUESTION_PROMPT, CONFIDENCE_LEVELS, false)
     container.prepend(divRating)
 }
 
@@ -237,12 +237,18 @@ const setupRatingUI = (id, question, labelsRating, row = false, onRated = undefi
                     dots[j].classList.remove("selected")
                 }
             }
-        })
-        spanDot.addEventListener("click", (e) => {
+
             if (onRated) {
                 onRated(i)
             }
         })
+
+        // spanDot.addEventListener("click", (e) => {
+        //     if (onRated) {
+        //         onRated(i)
+        //     }
+        // })
+
         divDots.appendChild(spanDot)
     }
 
