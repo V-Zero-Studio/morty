@@ -150,9 +150,9 @@ const monitorStreaming = () => {
                 // if the cff container has not been clear, don't set up post response yet;
                 // instead, set it up when a user clicks to reveal response
                 if (document.getElementsByClassName("cff-container").length <= 0) {
-                    _setupPostResponseElements()
+                    setupPostResponseElements()
                 } else {
-                    _elmResponse.parentElement.addEventListener("click", _setupPostResponseElements)
+                    _elmResponse.parentElement.addEventListener("click", setupPostResponseElements)
                 }
 
                 _isFollowUp = false
@@ -194,7 +194,7 @@ const setupCffElements = () => {
 //
 const setupConfElements = (container) => {
     _confidence = undefined
-    const divRating = _setupRatingUI("labelConfidence", CONFI_QUESTION_PROMPT, CONFIDENCE_LEVELS, false, revealResponse)
+    const divRating = setupRatingUI("labelConfidence", CONFI_QUESTION_PROMPT, CONFIDENCE_LEVELS, false, revealResponse)
     container.prepend(divRating)
 }
 
@@ -202,7 +202,7 @@ const setupConfElements = (container) => {
 //
 // 
 // todo: move the style to .css
-const _setupRatingUI = (id, question, labelsRating, row = false, onRated = undefined) => {
+const setupRatingUI = (id, question, labelsRating, row = false, onRated = undefined) => {
     const divRating = document.createElement("div")
 
     if (row) {
@@ -267,7 +267,7 @@ const revealResponse = () => {
 //
 //  use a textarea's placeholder as a prefilled prefix for the text to be entered
 //
-const _prefixPrompt = (e) => {
+const prefixPrompt = (e) => {
     e.target.value = e.target.getAttribute("placeholder") + " "
     const textLength = e.target.value.length
     e.target.setSelectionRange(textLength, textLength)
@@ -277,7 +277,7 @@ const _prefixPrompt = (e) => {
 //
 //  set up post response ui elements for mitigation 
 //
-const _setupPostResponseElements = () => {
+const setupPostResponseElements = () => {
     const toolbar = document.querySelectorAll(_config.QUERY_TOOLBAR)[0]
 
     document.getElementsByName("labelAgreement" + "-dot").forEach(elm => elm.classList.remove('selected'));
@@ -290,7 +290,7 @@ const _setupPostResponseElements = () => {
 
     // in case this is triggered by clicking the reveal response option
     // enable such handler only once
-    _elmResponse.parentElement.removeEventListener("click", _setupPostResponseElements)
+    _elmResponse.parentElement.removeEventListener("click", setupPostResponseElements)
 }
 
 //
@@ -379,16 +379,16 @@ const init = () => {
     _placeholderPrompt = elmPromptBox.getAttribute("placeholder")
 
     // set up the disagreement rating ui
-    _divAgreementRating = _setupRatingUI("labelAgreement", AGREEMENT_QUESTION_PROMPT, AGREEMENT_LEVELS, true, (idxRating) => {
+    _divAgreementRating = setupRatingUI("labelAgreement", AGREEMENT_QUESTION_PROMPT, AGREEMENT_LEVELS, true, (idxRating) => {
         let elmPromptBox = document.getElementById(_config.ID_TEXTBOX_PROMPT)
         const ratingNormalized = idxRating * 1.0 / AGREEMENT_LEVELS.length
         const placeholder = "I " + AGREEMENT_LEVELS[idxRating].toLowerCase() + " because"
         if (ratingNormalized < 0.5) {
             elmPromptBox.setAttribute("placeholder", placeholder)
             // clicking the prompt box will use the placeholder as the prefix to prefill the prompt
-            elmPromptBox.addEventListener("click", _prefixPrompt)
+            elmPromptBox.addEventListener("click", prefixPrompt)
             setTimeout(() => {
-                elmPromptBox.removeEventListener("click", _prefixPrompt)
+                elmPromptBox.removeEventListener("click", prefixPrompt)
             }, TIMEOUT_PLACEHOLDER_RESET);
         } else {
             elmPromptBox.setAttribute("placeholder", _placeholderPrompt)
