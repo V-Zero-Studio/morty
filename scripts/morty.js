@@ -22,13 +22,12 @@ const HTML_REVEAL_INFO = "(Click to reveal AI response)"
 
 // users' confidence levels
 const CONFI_QUESTION_PROMPT = "How confident are you if you were to respond to this prompt without ChatGPT's help?"
-// todo: extreme seems too extreme
 const CONFIDENCE_LEVELS = [
     "Not confident at all",
     "Slightly confident",
     "Moderately confident",
-    "Very confident",
-    "Extremely confident"
+    "Quite confident",
+    "Very confident"
 ]
 
 // 
