@@ -300,10 +300,9 @@ const setupPostResponseElements = () => {
 }
 
 //
-//
+//  use a simple rule to detect if the prompt is a follow-up based on disagreement
 //
 const isFollowUp = (prompt) => {
-    // console.info(prompt)
     for (idx in AGREEMENT_LEVELS) {
         if (idx <= AGREEMENT_LEVELS.length / 2) {
             if (prompt.includes("I " + AGREEMENT_LEVELS[idx].toLowerCase())) {
@@ -344,8 +343,6 @@ const configCff = () => {
 // initialization
 //
 const init = () => {
-    // configCff()
-
     console.log("morty ready")
 
     // intercept the sending of prompts: enter key and send button
@@ -363,7 +360,8 @@ const init = () => {
 
     // trigger mitigation from pressing send button
     document.addEventListener('click', function (event) {
-        // todo: detect if it is follow up
+        // currently svg can capture this button press but maybe also svg's
+        // but with false positives, configCff wouldn't cause any subsequent actions
         if (event.target.tagName === "svg") {
             configCff()
         }
@@ -384,15 +382,17 @@ const init = () => {
     let elmPromptBox = document.getElementById(_config.ID_TEXTBOX_PROMPT)
     _placeholderPrompt = elmPromptBox.getAttribute("placeholder")
 
-    // set up the disagreement rating ui
+    // set up the disagreement rating ui (just once)
     _divAgreementRating = setupRatingUI("labelAgreement", AGREEMENT_QUESTION_PROMPT, AGREEMENT_LEVELS, true, (idxRating) => {
         let elmPromptBox = document.getElementById(_config.ID_TEXTBOX_PROMPT)
         const ratingNormalized = idxRating * 1.0 / AGREEMENT_LEVELS.length
         const placeholder = "I " + AGREEMENT_LEVELS[idxRating].toLowerCase() + " because"
         if (ratingNormalized < 0.5) {
             elmPromptBox.setAttribute("placeholder", placeholder)
+
             // clicking the prompt box will use the placeholder as the prefix to prefill the prompt
             elmPromptBox.addEventListener("click", prefixPrompt)
+            
             setTimeout(() => {
                 elmPromptBox.removeEventListener("click", prefixPrompt)
             }, TIMEOUT_PLACEHOLDER_RESET);
@@ -413,8 +413,6 @@ const init = () => {
         .then(response => response.json())
         .then(data => {
             _config = data
-
-            // todo: try moving this into DOMContentLoaded handler
             init()
         })
         .catch(error => console.error('Error fetching JSON:', error))
