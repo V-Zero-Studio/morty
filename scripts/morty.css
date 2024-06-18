@@ -44,7 +44,12 @@ span.reveal {
   z-index: 1000;
 }
 
-.dot {
+div.dots{
+  display: flex;
+  flex-direction: row;
+}
+
+span.dot {
   height: 15px;
   width: 15px;
   background-color: #bbb;
@@ -55,7 +60,8 @@ span.reveal {
   margin-top: 5px;
   cursor: pointer;
 }
-.selected {
+
+span.selected {
   background-color: #4a4b4c; /* Green */
 }
 
@@ -71,4 +77,17 @@ textarea.post-response {
 div.post-response{
   align-items: center; /* Aligns children vertically in the center */
   justify-content: center; /* Optional, for horizontal centering */
+}
+
+span.rating {
+  margin-left: 5px;
+}
+
+div.rating-row {
+  display: flex;
+  flex-direction: row;
+}
+
+p.rating-question {
+  margin-right: 5px;
 }

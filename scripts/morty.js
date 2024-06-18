@@ -199,28 +199,26 @@ const setupConfElements = (container) => {
 }
 
 //
+//  set up ui to specify rating
+//  row: whether to place everything in a row (o/w in two lines: one for question and one for rating scale)
+//  onRated: call back when rating changes
 //
-// 
-// todo: move the style to .css
 const setupRatingUI = (id, question, labelsRating, row = false, onRated = undefined) => {
     const divRating = document.createElement("div")
 
     if (row) {
-        divRating.style.display = "flex"
-        divRating.style.flexDirection = "row"
+        divRating.classList.add("rating-row")
     }
 
     // the question
     const pRatingQuestion = document.createElement("p")
     pRatingQuestion.innerHTML = question
-    pRatingQuestion.style.marginRight = "5px"
+    pRatingQuestion.classList.add("rating-question")
     divRating.appendChild(pRatingQuestion)
 
     // the rating options
     const divDots = document.createElement("div")
-
-    divDots.style.display = "flex"
-    divDots.style.flexDirection = "row"
+    divDots.classList.add("dots")
 
     for (let i = 0; i < labelsRating.length; i++) {
         const spanDot = document.createElement("span")
@@ -243,19 +241,14 @@ const setupRatingUI = (id, question, labelsRating, row = false, onRated = undefi
             }
         })
 
-        // spanDot.addEventListener("click", (e) => {
-        //     if (onRated) {
-        //         onRated(i)
-        //     }
-        // })
-
         divDots.appendChild(spanDot)
     }
 
-    const spanConf = document.createElement("span")
-    spanConf.setAttribute("id", id + "-span")
-    spanConf.style.marginLeft = "5px"
-    divDots.appendChild(spanConf)
+    // the label that describes rating
+    const spanRating = document.createElement("span")
+    spanRating.setAttribute("id", id + "-span")
+    spanRating.classList.add("rating")
+    divDots.appendChild(spanRating)
 
     divRating.appendChild(divDots)
 
