@@ -84,7 +84,7 @@ const callbackNewResponse = (mutationsList, observer) => {
                     _elmResponse = elements[elements.length - 1]
 
                     if (_on) {
-                        if(!_isFollowUp) {
+                        if (!_isFollowUp) {
                             setupCffElements()
                             setupConfElements(_divCff)
                         }
@@ -186,7 +186,7 @@ const setupCffElements = () => {
     spanRevealInfo.classList.add("reveal")
     spanRevealInfo.innerHTML = HTML_REVEAL_INFO
     _divCff.appendChild(spanRevealInfo)
-    
+
 }
 
 //
@@ -227,8 +227,8 @@ const setupRatingUI = (id, question, labelsRating, row = false, onRated = undefi
         spanDot.addEventListener("mouseover", (e) => {
             document.getElementById(id + "-span").innerHTML = labelsRating[i]
 
-            var dots = document.getElementsByName(id + "-dot")
-            for (var j = 0; j < dots.length; j++) {
+            const dots = document.getElementsByName(id + "-dot")
+            for (let j = 0; j < dots.length; j++) {
                 if (j <= i) {
                     dots[j].classList.add("selected")
                 } else {
@@ -384,7 +384,7 @@ const init = () => {
 
             // clicking the prompt box will use the placeholder as the prefix to prefill the prompt
             elmPromptBox.addEventListener("click", prefixPrompt)
-            
+
             // remove it after a timeout, assuming the user would have ignored it by then
             setTimeout(() => {
                 elmPromptBox.removeEventListener("click", prefixPrompt)
@@ -396,8 +396,14 @@ const init = () => {
         }
     })
 
-    _divAgreementRating.addEventListener("click", () => {
-        fadeOutAndRemove(_divAgreementRating)
+    // _divAgreementRating.addEventListener("click", () => {
+    //     fadeOutAndRemove(_divAgreementRating)
+    // })
+
+    _divAgreementRating.querySelectorAll('[name="labelAgreement-dot"]').forEach(elm => {
+        elm.addEventListener("click", () => {
+            fadeOutAndRemove(_divAgreementRating)
+        })
     })
 }
 
