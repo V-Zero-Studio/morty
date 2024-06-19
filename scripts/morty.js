@@ -278,14 +278,13 @@ const prefixPrompt = (e) => {
 //
 const setupPostResponseElements = () => {
     const toolbar = document.querySelectorAll(_config.QUERY_TOOLBAR)[0]
+    toolbar.appendChild(_divAgreementRating)
 
     document.getElementsByName("labelAgreement" + "-dot").forEach(elm => elm.classList.remove('selected'));
     const label = document.getElementById("labelAgreement" + "-span")
     if (label != null) {
         label.innerHTML = ""
     }
-
-    toolbar.appendChild(_divAgreementRating)
 
     // in case this is triggered by clicking the reveal response option
     // enable such handler only once
@@ -394,6 +393,10 @@ const init = () => {
             elmPromptBox.setAttribute("placeholder", _placeholderPrompt)
             elmPromptBox.removeEventListener("click", prefixPrompt)
         }
+    })
+
+    _divAgreementRating.addEventListener("click", () => {
+        fadeOutAndRemove(_divAgreementRating)
     })
 }
 
