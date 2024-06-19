@@ -388,6 +388,7 @@ const init = () => {
             // remove it after a timeout, assuming the user would have ignored it by then
             setTimeout(() => {
                 elmPromptBox.removeEventListener("click", prefixPrompt)
+                elmPromptBox.setAttribute("placeholder", _placeholderPrompt)
             }, TIMEOUT_PLACEHOLDER_RESET);
         } else {
             elmPromptBox.setAttribute("placeholder", _placeholderPrompt)
