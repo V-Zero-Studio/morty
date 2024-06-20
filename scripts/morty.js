@@ -8,9 +8,12 @@ const PATH_CONFIG_FILE = "data/config.json"
 const CFF_ONDEMAND = 1
 const CFF_NONE = -1
 
+const CFF_DEFAULT = 1
+
 // design parameters for cff
 const HEIGHT_CFF_CONTAINER = 100
 const HEIGHT_POST_RESPONSE = 300
+const INTERVAL_MONITOR_STREAMING = 2000 // ms
 
 // design parameters for cff_wait
 const FADE_RATIO = 1.25 // how fast the covered response area fades
@@ -30,7 +33,7 @@ const CONFIDENCE_LEVELS = [
     "Very confident"
 ]
 
-// 
+// agreement rating
 const AGREEMENT_QUESTION_PROMPT = "Do you agree with ChatGPT?"
 const AGREEMENT_LEVELS = [
     "Totally disagree",
@@ -39,26 +42,16 @@ const AGREEMENT_LEVELS = [
     "Somewhat agree",
     "Totally agree"
 ]
-
-// default values
-const CFF_DEFAULT = 1
-
 const TIMEOUT_PLACEHOLDER_RESET = 30000
 
-const TEXT_POST_RESPONSE = "Tell ChatGPT which part(s) of its response you most disagree with"
 
 let _on = true
-
-// others
-const INTERVAL_MONITOR_STREAMING = 2000 // ms
 let _config = {}
 let _observerNewResponse = undefined
 let _elmResponse = undefined
 let _divCff = undefined
 let _elmPrompt = undefined
-let _elmSendBtn = undefined
 let _placeholderPrompt = undefined
-let _confidence = undefined
 let _divAgreementRating = undefined
 let _isFollowUp = false
 
@@ -80,18 +73,13 @@ const callbackNewResponse = (mutationsList, observer) => {
                     elements.forEach((value, index, array) => {
                         array[index].style.opacity = 1
                     })
-
                     _elmResponse = elements[elements.length - 1]
 
-                    if (_on) {
-                        if (!_isFollowUp) {
-                            setupCffElements()
-                            setupConfElements(_divCff)
-                        }
+                    if (_on && !_isFollowUp) {
+                        setupCffElements()
+                        const divRating = setupRatingUI("labelConfidence", CONFI_QUESTION_PROMPT, CONFIDENCE_LEVELS, false)
+                        _divCff.prepend(divRating)
                     }
-
-                    // reset the send button element b/c it will change in the next prompt
-                    _elmSendBtn = undefined
 
                     return
                 }
@@ -137,7 +125,6 @@ const fadeOutAndRemove = (element) => {
 //
 const monitorStreaming = () => {
     setTimeout(() => {
-
         // indicator of streaming ended
         var elements = document.querySelectorAll('[class*="' + _config.KEYWORD_STREAMING + '"')
         if (elements.length > 0) {
@@ -187,15 +174,6 @@ const setupCffElements = () => {
     spanRevealInfo.innerHTML = HTML_REVEAL_INFO
     _divCff.appendChild(spanRevealInfo)
 
-}
-
-//
-// set up confidence rating elements
-//
-const setupConfElements = (container) => {
-    _confidence = undefined
-    const divRating = setupRatingUI("labelConfidence", CONFI_QUESTION_PROMPT, CONFIDENCE_LEVELS, false)
-    container.prepend(divRating)
 }
 
 //
@@ -395,10 +373,6 @@ const init = () => {
             elmPromptBox.removeEventListener("click", prefixPrompt)
         }
     })
-
-    // _divAgreementRating.addEventListener("click", () => {
-    //     fadeOutAndRemove(_divAgreementRating)
-    // })
 
     _divAgreementRating.querySelectorAll('[name="labelAgreement-dot"]').forEach(elm => {
         elm.addEventListener("click", () => {
