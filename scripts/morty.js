@@ -7,7 +7,6 @@ const PATH_CONFIG_FILE = "data/config.json"
 // cognitive forcing function variations
 const CFF_ONDEMAND = 1
 const CFF_NONE = -1
-
 const CFF_DEFAULT = 1
 
 // design parameters for cff
@@ -374,6 +373,7 @@ const init = () => {
         }
     })
 
+    // remove the agreement rating when finished, providing a closure
     _divAgreementRating.querySelectorAll('[name="labelAgreement-dot"]').forEach(elm => {
         elm.addEventListener("click", () => {
             fadeOutAndRemove(_divAgreementRating)

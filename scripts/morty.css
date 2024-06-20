@@ -1,8 +1,3 @@
-.btn-reveal {
-  text-decoration: underline;
-  cursor: pointer;
-}
-
 .cff-container {
   position: fixed;
   align-items: center; /* Aligns children vertically in the center */
@@ -22,14 +17,10 @@
 @keyframes fadeOutAnimation {
   from {
     opacity: 1;
-}
-to {
+  }
+  to {
     opacity: 0;
-}
-}
-
-p.hint {
-  margin-bottom: 20px;
+  }
 }
 
 span.reveal {
@@ -44,7 +35,7 @@ span.reveal {
   z-index: 1000;
 }
 
-div.dots{
+div.dots {
   display: flex;
   flex-direction: row;
 }
@@ -74,7 +65,7 @@ textarea.post-response {
   line-height: normal;
 }
 
-div.post-response{
+div.post-response {
   align-items: center; /* Aligns children vertically in the center */
   justify-content: center; /* Optional, for horizontal centering */
 }
