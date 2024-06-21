@@ -54,6 +54,10 @@ let _placeholderPrompt = undefined
 let _divAgreementRating = undefined
 let _isFollowUp = false
 
+// data logging related
+let _isLogging = true
+let _sessionEntry = {}
+
 //
 // callback function to execute when mutations are observed
 //
@@ -141,6 +145,11 @@ const monitorStreaming = () => {
                 }
 
                 _isFollowUp = false
+            }
+
+            // create a new session entry
+            if (_isLogging) {
+                saveLog()
             }
         }
     }, INTERVAL_MONITOR_STREAMING)
@@ -321,8 +330,13 @@ const init = () => {
     document.addEventListener('keydown', function (event) {
         if (event.target.id === _config.ID_PROMPT_INPUT) {
             if (_on && event.key === "Enter" && !event.shiftKey) {
-                _isFollowUp = isFollowUp(event.target.value)
+                const prompt = event.target.value
+                _isFollowUp = isFollowUp(prompt)
                 configCff()
+
+                if (_isLogging) {
+                    _sessionEntry["prompt"] = prompt
+                }
             }
         }
     }, true)
@@ -382,6 +396,18 @@ const init = () => {
 }
 
 //
+//
+//
+const saveLog = () => {
+    let logItems = {}
+    logItems[new Date().toISOString()] = _sessionEntry
+    chrome.storage.sync.set(logItems, () => {
+        console.log("saved:", _sessionEntry)
+        _sessionEntry = {}
+    })
+}
+
+//
 //  entry function
 //
 (function () {
@@ -392,7 +418,19 @@ const init = () => {
         .then(response => response.json())
         .then(data => {
             _config = data
+
             init()
+
+            // initialize data storage
+            // if (_isLogging) {
+            //     saveLog()
+            // }
+
+            chrome.storage.sync.get(null, function (items) {
+                console.log('All data in sync storage:', items);
+                // items is an object containing all key-value pairs
+            });
+            // chrome.storage.sync.clear()
         })
         .catch(error => console.error('Error fetching JSON:', error))
 })()
