@@ -56,7 +56,7 @@ let _isFollowUp = false
 
 // data logging related
 let _isLogging = true
-let _sessionEntry = {}
+let _sessionEntry
 
 //
 // callback function to execute when mutations are observed
@@ -80,7 +80,14 @@ const callbackNewResponse = (mutationsList, observer) => {
 
                     if (_on && !_isFollowUp) {
                         setupCffElements()
-                        const divRating = setupRatingUI("labelConfidence", CONFI_QUESTION_PROMPT, CONFIDENCE_LEVELS, false)
+                        const divRating = setupRatingUI("labelConfidence", CONFI_QUESTION_PROMPT, CONFIDENCE_LEVELS, false, (scale)=> {
+                            _sessionEntry.confidenceRating.rating = scale
+                        })
+                        // divRating.querySelectorAll('[name="labelConfidence-dot"]').forEach(elm => {
+                        //     elm.addEventListener("click", () => {
+                        //         _sessionEntry.confidenceRating.rating
+                        //     })
+                        // })
                         _divCff.prepend(divRating)
                     }
 
@@ -335,7 +342,7 @@ const init = () => {
                 configCff()
 
                 if (_isLogging) {
-                    _sessionEntry["prompt"] = prompt
+                    _sessionEntry.prompt = prompt
                 }
             }
         }
@@ -403,8 +410,23 @@ const saveLog = () => {
     logItems[new Date().toISOString()] = _sessionEntry
     chrome.storage.sync.set(logItems, () => {
         console.log("saved:", _sessionEntry)
-        _sessionEntry = {}
+        _sessionEntry = createNewLogEntry()
     })
+}
+
+//
+//
+//
+const createNewLogEntry = () => {
+    return {
+        prompt: undefined,
+        confidenceRating: {
+            responseTime: undefined,
+            rating: undefined
+            // how much hovering
+            // how long it takes to decide
+        }
+    }
 }
 
 //
@@ -421,16 +443,11 @@ const saveLog = () => {
 
             init()
 
-            // initialize data storage
-            // if (_isLogging) {
-            //     saveLog()
-            // }
-
             chrome.storage.sync.get(null, function (items) {
                 console.log('All data in sync storage:', items);
-                // items is an object containing all key-value pairs
             });
-            // chrome.storage.sync.clear()
+            chrome.storage.sync.clear()
+            _sessionEntry = createNewLogEntry()
         })
         .catch(error => console.error('Error fetching JSON:', error))
 })()
