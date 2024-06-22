@@ -69,6 +69,7 @@ const callbackNewResponse = (mutationsList, observer) => {
                     _observerNewResponse.disconnect()
 
                     console.log("streaming starts")
+                    _sessionEntry.timeStamp = new Date().toISOString()
                     monitorStreaming()
 
                     // reset all previous response elements to full opacity
@@ -80,8 +81,8 @@ const callbackNewResponse = (mutationsList, observer) => {
 
                     if (_on && !_isFollowUp) {
                         setupCffElements()
-                        const divRating = setupRatingUI("labelConfidence", CONFI_QUESTION_PROMPT, CONFIDENCE_LEVELS, false, (scale)=> {
-                            _sessionEntry.confidenceRating.rating = scale
+                        const divRating = setupRatingUI("labelConfidence", CONFI_QUESTION_PROMPT, CONFIDENCE_LEVELS, false, (idxRating)=> {
+                            _sessionEntry.confidenceRating.rating = idxRating
                         })
                         // divRating.querySelectorAll('[name="labelConfidence-dot"]').forEach(elm => {
                         //     elm.addEventListener("click", () => {
@@ -152,11 +153,6 @@ const monitorStreaming = () => {
                 }
 
                 _isFollowUp = false
-            }
-
-            // create a new session entry
-            if (_isLogging) {
-                saveLog()
             }
         }
     }, INTERVAL_MONITOR_STREAMING)
@@ -392,11 +388,18 @@ const init = () => {
             elmPromptBox.setAttribute("placeholder", _placeholderPrompt)
             elmPromptBox.removeEventListener("click", prefixPrompt)
         }
+
+        if(_isLogging) {
+            _sessionEntry.agreementRating.rating = idxRating
+        }
     })
 
     // remove the agreement rating when finished, providing a closure
     _divAgreementRating.querySelectorAll('[name="labelAgreement-dot"]').forEach(elm => {
         elm.addEventListener("click", () => {
+            if (_isLogging) {
+                saveLog(_sessionEntry.timeStamp)
+            }
             fadeOutAndRemove(_divAgreementRating)
         })
     })
@@ -405,9 +408,13 @@ const init = () => {
 //
 //
 //
-const saveLog = () => {
+const saveLog = (key) => {
+    if(key == undefined) {
+        console.error("key cannot be undefined")
+        return
+    }
     let logItems = {}
-    logItems[new Date().toISOString()] = _sessionEntry
+    logItems[key] = _sessionEntry
     chrome.storage.sync.set(logItems, () => {
         console.log("saved:", _sessionEntry)
         _sessionEntry = createNewLogEntry()
@@ -419,12 +426,17 @@ const saveLog = () => {
 //
 const createNewLogEntry = () => {
     return {
+        timeStamp: undefined,
         prompt: undefined,
         confidenceRating: {
-            responseTime: undefined,
+            responseTime: undefined, // todo: properly define this attr
             rating: undefined
             // how much hovering
             // how long it takes to decide
+        },
+        agreementRating: {
+            responseTime: undefined, // todo: properly define this attr
+            rating: undefined
         }
     }
 }
