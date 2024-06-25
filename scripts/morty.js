@@ -79,16 +79,17 @@ const callbackNewResponse = (mutationsList, observer) => {
                     })
                     _elmResponse = elements[elements.length - 1]
 
+                    // logging interaction behavior on response area
+                    _elmResponse.addEventListener("mousewheel", (e) => {
+                        // console.log("scroll", e.deltaY)
+                        _sessionEntry.scrollEvents.push({timeStamp: e.timeStamp, offset: e.deltaY})
+                    })
+
                     if (_on && !_isFollowUp) {
                         setupCffElements()
                         const divRating = setupRatingUI("labelConfidence", CONFI_QUESTION_PROMPT, CONFIDENCE_LEVELS, false, (idxRating) => {
                             _sessionEntry.confidenceRating.rating = idxRating
                         })
-                        // divRating.querySelectorAll('[name="labelConfidence-dot"]').forEach(elm => {
-                        //     elm.addEventListener("click", () => {
-                        //         _sessionEntry.confidenceRating.rating
-                        //     })
-                        // })
                         _divCff.prepend(divRating)
                     }
 
@@ -429,6 +430,9 @@ const createNewLogEntry = () => {
             rating: undefined
             // how much hovering
             // how long it takes to decide
+        },
+        scrolling: {
+            scrollEvents: []
         },
         agreementRating: {
             responseTime: undefined, // todo: properly define this attr
