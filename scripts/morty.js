@@ -81,7 +81,7 @@ const callbackNewResponse = (mutationsList, observer) => {
 
                     if (_on && !_isFollowUp) {
                         setupCffElements()
-                        const divRating = setupRatingUI("labelConfidence", CONFI_QUESTION_PROMPT, CONFIDENCE_LEVELS, false, (idxRating)=> {
+                        const divRating = setupRatingUI("labelConfidence", CONFI_QUESTION_PROMPT, CONFIDENCE_LEVELS, false, (idxRating) => {
                             _sessionEntry.confidenceRating.rating = idxRating
                         })
                         // divRating.querySelectorAll('[name="labelConfidence-dot"]').forEach(elm => {
@@ -337,9 +337,7 @@ const init = () => {
                 _isFollowUp = isFollowUp(prompt)
                 configCff()
 
-                if (_isLogging) {
-                    _sessionEntry.prompt = prompt
-                }
+                _sessionEntry.prompt = prompt
             }
         }
     }, true)
@@ -389,9 +387,7 @@ const init = () => {
             elmPromptBox.removeEventListener("click", prefixPrompt)
         }
 
-        if(_isLogging) {
-            _sessionEntry.agreementRating.rating = idxRating
-        }
+        _sessionEntry.agreementRating.rating = idxRating
     })
 
     // remove the agreement rating when finished, providing a closure
@@ -409,7 +405,7 @@ const init = () => {
 //
 //
 const saveLog = (key) => {
-    if(key == undefined) {
+    if (key == undefined) {
         console.error("key cannot be undefined")
         return
     }
