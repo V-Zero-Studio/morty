@@ -55,9 +55,10 @@ let _divAgreementRating = undefined
 let _isFollowUp = false
 
 // data logging related
+const TIMEOUT_AUTO_LOG_SAVE = 30000
 let _isLogging = true
 let _sessionEntry
-
+let _autoSaveTimeout
 //
 // callback function to execute when mutations are observed
 //
@@ -155,6 +156,13 @@ const monitorStreaming = () => {
 
                 _isFollowUp = false
             }
+
+            // auto save
+            _autoSaveTimeout = setTimeout(() => {
+                if (_isLogging && _sessionEntry != undefined) {
+                    saveLog()
+                }
+            }, TIMEOUT_AUTO_LOG_SAVE);
         }
     }, INTERVAL_MONITOR_STREAMING)
 
@@ -394,22 +402,27 @@ const init = () => {
     // remove the agreement rating when finished, providing a closure
     _divAgreementRating.querySelectorAll('[name="labelAgreement-dot"]').forEach(elm => {
         elm.addEventListener("click", () => {
-            if (_isLogging) {
-                saveLog(_sessionEntry.timeStamp)
-            }
             fadeOutAndRemove(_divAgreementRating)
         })
+    })
+
+    // starting a new prompt saves the previous session entry
+    elmPromptBox.addEventListener("click", () => {
+        if (_isLogging && _sessionEntry.timeStamp != undefined) {
+            saveLog()
+            clearTimeout(_autoSaveTimeout)
+        }
     })
 }
 
 //
 //
 //
-const saveLog = (key) => {
-    if (key == undefined) {
-        console.error("key cannot be undefined")
+const saveLog = () => {
+    if (_sessionEntry == undefined) {
         return
     }
+    const key = _sessionEntry.timeStamp
     let logItems = {}
     logItems[key] = _sessionEntry
     chrome.storage.sync.set(logItems, () => {
@@ -431,9 +444,7 @@ const createNewLogEntry = () => {
             // how much hovering
             // how long it takes to decide
         },
-        scrolling: {
-            scrollEvents: []
-        },
+        scrollEvents: [],
         agreementRating: {
             responseTime: undefined, // todo: properly define this attr
             rating: undefined
