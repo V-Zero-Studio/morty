@@ -80,11 +80,7 @@ const callbackNewResponse = (mutationsList, observer) => {
                     })
                     _elmResponse = elements[elements.length - 1]
 
-                    // logging interaction behavior on response area
-                    _elmResponse.addEventListener("mousewheel", (e) => {
-                        // console.log("scroll", e.deltaY)
-                        _sessionEntry.interactionBehaviors.scrollEvents.push({timeStamp: new Date().toISOString(), offset: e.deltaY})
-                    })
+                    logInteractionBehaviorOnResponse()
 
                     if (_on && !_isFollowUp) {
                         setupCffElements()
@@ -144,6 +140,7 @@ const monitorStreaming = () => {
             monitorStreaming()
         } else {
             console.log("streaming ends")
+            _sessionEntry.interactionBehaviors.timeStreamingEnded = new Date().toISOString()
 
             if (_on) {
                 // if the cff container has not been clear, don't set up post response yet;
@@ -454,12 +451,47 @@ const createNewLogEntry = () => {
         interactionBehaviors: {
             timeStreamingEnded: undefined,
             scrollEvents: [],
+            clickEvents: [],
+            mousedownEvents: [],
+            mousemoveEvents: [],
+            mouseupEvents: []
         },
         agreementRating: {
             responseTime: undefined, // todo: properly define this attr
             rating: undefined
         }
     }
+}
+
+//
+//
+//
+const logInteractionBehaviorOnResponse = () => {
+    
+    // click
+    _elmResponse.addEventListener("click", (e) => {
+        _sessionEntry.interactionBehaviors.clickEvents.push({timeStamp: new Date().toISOString()})
+    })
+    
+    // scrolling
+    _elmResponse.addEventListener("mousewheel", (e) => {
+        _sessionEntry.interactionBehaviors.scrollEvents.push({timeStamp: new Date().toISOString(), offset: e.deltaY})
+    })
+
+    // mousedown
+    _elmResponse.addEventListener("mousedown", (e) => {
+        _sessionEntry.interactionBehaviors.mousedownEvents.push({timeStamp: new Date().toISOString(), coord: {x: e.clientX, y: e.clientY}})
+    })
+
+    // mousemove
+    _elmResponse.addEventListener("mousemove", (e) => {
+        _sessionEntry.interactionBehaviors.mousemoveEvents.push({timeStamp: new Date().toISOString(), coord: {x: e.clientX, y: e.clientY}})
+    })
+
+    // mouseup
+    _elmResponse.addEventListener("mouseup", (e) => {
+        _sessionEntry.interactionBehaviors.mouseupEvents.push({timeStamp: new Date().toISOString(), coord: {x: e.clientX, y: e.clientY}})
+    })
 }
 
 //
