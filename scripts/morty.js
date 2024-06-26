@@ -55,7 +55,7 @@ let _divAgreementRating = undefined
 let _isFollowUp = false
 
 // data logging related
-const TIMEOUT_AUTO_LOG_SAVE = 30000
+const TIMEOUT_AUTO_LOG_SAVE = 30000 // todo: increase this to, say, 5min
 let _isLogging = true
 let _sessionEntry
 let _autoSaveTimeout
@@ -83,7 +83,7 @@ const callbackNewResponse = (mutationsList, observer) => {
                     // logging interaction behavior on response area
                     _elmResponse.addEventListener("mousewheel", (e) => {
                         // console.log("scroll", e.deltaY)
-                        _sessionEntry.scrollEvents.push({timeStamp: e.timeStamp, offset: e.deltaY})
+                        _sessionEntry.interactionBehaviors.scrollEvents.push({timeStamp: new Date().toISOString(), offset: e.deltaY})
                     })
 
                     if (_on && !_isFollowUp) {
@@ -346,7 +346,8 @@ const init = () => {
                 _isFollowUp = isFollowUp(prompt)
                 configCff()
 
-                _sessionEntry.prompt = prompt
+                _sessionEntry.prompt.text = prompt
+                _sessionEntry.prompt.timeSent = new Date().toISOString()
             }
         }
     }, true)
@@ -357,6 +358,8 @@ const init = () => {
         // but with false positives, configCff wouldn't cause any subsequent actions
         if (event.target.tagName === "svg") {
             configCff()
+
+            // todo: log prompt here too
         }
     });
 
@@ -437,14 +440,21 @@ const saveLog = () => {
 const createNewLogEntry = () => {
     return {
         timeStamp: undefined,
-        prompt: undefined,
+        prompt: {
+            timeStart: undefined,
+            timeSent: undefined,
+            text: undefined
+        },
         confidenceRating: {
             responseTime: undefined, // todo: properly define this attr
             rating: undefined
             // how much hovering
             // how long it takes to decide
         },
-        scrollEvents: [],
+        interactionBehaviors: {
+            timeStreamingEnded: undefined,
+            scrollEvents: [],
+        },
         agreementRating: {
             responseTime: undefined, // todo: properly define this attr
             rating: undefined
