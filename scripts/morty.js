@@ -454,7 +454,9 @@ const createNewLogEntry = () => {
             clickEvents: [],
             mousedownEvents: [],
             mousemoveEvents: [],
-            mouseupEvents: []
+            mouseupEvents: [],
+            mouseenterEvents: [],
+            mouseleaveEvents: []
         },
         agreementRating: {
             responseTime: undefined, // todo: properly define this attr
@@ -491,6 +493,14 @@ const logInteractionBehaviorOnResponse = () => {
     // mouseup
     _elmResponse.addEventListener("mouseup", (e) => {
         _sessionEntry.interactionBehaviors.mouseupEvents.push({timeStamp: new Date().toISOString(), coord: {x: e.clientX, y: e.clientY}})
+    })
+
+    _elmResponse.addEventListener("mouseenter", (e) => {
+        _sessionEntry.interactionBehaviors.mouseenterEvents.push({timeStamp: new Date().toISOString()})
+    })
+
+    _elmResponse.addEventListener("mouseleave", (e) => {
+        _sessionEntry.interactionBehaviors.mouseleaveEvents.push({timeStamp: new Date().toISOString()})
     })
 }
 
