@@ -12,7 +12,7 @@ const CFF_DEFAULT = 1
 // design parameters for cff
 const HEIGHT_CFF_CONTAINER = 100
 const HEIGHT_POST_RESPONSE = 300
-const INTERVAL_MONITOR_STREAMING = 2000 // ms
+const INTERVAL_MONITOR_STREAMING = 1000 // ms
 
 // design parameters for cff_wait
 const FADE_RATIO = 1.25 // how fast the covered response area fades
@@ -456,7 +456,9 @@ const createNewLogEntry = () => {
             mousemoveEvents: [],
             mouseupEvents: [],
             mouseenterEvents: [],
-            mouseleaveEvents: []
+            mouseleaveEvents: [],
+            windowenterEvents: [],
+            windowleaveEvents: []
         },
         agreementRating: {
             responseTime: undefined, // todo: properly define this attr
@@ -470,37 +472,48 @@ const createNewLogEntry = () => {
 //
 const logInteractionBehaviorOnResponse = () => {
     
-    // click
+    // todo: why logging this; what is its correlation with overreliance?
     _elmResponse.addEventListener("click", (e) => {
         _sessionEntry.interactionBehaviors.clickEvents.push({timeStamp: new Date().toISOString()})
     })
     
-    // scrolling
+    // todo: why logging this; what is its correlation with overreliance?
     _elmResponse.addEventListener("mousewheel", (e) => {
         _sessionEntry.interactionBehaviors.scrollEvents.push({timeStamp: new Date().toISOString(), offset: e.deltaY})
     })
 
-    // mousedown
+    // todo: why logging this; what is its correlation with overreliance?
     _elmResponse.addEventListener("mousedown", (e) => {
         _sessionEntry.interactionBehaviors.mousedownEvents.push({timeStamp: new Date().toISOString(), coord: {x: e.clientX, y: e.clientY}})
     })
 
-    // mousemove
+    // todo: why logging this; what is its correlation with overreliance?
     _elmResponse.addEventListener("mousemove", (e) => {
         _sessionEntry.interactionBehaviors.mousemoveEvents.push({timeStamp: new Date().toISOString(), coord: {x: e.clientX, y: e.clientY}})
     })
 
-    // mouseup
+    // todo: why logging this; what is its correlation with overreliance?
     _elmResponse.addEventListener("mouseup", (e) => {
         _sessionEntry.interactionBehaviors.mouseupEvents.push({timeStamp: new Date().toISOString(), coord: {x: e.clientX, y: e.clientY}})
     })
 
+    // todo: why logging this; what is its correlation with overreliance?
     _elmResponse.addEventListener("mouseenter", (e) => {
         _sessionEntry.interactionBehaviors.mouseenterEvents.push({timeStamp: new Date().toISOString()})
     })
 
+    // todo: why logging this; what is its correlation with overreliance?
     _elmResponse.addEventListener("mouseleave", (e) => {
         _sessionEntry.interactionBehaviors.mouseleaveEvents.push({timeStamp: new Date().toISOString()})
+    })
+
+    // todo: why logging this; what is its correlation with overreliance?
+    window.addEventListener('blur', (e) => {
+        _sessionEntry.interactionBehaviors.windowleaveEvents.push({timeStamp: new Date().toISOString()})
+    })
+
+    window.addEventListener('focus', (e) => {
+        _sessionEntry.interactionBehaviors.windowenterEvents.push({timeStamp: new Date().toISOString()})
     })
 }
 
