@@ -54,7 +54,7 @@ let _placeholderPrompt = undefined
 let _divAgreementRating = undefined
 let _isFollowUp = false
 
-// data logging related
+// data logging
 const TIMEOUT_AUTO_LOG_SAVE = 30000 // todo: increase this to, say, 5min
 let _isLogging = true
 let _sessionEntry
@@ -70,7 +70,11 @@ const callbackNewResponse = (mutationsList, observer) => {
                     _observerNewResponse.disconnect()
 
                     console.log("streaming starts")
-                    _sessionEntry.timeStamp = new Date().toISOString()
+
+                    // data loggin
+                    _sessionEntry.timeStamp = time()
+                    _sessionEntry.interactionBehaviors.timeStreamingStarted = time()
+                    
                     monitorStreaming()
 
                     // reset all previous response elements to full opacity
@@ -85,7 +89,9 @@ const callbackNewResponse = (mutationsList, observer) => {
                     if (_on && !_isFollowUp) {
                         setupCffElements()
                         const divRating = setupRatingUI("labelConfidence", CONFI_QUESTION_PROMPT, CONFIDENCE_LEVELS, false, (idxRating) => {
+                            // data logging
                             _sessionEntry.confidenceRating.rating = idxRating
+                            _sessionEntry.confidenceRating.timeStamp = time()
                         })
                         _divCff.prepend(divRating)
                     }
@@ -140,7 +146,7 @@ const monitorStreaming = () => {
             monitorStreaming()
         } else {
             console.log("streaming ends")
-            _sessionEntry.interactionBehaviors.timeStreamingEnded = new Date().toISOString()
+            _sessionEntry.interactionBehaviors.timeStreamingEnded = time()
 
             if (_on) {
                 // if the cff container has not been clear, don't set up post response yet;
@@ -344,7 +350,7 @@ const init = () => {
                 configCff()
 
                 _sessionEntry.prompt.text = prompt
-                _sessionEntry.prompt.timeSent = new Date().toISOString()
+                _sessionEntry.prompt.timeSent = time()
             }
         }
     }, true)
@@ -396,7 +402,9 @@ const init = () => {
             elmPromptBox.removeEventListener("click", prefixPrompt)
         }
 
+        // data logging
         _sessionEntry.agreementRating.rating = idxRating
+        _sessionEntry.agreementRating.timeStamp = time()
     })
 
     // remove the agreement rating when finished, providing a closure
@@ -426,7 +434,7 @@ const saveLog = () => {
     let logItems = {}
     logItems[key] = _sessionEntry
     chrome.storage.sync.set(logItems, () => {
-        console.log("saved:", _sessionEntry)
+        console.info("saved:", _sessionEntry)
         _sessionEntry = createNewLogEntry()
     })
 }
@@ -443,12 +451,13 @@ const createNewLogEntry = () => {
             text: undefined
         },
         confidenceRating: {
-            responseTime: undefined, // todo: properly define this attr
+            timeStamp: undefined, // todo: properly define this attr
             rating: undefined
             // how much hovering
             // how long it takes to decide
         },
         interactionBehaviors: {
+            timeStreamingStarted: undefined,
             timeStreamingEnded: undefined,
             scrollEvents: [],
             clickEvents: [],
@@ -461,7 +470,7 @@ const createNewLogEntry = () => {
             windowleaveEvents: []
         },
         agreementRating: {
-            responseTime: undefined, // todo: properly define this attr
+            timeStamp: undefined, // todo: properly define this attr
             rating: undefined
         }
     }
@@ -474,47 +483,51 @@ const logInteractionBehaviorOnResponse = () => {
     
     // todo: why logging this; what is its correlation with overreliance?
     _elmResponse.addEventListener("click", (e) => {
-        _sessionEntry.interactionBehaviors.clickEvents.push({timeStamp: new Date().toISOString()})
+        _sessionEntry.interactionBehaviors.clickEvents.push({timeStamp: time()})
     })
     
     // todo: why logging this; what is its correlation with overreliance?
     _elmResponse.addEventListener("mousewheel", (e) => {
-        _sessionEntry.interactionBehaviors.scrollEvents.push({timeStamp: new Date().toISOString(), offset: e.deltaY})
+        _sessionEntry.interactionBehaviors.scrollEvents.push({timeStamp: time(), offset: e.deltaY})
     })
 
     // todo: why logging this; what is its correlation with overreliance?
     _elmResponse.addEventListener("mousedown", (e) => {
-        _sessionEntry.interactionBehaviors.mousedownEvents.push({timeStamp: new Date().toISOString(), coord: {x: e.clientX, y: e.clientY}})
+        _sessionEntry.interactionBehaviors.mousedownEvents.push({timeStamp: time(), coord: {x: e.clientX, y: e.clientY}})
     })
 
     // todo: why logging this; what is its correlation with overreliance?
     _elmResponse.addEventListener("mousemove", (e) => {
-        _sessionEntry.interactionBehaviors.mousemoveEvents.push({timeStamp: new Date().toISOString(), coord: {x: e.clientX, y: e.clientY}})
+        _sessionEntry.interactionBehaviors.mousemoveEvents.push({timeStamp: time(), coord: {x: e.clientX, y: e.clientY}})
     })
 
     // todo: why logging this; what is its correlation with overreliance?
     _elmResponse.addEventListener("mouseup", (e) => {
-        _sessionEntry.interactionBehaviors.mouseupEvents.push({timeStamp: new Date().toISOString(), coord: {x: e.clientX, y: e.clientY}})
+        _sessionEntry.interactionBehaviors.mouseupEvents.push({timeStamp: time(), coord: {x: e.clientX, y: e.clientY}})
     })
 
     // todo: why logging this; what is its correlation with overreliance?
     _elmResponse.addEventListener("mouseenter", (e) => {
-        _sessionEntry.interactionBehaviors.mouseenterEvents.push({timeStamp: new Date().toISOString()})
+        _sessionEntry.interactionBehaviors.mouseenterEvents.push({timeStamp: time()})
     })
 
     // todo: why logging this; what is its correlation with overreliance?
     _elmResponse.addEventListener("mouseleave", (e) => {
-        _sessionEntry.interactionBehaviors.mouseleaveEvents.push({timeStamp: new Date().toISOString()})
+        _sessionEntry.interactionBehaviors.mouseleaveEvents.push({timeStamp: time()})
     })
 
     // todo: why logging this; what is its correlation with overreliance?
     window.addEventListener('blur', (e) => {
-        _sessionEntry.interactionBehaviors.windowleaveEvents.push({timeStamp: new Date().toISOString()})
+        _sessionEntry.interactionBehaviors.windowleaveEvents.push({timeStamp: time()})
     })
 
     window.addEventListener('focus', (e) => {
-        _sessionEntry.interactionBehaviors.windowenterEvents.push({timeStamp: new Date().toISOString()})
+        _sessionEntry.interactionBehaviors.windowenterEvents.push({timeStamp: time()})
     })
+}
+
+const time = () => {
+    return new Date().toISOString()
 }
 
 //
