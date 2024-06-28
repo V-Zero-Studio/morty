@@ -45,6 +45,7 @@ const TIMEOUT_PLACEHOLDER_RESET = 30000
 
 
 let _on = true
+let _isStreaming = false
 let _config = {}
 let _observerNewResponse = undefined
 let _elmResponse = undefined
@@ -59,6 +60,7 @@ const TIMEOUT_AUTO_LOG_SAVE = 30000 // todo: increase this to, say, 5min
 let _isLogging = true
 let _sessionEntry
 let _autoSaveTimeout
+let _isWindowBlur = false   // has the user left the window
 //
 // callback function to execute when mutations are observed
 //
@@ -70,11 +72,12 @@ const callbackNewResponse = (mutationsList, observer) => {
                     _observerNewResponse.disconnect()
 
                     console.log("streaming starts")
+                    _isStreaming = true
 
                     // data loggin
                     _sessionEntry.timeStamp = time()
                     _sessionEntry.interactionBehaviors.timeStreamingStarted = time()
-                    
+
                     monitorStreaming()
 
                     // reset all previous response elements to full opacity
@@ -146,6 +149,8 @@ const monitorStreaming = () => {
             monitorStreaming()
         } else {
             console.log("streaming ends")
+            _isStreaming = false
+
             _sessionEntry.interactionBehaviors.timeStreamingEnded = time()
 
             if (_on) {
@@ -160,12 +165,14 @@ const monitorStreaming = () => {
                 _isFollowUp = false
             }
 
-            // auto save
-            _autoSaveTimeout = setTimeout(() => {
-                if (_isLogging && _sessionEntry != undefined) {
-                    saveLog()
-                }
-            }, TIMEOUT_AUTO_LOG_SAVE);
+            // auto save when the user is not focused on the current window
+            if (_isWindowBlur) {
+                _autoSaveTimeout = setTimeout(() => {
+                    if (_isLogging && _sessionEntry != undefined) {
+                        saveLog()
+                    }
+                }, TIMEOUT_AUTO_LOG_SAVE);
+            }
         }
     }, INTERVAL_MONITOR_STREAMING)
 
@@ -480,49 +487,59 @@ const createNewLogEntry = () => {
 //
 //
 const logInteractionBehaviorOnResponse = () => {
-    
+
     // todo: why logging this; what is its correlation with overreliance?
     _elmResponse.addEventListener("click", (e) => {
-        _sessionEntry.interactionBehaviors.clickEvents.push({timeStamp: time()})
+        _sessionEntry.interactionBehaviors.clickEvents.push({ timeStamp: time() })
     })
-    
+
     // todo: why logging this; what is its correlation with overreliance?
     _elmResponse.addEventListener("mousewheel", (e) => {
-        _sessionEntry.interactionBehaviors.scrollEvents.push({timeStamp: time(), offset: e.deltaY})
+        _sessionEntry.interactionBehaviors.scrollEvents.push({ timeStamp: time(), offset: e.deltaY })
     })
 
     // todo: why logging this; what is its correlation with overreliance?
     _elmResponse.addEventListener("mousedown", (e) => {
-        _sessionEntry.interactionBehaviors.mousedownEvents.push({timeStamp: time(), coord: {x: e.clientX, y: e.clientY}})
+        _sessionEntry.interactionBehaviors.mousedownEvents.push({ timeStamp: time(), coord: { x: e.clientX, y: e.clientY } })
     })
 
     // todo: why logging this; what is its correlation with overreliance?
     _elmResponse.addEventListener("mousemove", (e) => {
-        _sessionEntry.interactionBehaviors.mousemoveEvents.push({timeStamp: time(), coord: {x: e.clientX, y: e.clientY}})
+        _sessionEntry.interactionBehaviors.mousemoveEvents.push({ timeStamp: time(), coord: { x: e.clientX, y: e.clientY } })
     })
 
     // todo: why logging this; what is its correlation with overreliance?
     _elmResponse.addEventListener("mouseup", (e) => {
-        _sessionEntry.interactionBehaviors.mouseupEvents.push({timeStamp: time(), coord: {x: e.clientX, y: e.clientY}})
+        _sessionEntry.interactionBehaviors.mouseupEvents.push({ timeStamp: time(), coord: { x: e.clientX, y: e.clientY } })
     })
 
     // todo: why logging this; what is its correlation with overreliance?
     _elmResponse.addEventListener("mouseenter", (e) => {
-        _sessionEntry.interactionBehaviors.mouseenterEvents.push({timeStamp: time()})
+        _sessionEntry.interactionBehaviors.mouseenterEvents.push({ timeStamp: time() })
     })
 
     // todo: why logging this; what is its correlation with overreliance?
     _elmResponse.addEventListener("mouseleave", (e) => {
-        _sessionEntry.interactionBehaviors.mouseleaveEvents.push({timeStamp: time()})
+        _sessionEntry.interactionBehaviors.mouseleaveEvents.push({ timeStamp: time() })
     })
 
     // todo: why logging this; what is its correlation with overreliance?
     window.addEventListener('blur', (e) => {
-        _sessionEntry.interactionBehaviors.windowleaveEvents.push({timeStamp: time()})
+        _sessionEntry.interactionBehaviors.windowleaveEvents.push({ timeStamp: time() })
+        _isWindowBlur = false
+        if(!_isStreaming) {
+            _autoSaveTimeout = setTimeout(() => {
+                if (_isLogging && _sessionEntry != undefined) {
+                    saveLog()
+                }
+            }, TIMEOUT_AUTO_LOG_SAVE);
+        }
     })
 
     window.addEventListener('focus', (e) => {
-        _sessionEntry.interactionBehaviors.windowenterEvents.push({timeStamp: time()})
+        _sessionEntry.interactionBehaviors.windowenterEvents.push({ timeStamp: time() })
+        _isWindowBlur = true
+        clearTimeout(_autoSaveTimeout)
     })
 }
 
