@@ -170,9 +170,7 @@ const monitorStreaming = () => {
             // auto save when the user is not focused on the current window
             if (_isWindowBlur) {
                 _autoSaveTimeout = setTimeout(() => {
-                    if (_isLogging && _sessionEntry != undefined) {
-                        saveLog()
-                    }
+                    saveLog()
                 }, TIMEOUT_AUTO_LOG_SAVE);
             }
         }
@@ -358,9 +356,13 @@ const init = () => {
                 _isFollowUp = isFollowUp(prompt)
                 configCff()
 
+                // data logging
                 _sessionEntry.prompt.text = prompt
                 _sessionEntry.prompt.timeSent = time()
             }
+        } else {
+            // data logging
+            _sessionEntry.interactionBehaviors.keydownEvents.push({ timeStamp: time(), key: event.key })
         }
     }, true)
 
@@ -436,7 +438,7 @@ const init = () => {
 //
 //
 const saveLog = () => {
-    if (_sessionEntry == undefined) {
+    if (!_isLogging || _sessionEntry == undefined || _sessionEntry.timeStamp == undefined) {
         return
     }
     const key = _sessionEntry.timeStamp
@@ -462,8 +464,6 @@ const createNewLogEntry = () => {
         confidenceRating: {
             timeStamp: undefined, // todo: properly define this attr
             rating: undefined
-            // how much hovering
-            // how long it takes to decide
         },
         response: {
             timeStreamingStarted: undefined,
@@ -479,7 +479,8 @@ const createNewLogEntry = () => {
             mouseenterEvents: [],
             mouseleaveEvents: [],
             windowenterEvents: [],
-            windowleaveEvents: []
+            windowleaveEvents: [],
+            keydownEvents: []
         },
         agreementRating: {
             timeStamp: undefined, // todo: properly define this attr
@@ -528,15 +529,17 @@ const logInteractionBehaviorOnResponse = () => {
         _sessionEntry.interactionBehaviors.mouseleaveEvents.push({ timeStamp: time() })
     })
 
+    // _elmResponse.addEventListener("keydown", (e) => {
+    //     _sessionEntry.interactionBehaviors.keydownEvents.push({ timeStamp: time(), key: e.key })
+    // })
+
     // todo: why logging this; what is its correlation with overreliance?
     window.addEventListener('blur', (e) => {
         _sessionEntry.interactionBehaviors.windowleaveEvents.push({ timeStamp: time() })
         _isWindowBlur = false
-        if(!_isStreaming) {
+        if (!_isStreaming) {
             _autoSaveTimeout = setTimeout(() => {
-                if (_isLogging && _sessionEntry != undefined) {
-                    saveLog()
-                }
+                saveLog()
             }, TIMEOUT_AUTO_LOG_SAVE);
         }
     })
