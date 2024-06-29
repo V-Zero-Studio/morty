@@ -74,7 +74,7 @@ const callbackNewResponse = (mutationsList, observer) => {
                     console.log("streaming starts")
                     _isStreaming = true
 
-                    // data loggin
+                    // data logging
                     _sessionEntry.timeStamp = time()
                     _sessionEntry.interactionBehaviors.timeStreamingStarted = time()
 
@@ -151,7 +151,9 @@ const monitorStreaming = () => {
             console.log("streaming ends")
             _isStreaming = false
 
+            // data logging
             _sessionEntry.interactionBehaviors.timeStreamingEnded = time()
+            _sessionEntry.heightResponse = _elmResponse.getBoundingClientRect().height
 
             if (_on) {
                 // if the cff container has not been clear, don't set up post response yet;
