@@ -76,7 +76,7 @@ const callbackNewResponse = (mutationsList, observer) => {
 
                     // data logging
                     _sessionEntry.timeStamp = time()
-                    _sessionEntry.interactionBehaviors.timeStreamingStarted = time()
+                    _sessionEntry.response.timeStreamingStarted = time()
 
                     monitorStreaming()
 
@@ -152,8 +152,8 @@ const monitorStreaming = () => {
             _isStreaming = false
 
             // data logging
-            _sessionEntry.interactionBehaviors.timeStreamingEnded = time()
-            _sessionEntry.heightResponse = _elmResponse.getBoundingClientRect().height
+            _sessionEntry.response.timeStreamingEnded = time()
+            _sessionEntry.response.height = _elmResponse.getBoundingClientRect().height
 
             if (_on) {
                 // if the cff container has not been clear, don't set up post response yet;
@@ -465,9 +465,12 @@ const createNewLogEntry = () => {
             // how much hovering
             // how long it takes to decide
         },
-        interactionBehaviors: {
+        response: {
             timeStreamingStarted: undefined,
             timeStreamingEnded: undefined,
+            height: undefined
+        },
+        interactionBehaviors: {
             scrollEvents: [],
             clickEvents: [],
             mousedownEvents: [],
