@@ -435,7 +435,7 @@ const init = () => {
 }
 
 //
-//
+//  save the latest session's log entry
 //
 const saveLog = () => {
     if (!_isLogging || _sessionEntry == undefined || _sessionEntry.timeStamp == undefined) {
@@ -451,7 +451,7 @@ const saveLog = () => {
 }
 
 //
-//
+//  create an empty new log entry
 //
 const createNewLogEntry = () => {
     return {
@@ -490,7 +490,7 @@ const createNewLogEntry = () => {
 }
 
 //
-//
+//  attach event listeners to log interaction behaviors
 //
 const logInteractionBehaviorOnResponse = () => {
 
@@ -544,6 +544,9 @@ const logInteractionBehaviorOnResponse = () => {
     })
 }
 
+//
+//  shortcut method to get the current time as a string
+//
 const time = () => {
     return new Date().toISOString()
 }
