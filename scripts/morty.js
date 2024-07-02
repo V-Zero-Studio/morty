@@ -530,7 +530,10 @@ const logInteractionBehaviorOnResponse = () => {
         if (!_isStreaming) {
             _autoSaveTimeout = setTimeout(() => {
                 saveLog()
+                // in case the user wasn't engaged
+                fadeOutAndRemove(_divAgreementRating)
             }, TIMEOUT_AUTO_LOG_SAVE);
+            console.info("auto save timeout started")
         }
     })
 
@@ -561,7 +564,7 @@ const time = () => {
 
             chrome.storage.sync.get(null, function (items) {
                 console.log('All data in sync storage:', items);
-            });
+            })
             chrome.storage.sync.clear()
             _sessionEntry = createNewLogEntry()
         })
