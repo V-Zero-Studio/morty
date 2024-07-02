@@ -494,49 +494,39 @@ const createNewLogEntry = () => {
 //
 const logInteractionBehaviorOnResponse = () => {
 
-    // todo: why logging this; what is its correlation with overreliance?
     _elmResponse.addEventListener("click", (e) => {
         _sessionEntry.interactionBehaviors.clickEvents.push({ timeStamp: time() })
     })
 
-    // todo: why logging this; what is its correlation with overreliance?
     _elmResponse.addEventListener("mousewheel", (e) => {
         _sessionEntry.interactionBehaviors.scrollEvents.push({ timeStamp: time(), offset: e.deltaY })
     })
 
-    // todo: why logging this; what is its correlation with overreliance?
     _elmResponse.addEventListener("mousedown", (e) => {
         _sessionEntry.interactionBehaviors.mousedownEvents.push({ timeStamp: time(), coord: { x: e.clientX, y: e.clientY } })
     })
 
-    // todo: why logging this; what is its correlation with overreliance?
     _elmResponse.addEventListener("mousemove", (e) => {
         _sessionEntry.interactionBehaviors.mousemoveEvents.push({ timeStamp: time(), coord: { x: e.clientX, y: e.clientY } })
     })
 
-    // todo: why logging this; what is its correlation with overreliance?
     _elmResponse.addEventListener("mouseup", (e) => {
         _sessionEntry.interactionBehaviors.mouseupEvents.push({ timeStamp: time(), coord: { x: e.clientX, y: e.clientY } })
     })
 
-    // todo: why logging this; what is its correlation with overreliance?
     _elmResponse.addEventListener("mouseenter", (e) => {
         _sessionEntry.interactionBehaviors.mouseenterEvents.push({ timeStamp: time() })
     })
 
-    // todo: why logging this; what is its correlation with overreliance?
     _elmResponse.addEventListener("mouseleave", (e) => {
         _sessionEntry.interactionBehaviors.mouseleaveEvents.push({ timeStamp: time() })
     })
 
-    // _elmResponse.addEventListener("keydown", (e) => {
-    //     _sessionEntry.interactionBehaviors.keydownEvents.push({ timeStamp: time(), key: e.key })
-    // })
-
-    // todo: why logging this; what is its correlation with overreliance?
     window.addEventListener('blur', (e) => {
         _sessionEntry.interactionBehaviors.windowleaveEvents.push({ timeStamp: time() })
         _isWindowBlur = false
+        // if the user leaves the page during streaming, we assume they are not done with the session
+        // so we don't end and save the log entry
         if (!_isStreaming) {
             _autoSaveTimeout = setTimeout(() => {
                 saveLog()
