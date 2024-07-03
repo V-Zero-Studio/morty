@@ -51,6 +51,7 @@ let _observerNewResponse = undefined
 let _elmResponse = undefined
 let _divCff = undefined
 let _elmPrompt = undefined
+let _promptCurrent = undefined
 let _placeholderPrompt = undefined
 let _divAgreementRating = undefined
 let _isFollowUp = false
@@ -346,24 +347,27 @@ const init = () => {
     log("morty ready")
 
     // intercept the sending of prompts: enter key and send button
-    _elmPrompt = document.getElementById(_config.ID_PROMPT_INPUT)
+    // _elmPrompt = document.getElementById(_config.ID_PROMPT_INPUT)
 
     // trigger mitigation from enter key press to send prompt
     document.addEventListener('keydown', function (event) {
         if (event.target.id === _config.ID_PROMPT_INPUT) {
+            _promptCurrent = event.target.value
+            log(_promptCurrent)
             if (_on && event.key === "Enter" && !event.shiftKey) {
                 const prompt = event.target.value
                 _isFollowUp = isFollowUp(prompt)
                 configCff()
 
                 // data logging
-                _sessionEntry.prompt.text = prompt
+                _sessionEntry.prompt.text = _promptCurrent
                 _sessionEntry.prompt.timeSent = time()
             }
         } else {
             // data logging
             _sessionEntry.interactionBehaviors.keydownEvents.push({ timeStamp: time(), key: event.key })
         }
+
     }, true)
 
     // trigger mitigation from pressing send button
@@ -373,7 +377,9 @@ const init = () => {
         if (event.target.tagName === "svg") {
             configCff()
 
-            // todo: log prompt here too
+            // data logging
+            _sessionEntry.prompt.text = _promptCurrent
+            _sessionEntry.prompt.timeSent = time()
         }
     });
 
@@ -445,7 +451,7 @@ const saveLog = () => {
     let logItems = {}
     logItems[key] = _sessionEntry
     chrome.storage.sync.set(logItems, () => {
-        log("saved:", _sessionEntry)
+        log(JSON.stringify(_sessionEntry))
         _sessionEntry = createNewLogEntry()
     })
 }
