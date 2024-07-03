@@ -71,7 +71,7 @@ const callbackNewResponse = (mutationsList, observer) => {
                 if (node.className != undefined && typeof node.className.includes == "function" && node.className.includes(_config.KEYWORD_STREAMING)) {
                     _observerNewResponse.disconnect()
 
-                    console.log("streaming starts")
+                    log("streaming starts")
                     _isStreaming = true
 
                     // data logging
@@ -148,7 +148,7 @@ const monitorStreaming = () => {
         if (elements.length > 0) {
             monitorStreaming()
         } else {
-            console.log("streaming ends")
+            log("streaming ends")
             _isStreaming = false
 
             // data logging
@@ -343,7 +343,7 @@ const configCff = () => {
 // initialization
 //
 const init = () => {
-    console.log("morty ready")
+    log("morty ready")
 
     // intercept the sending of prompts: enter key and send button
     _elmPrompt = document.getElementById(_config.ID_PROMPT_INPUT)
@@ -445,7 +445,7 @@ const saveLog = () => {
     let logItems = {}
     logItems[key] = _sessionEntry
     chrome.storage.sync.set(logItems, () => {
-        console.info("saved:", _sessionEntry)
+        log("saved:", _sessionEntry)
         _sessionEntry = createNewLogEntry()
     })
 }
@@ -552,6 +552,13 @@ const time = () => {
 }
 
 //
+//
+//
+const log = (msg) => {
+    console.info("[morty]", msg)
+}
+
+//
 //  entry function
 //
 (function () {
@@ -566,7 +573,7 @@ const time = () => {
             init()
 
             chrome.storage.sync.get(null, function (items) {
-                console.log('All data in sync storage:', items);
+                log('all data in sync storage:', items);
             })
             chrome.storage.sync.clear()
             _sessionEntry = createNewLogEntry()
