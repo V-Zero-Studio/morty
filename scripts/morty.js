@@ -90,6 +90,7 @@ const callbackNewResponse = (mutationsList, observer) => {
 
                     logInteractionBehaviorOnResponse()
 
+                    _sessionEntry.prompt.isFollowUp = _isFollowUp
                     if (_on && !_isFollowUp) {
                         setupCffElements()
                         const divRating = setupRatingUI("labelConfidence", CONFI_QUESTION_PROMPT, CONFIDENCE_LEVELS, false, (idxRating) => {
@@ -464,7 +465,8 @@ const createNewLogEntry = () => {
         prompt: {
             timeStart: undefined,
             timeSent: undefined,
-            text: undefined
+            text: undefined,
+            isFollowUp: undefined
         },
         confidenceRating: {
             timeStamp: undefined, // todo: properly define this attr
