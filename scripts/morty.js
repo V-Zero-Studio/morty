@@ -532,11 +532,12 @@ const logInteractionBehaviorOnResponse = () => {
         _isWindowBlur = false
         // if the user leaves the page during streaming, we assume they are not done with the session
         // so we don't end and save the log entry
-        if (!_isStreaming) {
+        if (!_isStreaming && _autoSaveTimeout == undefined) {
             _autoSaveTimeout = setTimeout(() => {
                 saveLog()
                 // in case the user wasn't engaged
                 fadeOutAndRemove(_divAgreementRating)
+                _autoSaveTimeout = undefined
             }, TIMEOUT_AUTO_LOG_SAVE);
             console.info("auto save timeout started")
         }
@@ -546,6 +547,7 @@ const logInteractionBehaviorOnResponse = () => {
         _sessionEntry.interactionBehaviors.windowenterEvents.push({ timeStamp: time() })
         _isWindowBlur = true
         clearTimeout(_autoSaveTimeout)
+        _autoSaveTimeout = undefined
     })
 }
 
