@@ -353,7 +353,6 @@ const init = () => {
     document.addEventListener('keydown', function (event) {
         if (event.target.id === _config.ID_PROMPT_INPUT) {
             _promptCurrent = event.target.value
-            log(_promptCurrent)
             if (_on && event.key === "Enter" && !event.shiftKey) {
                 const prompt = event.target.value
                 _isFollowUp = isFollowUp(prompt)
@@ -451,7 +450,7 @@ const saveLog = () => {
     let logItems = {}
     logItems[key] = _sessionEntry
     chrome.storage.sync.set(logItems, () => {
-        log(JSON.stringify(_sessionEntry))
+        log(_sessionEntry)
         _sessionEntry = createNewLogEntry()
     })
 }
@@ -558,7 +557,7 @@ const time = () => {
 }
 
 //
-//
+//  a short cut to do console.log
 //
 const log = (msg) => {
     console.info("[morty]", msg)
