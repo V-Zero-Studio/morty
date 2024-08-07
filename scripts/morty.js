@@ -57,7 +57,7 @@ let _divAgreementRating = undefined
 let _isFollowUp = false
 
 // data logging
-const TIMEOUT_AUTO_LOG_SAVE = 30000 // todo: increase this to, say, 5min
+const TIMEOUT_AUTO_LOG_SAVE = 30000
 let _isLogging = true
 let _sessionEntry
 let _autoSaveTimeout
@@ -345,7 +345,7 @@ const configCff = () => {
 // initialization
 //
 const init = () => {
-    log("morty ready")
+    log("ready")
 
     // intercept the sending of prompts: enter key and send button
     // _elmPrompt = document.getElementById(_config.ID_PROMPT_INPUT)
@@ -507,6 +507,7 @@ const logInteractionBehaviorOnResponse = () => {
 
     _elmResponse.addEventListener("mousewheel", (e) => {
         _sessionEntry.interactionBehaviors.scrollEvents.push({ timeStamp: time(), offset: e.deltaY })
+        log("scrolling")
     })
 
     _elmResponse.addEventListener("mousedown", (e) => {
@@ -541,7 +542,7 @@ const logInteractionBehaviorOnResponse = () => {
                 fadeOutAndRemove(_divAgreementRating)
                 _autoSaveTimeout = undefined
             }, TIMEOUT_AUTO_LOG_SAVE);
-            console.info("auto save timeout started")
+            log("auto save timeout started")
         }
     })
 
