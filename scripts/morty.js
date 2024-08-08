@@ -57,6 +57,7 @@ let _divAgreementRating = undefined
 let _isFollowUp = false
 
 // data logging
+const DT_EVENTS = 250
 const TIMEOUT_AUTO_LOG_SAVE = 30000
 let _isLogging = true
 let _sessionEntry
@@ -497,6 +498,24 @@ const createNewLogEntry = () => {
 }
 
 //
+//
+//
+const pushIfApart = (array, entry, dt, accuFunc) => {
+    if (array.length === 0) {
+        array.push(entry)
+        return
+    }
+
+    const timeStampPrev = array[array.length - 1].timeStamp
+
+    if (new Date().getTime() - new Date(timeStampPrev).getTime() > dt) {
+        array.push(entry)
+    } else if (accuFunc != undefined) {
+        accuFunc(array, entry)
+    }
+}
+
+//
 //  attach event listeners to log interaction behaviors
 //
 const logInteractionBehaviorOnResponse = () => {
@@ -506,8 +525,13 @@ const logInteractionBehaviorOnResponse = () => {
     })
 
     _elmResponse.addEventListener("mousewheel", (e) => {
-        _sessionEntry.interactionBehaviors.scrollEvents.push({ timeStamp: time(), offset: e.deltaY })
-        log("scrolling")
+        // _sessionEntry.interactionBehaviors.scrollEvents.push({ timeStamp: time(), offset: e.deltaY })
+        pushIfApart(_sessionEntry.interactionBehaviors.scrollEvents, { timeStamp: time(), offset: e.deltaY }, DT_EVENTS, (array, entry) => {
+            if (array.length > 0) {
+                array[array.length - 1].offset += entry.offset
+            }
+        })
+        // log("scrolling")
     })
 
     _elmResponse.addEventListener("mousedown", (e) => {
@@ -515,7 +539,8 @@ const logInteractionBehaviorOnResponse = () => {
     })
 
     _elmResponse.addEventListener("mousemove", (e) => {
-        _sessionEntry.interactionBehaviors.mousemoveEvents.push({ timeStamp: time(), coord: { x: e.clientX, y: e.clientY } })
+        // _sessionEntry.interactionBehaviors.mousemoveEvents.push({ timeStamp: time(), coord: { x: e.clientX, y: e.clientY } })
+        pushIfApart(_sessionEntry.interactionBehaviors.mousemoveEvents, { timeStamp: time(), coord: { x: e.clientX, y: e.clientY } }, DT_EVENTS)
     })
 
     _elmResponse.addEventListener("mouseup", (e) => {
