@@ -71,6 +71,17 @@ const callbackNewResponse = (mutationsList, observer) => {
         if (mutation.type === 'childList') {
             mutation.addedNodes.forEach(node => {
                 if (node.className != undefined && typeof node.className.includes == "function" && node.className.includes(_config.KEYWORD_STREAMING)) {
+                    // _observerNewResponse.disconnect()
+
+                    var elements = document.querySelectorAll(_config.QUERY_ELM_RESPONSE)
+                    _elmResponse = elements[elements.length - 1]
+                    // not sure why: when there is only one response in the current window (i.e., the first prompt)
+                    // we need to wait until the text appears
+                    // otherwise the _elmResponse element will be changed
+                    if(elements.length == 1 && _elmResponse.textContent.length == 0) {
+                        return
+                    }
+
                     _observerNewResponse.disconnect()
 
                     log("streaming starts")
@@ -84,11 +95,11 @@ const callbackNewResponse = (mutationsList, observer) => {
 
                     // reset all previous response elements to full opacity
                     var elements = document.querySelectorAll(_config.QUERY_ELM_RESPONSE)
+
                     elements.forEach((value, index, array) => {
                         array[index].style.opacity = 1
                     })
-                    _elmResponse = elements[elements.length - 1]
-                    log(_elmResponse.textContent)
+                    
 
                     logInteractionBehaviorOnResponse()
 
