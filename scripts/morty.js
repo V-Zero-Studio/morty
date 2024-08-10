@@ -94,8 +94,6 @@ const callbackNewResponse = (mutationsList, observer) => {
                     monitorStreaming()
 
                     // reset all previous response elements to full opacity
-                    var elements = document.querySelectorAll(_config.QUERY_ELM_RESPONSE)
-
                     elements.forEach((value, index, array) => {
                         array[index].style.opacity = 1
                     })
@@ -602,7 +600,7 @@ const time = () => {
 //  a short cut to do console.log
 //
 const log = (msg) => {
-    console.info("[morty]", msg)
+    console.info("[morty]", time(), msg)
 }
 
 //
