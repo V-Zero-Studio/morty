@@ -88,6 +88,7 @@ const callbackNewResponse = (mutationsList, observer) => {
                         array[index].style.opacity = 1
                     })
                     _elmResponse = elements[elements.length - 1]
+                    log(_elmResponse.textContent)
 
                     logInteractionBehaviorOnResponse()
 
