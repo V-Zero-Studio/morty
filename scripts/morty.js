@@ -92,10 +92,7 @@ const callbackNewResponse = (mutationsList, observer) => {
                     _sessionEntry.timeStamp = time()
                     _sessionEntry.response.timeStreamingStarted = time()
 
-                    // setTimeout(() => {
-                        // log("start monitoring streaming ...")
-                        monitorStreaming()    
-                    // }, WAIT_TIME_RESPONSE);
+                    monitorStreaming()
 
                     // reset all previous response elements to full opacity
                     elements.forEach((value, index, array) => {
