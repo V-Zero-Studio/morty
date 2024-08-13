@@ -21,6 +21,7 @@ const FADE_INTERVAL = 100 // smoothness of fading
 
 // design parameters for cff_ondemand
 const HTML_REVEAL_INFO = "(Click to reveal AI response)"
+const WAIT_TIME_RESPONSE = 3000
 
 // users' confidence levels
 const CONFI_QUESTION_PROMPT = "How confident are you if you were to respond to this prompt without ChatGPT's help?"
@@ -78,7 +79,7 @@ const callbackNewResponse = (mutationsList, observer) => {
                     // not sure why: when there is only one response in the current window (i.e., the first prompt)
                     // we need to wait until the text appears
                     // otherwise the _elmResponse element will be changed
-                    if(elements.length == 1 && _elmResponse.textContent.length == 0) {
+                    if (elements.length == 1 && _elmResponse.textContent.length == 0) {
                         return
                     }
 
@@ -91,13 +92,15 @@ const callbackNewResponse = (mutationsList, observer) => {
                     _sessionEntry.timeStamp = time()
                     _sessionEntry.response.timeStreamingStarted = time()
 
-                    monitorStreaming()
+                    // setTimeout(() => {
+                        // log("start monitoring streaming ...")
+                        monitorStreaming()    
+                    // }, WAIT_TIME_RESPONSE);
 
                     // reset all previous response elements to full opacity
                     elements.forEach((value, index, array) => {
                         array[index].style.opacity = 1
                     })
-                    
 
                     logInteractionBehaviorOnResponse()
 
@@ -174,7 +177,9 @@ const monitorStreaming = () => {
                 if (document.getElementsByClassName("cff-container").length <= 0) {
                     setupPostResponseElements()
                 } else {
-                    _elmResponse.parentElement.addEventListener("click", setupPostResponseElements)
+                    if (_elmResponse.parentElement != null) {
+                        _elmResponse.parentElement.addEventListener("click", setupPostResponseElements)
+                    }
                 }
 
                 _isFollowUp = false
@@ -200,7 +205,10 @@ const clearCffContainer = (fadeOut = true) => {
     } else {
         _divCff.remove()
     }
-    _elmResponse.parentElement.removeEventListener("click", revealResponse)
+
+    if (_elmResponse.parentElement != null) {
+        _elmResponse.parentElement.removeEventListener("click", revealResponse)
+    }
 }
 
 //
@@ -447,6 +455,7 @@ const init = () => {
         if (_isLogging && _sessionEntry.timeStamp != undefined) {
             saveLog()
             clearTimeout(_autoSaveTimeout)
+            log("auto save timeout cleared")
         }
     })
 }
@@ -585,6 +594,7 @@ const logInteractionBehaviorOnResponse = () => {
         _sessionEntry.interactionBehaviors.windowenterEvents.push({ timeStamp: time() })
         _isWindowBlur = true
         clearTimeout(_autoSaveTimeout)
+        log("auto save timeout cleared")
         _autoSaveTimeout = undefined
     })
 }
