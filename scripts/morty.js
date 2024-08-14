@@ -76,13 +76,11 @@ const callbackNewResponse = (mutationsList, observer) => {
 
                     var elements = document.querySelectorAll(_config.QUERY_ELM_RESPONSE)
                     _elmResponse = elements[elements.length - 1]
-                    // not sure why: when there is only one response in the current window (i.e., the first prompt)
-                    // we need to wait until the text appears
-                    // otherwise the _elmResponse element will be changed
-                    if (elements.length == 1 && _elmResponse.textContent.length == 0) {
+                    
+                    // keep monitoring until the actual response arrives
+                    if (_elmResponse.textContent.length == 0) {
                         return
                     }
-
                     _observerNewResponse.disconnect()
 
                     log("streaming starts")
