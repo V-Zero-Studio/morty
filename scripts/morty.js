@@ -51,7 +51,6 @@ let _config = {}
 let _observerNewResponse = undefined
 let _elmResponse = undefined
 let _divCff = undefined
-let _elmPrompt = undefined
 let _promptCurrent = undefined
 let _placeholderPrompt = undefined
 let _divAgreementRating = undefined
@@ -72,8 +71,6 @@ const callbackNewResponse = (mutationsList, observer) => {
         if (mutation.type === 'childList') {
             mutation.addedNodes.forEach(node => {
                 if (node.className != undefined && typeof node.className.includes == "function" && node.className.includes(_config.KEYWORD_STREAMING)) {
-                    // _observerNewResponse.disconnect()
-
                     var elements = document.querySelectorAll(_config.QUERY_ELM_RESPONSE)
                     _elmResponse = elements[elements.length - 1]
                     
@@ -360,9 +357,6 @@ const configCff = () => {
 //
 const init = () => {
     log("ready")
-
-    // intercept the sending of prompts: enter key and send button
-    // _elmPrompt = document.getElementById(_config.ID_PROMPT_INPUT)
 
     // trigger mitigation from enter key press to send prompt
     document.addEventListener('keydown', function (event) {
