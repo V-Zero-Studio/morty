@@ -432,6 +432,8 @@ const init = () => {
         _sessionEntry.agreementRating.timeStamp = time()
     })
 
+    _divAgreementRating.style.background = "rgba(255, 255, 0, 0.25)"
+
     // remove the agreement rating when finished, providing a closure
     _divAgreementRating.querySelectorAll('[name="labelAgreement-dot"]').forEach(elm => {
         elm.addEventListener("click", () => {
