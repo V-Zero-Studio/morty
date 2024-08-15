@@ -14,14 +14,11 @@ const HEIGHT_CFF_CONTAINER = 100
 const HEIGHT_POST_RESPONSE = 300
 const INTERVAL_MONITOR_STREAMING = 1000 // ms
 
-// design parameters for cff_wait
+// design parameters for cff
 const FADE_RATIO = 1.25 // how fast the covered response area fades
 const FADE_OPACITY = 0.05 // the lowest opacity
 const FADE_INTERVAL = 100 // smoothness of fading
-
-// design parameters for cff_ondemand
 const HTML_REVEAL_INFO = "(Click to reveal AI response)"
-const WAIT_TIME_RESPONSE = 3000
 
 // users' confidence levels
 const CONFI_QUESTION_PROMPT = "How confident are you if you were to respond to this prompt without ChatGPT's help?"
@@ -43,6 +40,7 @@ const AGREEMENT_LEVELS = [
     "Totally agree"
 ]
 const TIMEOUT_PLACEHOLDER_RESET = 30000
+const STYLE_AGREEMENT_RATING = "rgba(255, 255, 0, 0.25)"
 
 
 let _on = true
@@ -432,7 +430,7 @@ const init = () => {
         _sessionEntry.agreementRating.timeStamp = time()
     })
 
-    _divAgreementRating.style.background = "rgba(255, 255, 0, 0.25)"
+    _divAgreementRating.style.background = STYLE_AGREEMENT_RATING
 
     // remove the agreement rating when finished, providing a closure
     _divAgreementRating.querySelectorAll('[name="labelAgreement-dot"]').forEach(elm => {
