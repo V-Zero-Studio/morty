@@ -289,7 +289,10 @@ const prefixPrompt = (e) => {
     e.target.value = e.target.getAttribute("placeholder") + " "
     const textLength = e.target.value.length
     e.target.setSelectionRange(textLength, textLength)
-    e.target.setAttribute("placeholder", _placeholderPrompt)
+    // e.target.setAttribute("placeholder", _placeholderPrompt)
+
+    // only do this prefixing once
+    e.target.removeEventListener("click", prefixPrompt)
 }
 
 //
