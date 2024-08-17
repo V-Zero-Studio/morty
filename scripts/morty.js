@@ -71,12 +71,21 @@ const callbackNewResponse = (mutationsList, observer) => {
                 if (node.className != undefined && typeof node.className.includes == "function" && node.className.includes(_config.KEYWORD_STREAMING)) {
                     var elements = document.querySelectorAll(_config.QUERY_ELM_RESPONSE)
                     _elmResponse = elements[elements.length - 1]
-                    
+
                     // keep monitoring until the actual response arrives
                     if (_elmResponse.textContent.length == 0) {
                         return
                     }
                     _observerNewResponse.disconnect()
+
+                    if (elements.length == 1) {
+                        // starting a new prompt saves the previous session entry
+                        // this event listener needs to be (re)created every time the user
+                        // starts a new tab, which means # of response in history == 1
+                        let elmPromptBox = document.getElementById(_config.ID_TEXTBOX_PROMPT)
+                        elmPromptBox.removeEventListener("click", onClickPromptBox)
+                        elmPromptBox.addEventListener("click", onClickPromptBox)
+                    }
 
                     log("streaming starts")
                     _isStreaming = true
@@ -283,6 +292,17 @@ const revealResponse = () => {
 }
 
 //
+//
+//
+const onClickPromptBox = () => {
+    if (_isLogging && _sessionEntry.timeStamp != undefined) {
+        saveLog()
+        clearTimeout(_autoSaveTimeout)
+        log("auto save timeout cleared")
+    }
+}
+
+//
 //  use a textarea's placeholder as a prefilled prefix for the text to be entered
 //
 const prefixPrompt = (e) => {
@@ -406,6 +426,7 @@ const init = () => {
     // extract the default placeholder in the prompt box
     let elmPromptBox = document.getElementById(_config.ID_TEXTBOX_PROMPT)
     _placeholderPrompt = elmPromptBox.getAttribute("placeholder")
+    elmPromptBox.addEventListener("click", onClickPromptBox)
 
     // set up the disagreement rating ui (just once)
     _divAgreementRating = setupRatingUI("labelAgreement", AGREEMENT_QUESTION_PROMPT, AGREEMENT_LEVELS, true, (idxRating) => {
@@ -442,14 +463,7 @@ const init = () => {
         })
     })
 
-    // starting a new prompt saves the previous session entry
-    elmPromptBox.addEventListener("click", () => {
-        if (_isLogging && _sessionEntry.timeStamp != undefined) {
-            saveLog()
-            clearTimeout(_autoSaveTimeout)
-            log("auto save timeout cleared")
-        }
-    })
+
 }
 
 //
