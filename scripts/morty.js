@@ -480,6 +480,10 @@ const saveLog = () => {
         log(_sessionEntry)
         _sessionEntry = createNewLogEntry()
     })
+
+    chrome.storage.sync.get(null, function (items) {
+        log('all data in sync storage:', items);
+    })
 }
 
 //
@@ -634,9 +638,9 @@ const log = (msg) => {
             init()
 
             chrome.storage.sync.get(null, function (items) {
-                log('all data in sync storage:', items);
+                console.log('[morty] all data in sync storage:', items);
             })
-            chrome.storage.sync.clear()
+            // chrome.storage.sync.clear()
             _sessionEntry = createNewLogEntry()
         })
         .catch(error => console.error('Error fetching JSON:', error))
