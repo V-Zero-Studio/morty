@@ -4,11 +4,6 @@
 
 const PATH_CONFIG_FILE = "data/config.json"
 
-// cognitive forcing function variations
-const CFF_ONDEMAND = 1
-const CFF_NONE = -1
-const CFF_DEFAULT = 1
-
 // design parameters for cff
 const HEIGHT_CFF_CONTAINER = 100
 const HEIGHT_POST_RESPONSE = 300
@@ -479,10 +474,6 @@ const saveLog = () => {
     chrome.storage.sync.set(logItems, () => {
         log(_sessionEntry)
         _sessionEntry = createNewLogEntry()
-    })
-
-    chrome.storage.sync.get(null, function (items) {
-        log('all data in sync storage:', items);
     })
 }
 
