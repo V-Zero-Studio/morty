@@ -287,7 +287,7 @@ const revealResponse = () => {
 }
 
 //
-//
+//  event handler for clicking the prompt box to enter a prompt
 //
 const onClickPromptBox = () => {
     if (_isLogging && _sessionEntry.timeStamp != undefined) {
@@ -457,8 +457,6 @@ const init = () => {
             fadeOutAndRemove(_divAgreementRating)
         })
     })
-
-
 }
 
 //
