@@ -367,6 +367,26 @@ const configCff = () => {
     _divCff.style.top = `${topPosition - HEIGHT_CFF_CONTAINER}px`
 }
 
+//
+//
+//
+const downloadObjectAsJson = (exportObj, exportName) => {
+    // Convert the object to a JSON string
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj));
+
+    // Create an invisible anchor element
+    const downloadAnchorNode = document.createElement('a');
+
+    // Set the download attribute with a filename
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", exportName + ".json");
+
+    // Append the anchor to the document, trigger a click on it, and then remove it
+    document.body.appendChild(downloadAnchorNode);
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+}
+
 
 //
 // initialization
@@ -415,6 +435,11 @@ const init = () => {
     btnSwitch.addEventListener('click', (e) => {
         _on = !_on
         btnSwitch.style.filter = _on ? '' : 'grayscale(100%)'
+    })
+    btnSwitch.addEventListener("dblclick", () => {
+        chrome.storage.sync.get(null, function (items) {
+            downloadObjectAsJson(items, "morty_log_" + time().replace(":", "_"))
+        })
     })
     document.body.appendChild(btnSwitch)
 
