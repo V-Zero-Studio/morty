@@ -368,7 +368,7 @@ const configCff = () => {
 }
 
 //
-//
+//  trigger a dialog to download an object as a json file
 //
 const downloadObjectAsJson = (exportObj, exportName) => {
     // Convert the object to a JSON string
