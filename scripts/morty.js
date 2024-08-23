@@ -38,7 +38,7 @@ const TIMEOUT_PLACEHOLDER_RESET = 30000
 const STYLE_AGREEMENT_RATING = "rgba(255, 255, 0, 0.25)"
 
 
-let _on = true
+let _on = false
 let _isStreaming = false
 let _config = {}
 let _observerNewResponse = undefined
@@ -432,9 +432,11 @@ const init = () => {
     btnSwitch.src = chrome.runtime.getURL(_config.URL_ICON)
     btnSwitch.alt = 'Toggle Button'
     btnSwitch.classList.add("switch")
+    btnSwitch.style.filter = _on ? '' : 'grayscale(100%)'
     btnSwitch.addEventListener('click', (e) => {
-        _on = !_on
-        btnSwitch.style.filter = _on ? '' : 'grayscale(100%)'
+        // disabled for data logging under on/off conditions
+        // _on = !_on
+        // btnSwitch.style.filter = _on ? '' : 'grayscale(100%)'
     })
     btnSwitch.addEventListener("dblclick", () => {
         chrome.storage.sync.get(null, function (items) {
