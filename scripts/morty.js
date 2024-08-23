@@ -157,6 +157,7 @@ const monitorStreaming = () => {
         var elements = document.querySelectorAll('[class*="' + _config.KEYWORD_STREAMING + '"')
         if (elements.length > 0) {
             monitorStreaming()
+            log("monitoring streaming ...")
         } else {
             log("streaming ends")
             _isStreaming = false
@@ -347,11 +348,6 @@ const isFollowUp = (prompt) => {
 // configure cff: start or stop the monitor for implementing cff on the response element
 //
 const configCff = () => {
-    // create an instance of MutationObserver
-    _observerNewResponse = new MutationObserver(callbackNewResponse)
-    const divChat = document.querySelector(_config.QUERY_CHAT_DIV)
-    _observerNewResponse.observe(divChat, { childList: true, subtree: true })
-
     // create a container for added cff elements
     _divCff = document.createElement("div")
     _divCff.classList.add("cff-container")
@@ -365,6 +361,16 @@ const configCff = () => {
     let topPosition = rect.top + window.scrollY;
     _divCff.style.height = `${HEIGHT_CFF_CONTAINER}px`
     _divCff.style.top = `${topPosition - HEIGHT_CFF_CONTAINER}px`
+}
+
+//
+//
+//
+const startMonitoring = () => {
+    // create an instance of MutationObserver
+    _observerNewResponse = new MutationObserver(callbackNewResponse)
+    const divChat = document.querySelector(_config.QUERY_CHAT_DIV)
+    _observerNewResponse.observe(divChat, { childList: true, subtree: true })
 }
 
 //
@@ -398,14 +404,20 @@ const init = () => {
     document.addEventListener('keydown', function (event) {
         if (event.target.id === _config.ID_PROMPT_INPUT) {
             _promptCurrent = event.target.value
-            if (_on && event.key === "Enter" && !event.shiftKey) {
+
+            if (event.key === "Enter" && !event.shiftKey) {
                 const prompt = event.target.value
                 _isFollowUp = isFollowUp(prompt)
-                configCff()
+
+                if (_on) {
+                    configCff()
+                }
 
                 // data logging
                 _sessionEntry.prompt.text = _promptCurrent
                 _sessionEntry.prompt.timeSent = time()
+
+                startMonitoring()
             }
         } else {
             // data logging
@@ -418,13 +430,20 @@ const init = () => {
     document.addEventListener('click', function (event) {
         // currently svg can capture this button press but maybe also svg's
         // but with false positives, configCff wouldn't cause any subsequent actions
-        if (event.target.tagName === "svg") {
-            configCff()
+        if (vent.target.tagName === "svg") {
+            if (_on) {
+                configCff()
+            }
 
-            // data logging
-            _sessionEntry.prompt.text = _promptCurrent
-            _sessionEntry.prompt.timeSent = time()
+            startMonitoring()
         }
+
+        // data logging
+        // _sessionEntry.timeStamp = time()
+        _sessionEntry.prompt.text = _promptCurrent
+        _sessionEntry.prompt.timeSent = time()
+
+        
     });
 
     // create on-web-page ui
