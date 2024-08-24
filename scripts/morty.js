@@ -87,6 +87,7 @@ const callbackNewResponse = (mutationsList, observer) => {
 
                     // data logging
                     _sessionEntry.timeStamp = time()
+                    _sessionEntry.on = _on
                     _sessionEntry.response.timeStreamingStarted = time()
 
                     monitorStreaming()
