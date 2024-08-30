@@ -3,14 +3,16 @@ import matplotlib.pyplot as plt
 import json
 from datetime import datetime
 import math
+import os
 
-DATA_FILE = "morty_log_2024-08-24T03_31_04.319Z.json"
+DATA_FILE = "/data/morty_log_2024-08-24T03_31_04.319Z.json"
 
 START_DATE = "08/21/2024"
 END_DATE = "08/31/2024"
 
 series_mouse_enter = []
 series_mouse_footprint = []
+series_prompt_length = []
 
 cnt_sessions = 0
 cnt_mouse_enter = 0
@@ -26,7 +28,7 @@ def calMouseFootprint(events):
     return footprint
 
 if __name__ == "__main__":
-    with open(DATA_FILE, 'r') as file:
+    with open(os.getcwd() + DATA_FILE, 'r') as file:
         data = json.load(file)
 
     print("total # of session entries:", len(data))
@@ -55,9 +57,12 @@ if __name__ == "__main__":
         series_mouse_footprint.append(footprint)
         sum_mouse_move += footprint
 
+        prompt_log = data[key]["prompt"]
+        if "text" in prompt_log:
+            series_prompt_length.append(len(prompt_log["text"]))
+
     # print("avg mouse enter events:", cnt_mouse_enter / cnt_sessions)
     # print("avg mouse leave events:", cnt_mouse_leave / cnt_sessions)
     # print("avg mouse movement:", sum_mouse_move / cnt_sessions)
 
-    # print(series_mouse_enter)
-    # print(series_mouse_footprint)
+    print(series_prompt_length)
