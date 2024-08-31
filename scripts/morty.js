@@ -432,7 +432,7 @@ const init = () => {
     document.addEventListener('click', function (event) {
         // currently svg can capture this button press but maybe also svg's
         // but with false positives, configCff wouldn't cause any subsequent actions
-        if (vent.target.tagName === "svg") {
+        if (event.target.tagName === "svg") {
             if (_on) {
                 configCff()
             }
@@ -550,6 +550,7 @@ const createNewLogEntry = () => {
             mouseupEvents: [],
             mouseenterEvents: [],
             mouseleaveEvents: [],
+            copyEvents: [],
             windowenterEvents: [],
             windowleaveEvents: [],
             keydownEvents: []
@@ -617,6 +618,10 @@ const logInteractionBehaviorOnResponse = () => {
 
     _elmResponse.addEventListener("mouseleave", (e) => {
         _sessionEntry.interactionBehaviors.mouseleaveEvents.push({ timeStamp: time() })
+    })
+
+    _elmResponse.addEventListener("copy", (e) => {
+        _sessionEntry.interactionBehaviors.copyEvents.push({ timeStamp: time(), length: window.getSelection().toString().length })
     })
 
     window.addEventListener('blur', (e) => {
