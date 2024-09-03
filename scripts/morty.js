@@ -509,7 +509,7 @@ const init = () => {
 //  save the latest session's log entry
 //
 const saveLog = () => {
-    if (!_isLogging || _sessionEntry == undefined || _sessionEntry.timeStamp == undefined) {
+    if (_sessionEntry == undefined || _sessionEntry.timeStamp == undefined) {
         return
     }
     const key = _sessionEntry.timeStamp
