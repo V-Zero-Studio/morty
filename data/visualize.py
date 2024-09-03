@@ -10,6 +10,10 @@ DATA_FILE = "/data/morty_log_2024-08-24T03_31_04.319Z.json"
 START_DATE = "08/21/2024"
 END_DATE = "08/31/2024"
 
+series_date = []
+
+series_confidence = []
+
 series_mouse_enter = []
 series_mouse_footprint = []
 series_prompt_length = []
@@ -45,8 +49,14 @@ if __name__ == "__main__":
 
         cnt_sessions += 1
 
+        series_date.append(data[key]["timeStamp"])
+
+        if "rating" in data[key]["confidenceRating"]:
+            series_confidence.append(data[key]["confidenceRating"]["rating"])
+        else:
+            series_confidence.append(None)
+
         int_bev = data[key]["interactionBehaviors"]
-        stats = {}
 
         cnt_mouse_enter += len(int_bev["mouseenterEvents"])
         series_mouse_enter.append(len(int_bev["mouseenterEvents"]))
@@ -65,4 +75,20 @@ if __name__ == "__main__":
     # print("avg mouse leave events:", cnt_mouse_leave / cnt_sessions)
     # print("avg mouse movement:", sum_mouse_move / cnt_sessions)
 
-    print(series_prompt_length)
+    # plot confidence rating over time
+    df_confidence = pd.DataFrame({
+        'date': series_date,
+        'value': series_confidence
+    })
+    plt.figure(figsize=(10, 6))
+    plt.scatter(df_confidence['date'], df_confidence['value'], color='blue', marker='o')
+
+    # Adding labels and title
+    plt.xlabel('Date')
+    plt.ylabel('Confidence')
+    plt.title('Confidence Rating Over Time')
+    plt.grid(True)
+    plt.show()
+
+    # print(series_date)
+    # print(series_confidence)
