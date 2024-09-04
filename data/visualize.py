@@ -75,15 +75,21 @@ if __name__ == "__main__":
     # print("avg mouse leave events:", cnt_mouse_leave / cnt_sessions)
     # print("avg mouse movement:", sum_mouse_move / cnt_sessions)
 
+    # 
     # plot confidence rating over time
+    # 
     df_confidence = pd.DataFrame({
         'date': series_date,
         'value': series_confidence
     })
-    plt.figure(figsize=(10, 6))
-    plt.scatter(df_confidence['date'], df_confidence['value'], color='blue', marker='o')
+    df_confidence['date'] = pd.to_datetime(df_confidence["date"])
+    df_confidence_aggregated = df_confidence.groupby(df_confidence['date'].dt.date).mean()
+    df_confidence_aggregated.index.name = 'date_aggregated' 
+    df_confidence_aggregated = df_confidence_aggregated.reset_index()
 
-    # Adding labels and title
+    plt.figure(figsize=(10, 6))
+    plt.scatter(df_confidence_aggregated['date_aggregated'], df_confidence_aggregated['value'], color='blue', marker='o')
+
     plt.xlabel('Date')
     plt.ylabel('Confidence')
     plt.title('Confidence Rating Over Time')
