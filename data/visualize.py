@@ -13,6 +13,7 @@ END_DATE = "08/31/2024"
 series_date = []
 
 series_confidence = []
+series_agreement = []
 
 series_mouse_enter = []
 series_mouse_footprint = []
@@ -56,6 +57,11 @@ if __name__ == "__main__":
         else:
             series_confidence.append(None)
 
+        if "rating" in data[key]["agreementRating"]:
+            series_agreement.append(data[key]["agreementRating"]["rating"])
+        else:
+            series_agreement.append(None)
+
         int_bev = data[key]["interactionBehaviors"]
 
         cnt_mouse_enter += len(int_bev["mouseenterEvents"])
@@ -90,11 +96,22 @@ if __name__ == "__main__":
     plt.figure(figsize=(10, 6))
     plt.scatter(df_confidence_aggregated['date_aggregated'], df_confidence_aggregated['value'], color='blue', marker='o')
 
+    # 
+    # plot agreement rating over time
+    # 
+    df_agreement = pd.DataFrame({
+        'date': series_date,
+        'value': series_agreement
+    })
+    df_agreement['date'] = pd.to_datetime(df_confidence["date"])
+    df_agreement_aggregated = df_agreement.groupby(df_confidence['date'].dt.date).mean()
+    df_agreement_aggregated.index.name = 'date_aggregated' 
+    df_agreement_aggregated = df_agreement_aggregated.reset_index()
+
+    plt.scatter(df_agreement_aggregated['date_aggregated'], df_agreement_aggregated['value'], color='red', marker='o')
+
     plt.xlabel('Date')
-    plt.ylabel('Confidence')
-    plt.title('Confidence Rating Over Time')
+    plt.ylabel('Rating')
+    plt.title('Confidence & Agreement Rating Over Time')
     plt.grid(True)
     plt.show()
-
-    # print(series_date)
-    # print(series_confidence)
