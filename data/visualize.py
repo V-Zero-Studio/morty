@@ -4,6 +4,7 @@ import json
 from datetime import datetime
 import math
 import os
+import matplotlib.dates as mdates
 
 DATA_FILE = "/data/morty_log_2024-08-24T03_31_04.319Z.json"
 
@@ -109,6 +110,10 @@ if __name__ == "__main__":
     df_agreement_aggregated = df_agreement_aggregated.reset_index()
 
     plt.scatter(df_agreement_aggregated['date_aggregated'], df_agreement_aggregated['value'], color='red', marker='o')
+
+    plt.gca().xaxis.set_major_locator(mdates.DayLocator())
+    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
+    plt.xticks(rotation=45)
 
     plt.xlabel('Date')
     plt.ylabel('Rating')
