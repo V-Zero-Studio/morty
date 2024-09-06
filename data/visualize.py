@@ -19,11 +19,13 @@ series_agreement = []
 series_mouse_enter = []
 series_mouse_footprint = []
 series_prompt_length = []
+series_window_leave = []
 
 cnt_sessions = 0
 cnt_mouse_enter = 0
 cnt_mouse_leave = 0
 sum_mouse_move = 0
+cnt_window_leave = 0
 
 def calMouseFootprint(events):
     footprint = 0
@@ -74,6 +76,9 @@ if __name__ == "__main__":
         series_mouse_footprint.append(footprint)
         sum_mouse_move += footprint
 
+        cnt_window_leave += len(int_bev["windowleaveEvents"])
+        series_window_leave.append(len(int_bev["windowleaveEvents"]))
+
         prompt_log = data[key]["prompt"]
         if "text" in prompt_log:
             series_prompt_length.append(len(prompt_log["text"]))
@@ -81,6 +86,8 @@ if __name__ == "__main__":
     # print("avg mouse enter events:", cnt_mouse_enter / cnt_sessions)
     # print("avg mouse leave events:", cnt_mouse_leave / cnt_sessions)
     # print("avg mouse movement:", sum_mouse_move / cnt_sessions)
+    print("avg window leave events:", cnt_window_leave / cnt_sessions)
+    # print("window leave envents:", series_window_leave)
 
     # 
     # plot confidence rating over time
