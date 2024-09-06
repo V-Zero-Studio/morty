@@ -466,8 +466,12 @@ const init = () => {
 
     // extract the default placeholder in the prompt box
     let elmPromptBox = document.getElementById(_config.ID_TEXTBOX_PROMPT)
-    _placeholderPrompt = elmPromptBox.getAttribute("placeholder")
-    elmPromptBox.addEventListener("click", onClickPromptBox)
+    if (elmPromptBox != null) {
+        _placeholderPrompt = elmPromptBox.getAttribute("placeholder")
+        elmPromptBox.addEventListener("click", onClickPromptBox)
+    } else {
+        console.error("[morty]", "unable to locate prompt box!")
+    }
 
     // set up the disagreement rating ui (just once)
     _divAgreementRating = setupRatingUI("labelAgreement", AGREEMENT_QUESTION_PROMPT, AGREEMENT_LEVELS, true, (idxRating) => {
@@ -670,18 +674,20 @@ const log = (msg) => {
     const jsonFilePath = chrome.runtime.getURL(PATH_CONFIG_FILE)
 
     // load _config file
-    fetch(jsonFilePath)
-        .then(response => response.json())
-        .then(data => {
-            _config = data
+    window.addEventListener('load', function () {
+        fetch(jsonFilePath)
+            .then(response => response.json())
+            .then(data => {
+                _config = data
 
-            init()
+                init()
 
-            chrome.storage.sync.get(null, function (items) {
-                console.log('[morty] all data in sync storage:', items);
+                chrome.storage.sync.get(null, function (items) {
+                    console.log('[morty] all data in sync storage:', items);
+                })
+                // chrome.storage.sync.clear()
+                _sessionEntry = createNewLogEntry()
             })
-            // chrome.storage.sync.clear()
-            _sessionEntry = createNewLogEntry()
-        })
-        .catch(error => console.error('Error fetching JSON:', error))
+            .catch(error => console.error('Error fetching JSON:', error))
+    })
 })()
