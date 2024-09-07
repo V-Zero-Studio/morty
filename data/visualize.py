@@ -83,11 +83,11 @@ if __name__ == "__main__":
         if "text" in prompt_log:
             series_prompt_length.append(len(prompt_log["text"]))
 
-    # print("avg mouse enter events:", cnt_mouse_enter / cnt_sessions)
-    # print("avg mouse leave events:", cnt_mouse_leave / cnt_sessions)
-    # print("avg mouse movement:", sum_mouse_move / cnt_sessions)
+    print("avg mouse enter events:", cnt_mouse_enter / cnt_sessions)
+    print("avg mouse leave events:", cnt_mouse_leave / cnt_sessions)
+    print("avg mouse movement:", sum_mouse_move / cnt_sessions)
     print("avg window leave events:", cnt_window_leave / cnt_sessions)
-    # print("window leave envents:", series_window_leave)
+    print("window leave envents:", series_window_leave)
 
     # 
     # plot confidence rating over time
@@ -103,6 +103,12 @@ if __name__ == "__main__":
 
     plt.figure(figsize=(10, 6))
     plt.scatter(df_confidence_aggregated['date_aggregated'], df_confidence_aggregated['value'], color='blue', marker='o')
+
+    # confidence / agreement response rate
+    cnt_confidence_response = sum(1 for element in series_confidence if element is not None)
+    print("confidence response rate:", cnt_confidence_response / cnt_sessions)
+    cnt_agreement_response = sum(1 for element in series_agreement if element is not None)
+    print("agreement response rate:", cnt_agreement_response / cnt_sessions)
 
     # 
     # plot agreement rating over time
