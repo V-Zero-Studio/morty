@@ -87,7 +87,6 @@ if __name__ == "__main__":
     print("avg mouse leave events:", cnt_mouse_leave / cnt_sessions)
     print("avg mouse movement:", sum_mouse_move / cnt_sessions)
     print("avg window leave events:", cnt_window_leave / cnt_sessions)
-    print("window leave envents:", series_window_leave)
 
     # 
     # plot confidence rating over time
