@@ -692,7 +692,7 @@ const log = (msg) => {
 //
 // todo: move this to a separate file
 //
-const openDB = () => {
+const openDB = (onSuccess) => {
     const request = indexedDB.open(ID_DB, 1);
 
     request.onupgradeneeded = function (event) {
@@ -708,6 +708,7 @@ const openDB = () => {
     request.onsuccess = function (event) {
         _db = event.target.result;
         log("database opened successfully in content script")
+        onSuccess()
     }
 
     request.onerror = function (event) {
@@ -739,6 +740,26 @@ const writeToDB = (data, onSuccess) => {
 }
 
 //
+//
+//
+const readFromDB = () => {
+    const transaction = _db.transaction([ID_STORE], "readonly");
+    const store = transaction.objectStore(ID_STORE);
+
+    const getRequest = store.getAll();
+
+    getRequest.onsuccess = function(event) {
+        log("Data retrieved: ")
+        log(getRequest.result)
+    };
+
+    getRequest.onerror = function(event) {
+        log("error retrieving data: ")
+        log(event)
+    };
+}
+
+//
 //  entry function
 //
 (function () {
@@ -756,7 +777,8 @@ const writeToDB = (data, onSuccess) => {
                 // chrome.storage.sync.get(null, function (items) {
                 //     console.log('[morty] all data in sync storage:', items);
                 // })
-                openDB()
+
+                openDB(readFromDB)
 
                 // chrome.storage.sync.clear()
                 _sessionEntry = createNewLogEntry()
