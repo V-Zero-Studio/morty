@@ -56,6 +56,10 @@ let _isLogging = true
 let _sessionEntry
 let _autoSaveTimeout
 let _isWindowBlur = false   // has the user left the window
+let _db
+const ID_DB = "MortyDB"
+const ID_STORE = "sessionStore"
+
 //
 // callback function to execute when mutations are observed
 //
@@ -516,10 +520,28 @@ const saveLog = () => {
     if (_sessionEntry == undefined || _sessionEntry.timeStamp == undefined) {
         return
     }
-    const key = _sessionEntry.timeStamp
-    let logItems = {}
-    logItems[key] = _sessionEntry
-    chrome.storage.sync.set(logItems, () => {
+    // const key = _sessionEntry.timeStamp
+    // let logItems = {}
+    // logItems[key] = _sessionEntry
+
+    // chrome.storage.sync.set(logItems, () => {
+
+    //     _sessionEntry = createNewLogEntry()
+
+    //     if (chrome.runtime.lastError) {
+    //         log('Error:', chrome.runtime.lastError);
+    //     } else {
+    //         log('Data successfully stored.')
+    //         log(_sessionEntry)
+    //     }
+
+    //     // chrome.storage.sync.get(null, function (items) {
+    //     //     console.log('[morty] all data in sync storage:', items);
+    //     // })
+    // })
+
+    writeToDB(_sessionEntry, () => {
+        log('Data successfully stored.')
         log(_sessionEntry)
         _sessionEntry = createNewLogEntry()
     })
@@ -668,6 +690,55 @@ const log = (msg) => {
 }
 
 //
+// todo: move this to a separate file
+//
+const openDB = () => {
+    const request = indexedDB.open(ID_DB, 1);
+
+    request.onupgradeneeded = function (event) {
+        _db = event.target.result
+        if (!_db.objectStoreNames.contains(ID_STORE)) {
+            const store = _db.createObjectStore(ID_STORE, { keyPath: "id", autoIncrement: true })
+            log("object store created")
+        } else {
+            log("object store already exists");
+        }
+    }
+
+    request.onsuccess = function (event) {
+        _db = event.target.result;
+        log("database opened successfully in content script")
+    }
+
+    request.onerror = function (event) {
+        log(event)
+        log("error code: " + event.target.errorCode)
+    }
+
+}
+
+//
+//
+//
+const writeToDB = (data, onSuccess) => {
+    const transaction = _db.transaction([ID_STORE], "readwrite");
+    const store = transaction.objectStore(ID_STORE);
+
+    const addRequest = store.add(data);
+
+    addRequest.onsuccess = function (event) {
+        log("data added successfully in content script");
+        if (onSuccess != undefined) {
+            onSuccess()
+        }
+    };
+
+    addRequest.onerror = function (event) {
+        log("error adding data in content script", event);
+    };
+}
+
+//
 //  entry function
 //
 (function () {
@@ -682,9 +753,11 @@ const log = (msg) => {
 
                 init()
 
-                chrome.storage.sync.get(null, function (items) {
-                    console.log('[morty] all data in sync storage:', items);
-                })
+                // chrome.storage.sync.get(null, function (items) {
+                //     console.log('[morty] all data in sync storage:', items);
+                // })
+                openDB()
+
                 // chrome.storage.sync.clear()
                 _sessionEntry = createNewLogEntry()
             })
