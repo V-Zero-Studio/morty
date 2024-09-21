@@ -412,7 +412,7 @@ const init = () => {
             _promptCurrent = event.target.value
 
             if (event.key === "Enter" && !event.shiftKey) {
-                const prompt = event.target.value
+                const prompt = event.target.innerText
                 _isFollowUp = isFollowUp(prompt)
 
                 if (_on) {
@@ -462,9 +462,10 @@ const init = () => {
         // btnSwitch.style.filter = _on ? '' : 'grayscale(100%)'
     })
     btnSwitch.addEventListener("dblclick", () => {
-        chrome.storage.sync.get(null, function (items) {
-            downloadObjectAsJson(items, "morty_log_" + time().replace(":", "_"))
-        })
+        // chrome.storage.sync.get(null, function (items) {
+        //     downloadObjectAsJson(items, "morty_log_" + time().replace(":", "_"))
+        // })
+        // todo: implement a new download function
     })
     document.body.appendChild(btnSwitch)
 
@@ -520,25 +521,6 @@ const saveLog = () => {
     if (_sessionEntry == undefined || _sessionEntry.timeStamp == undefined) {
         return
     }
-    // const key = _sessionEntry.timeStamp
-    // let logItems = {}
-    // logItems[key] = _sessionEntry
-
-    // chrome.storage.sync.set(logItems, () => {
-
-    //     _sessionEntry = createNewLogEntry()
-
-    //     if (chrome.runtime.lastError) {
-    //         log('Error:', chrome.runtime.lastError);
-    //     } else {
-    //         log('Data successfully stored.')
-    //         log(_sessionEntry)
-    //     }
-
-    //     // chrome.storage.sync.get(null, function (items) {
-    //     //     console.log('[morty] all data in sync storage:', items);
-    //     // })
-    // })
 
     writeToDB(_sessionEntry, () => {
         log('Data successfully stored.')
@@ -774,13 +756,8 @@ const readFromDB = () => {
 
                 init()
 
-                // chrome.storage.sync.get(null, function (items) {
-                //     console.log('[morty] all data in sync storage:', items);
-                // })
-
                 openDB(readFromDB)
 
-                // chrome.storage.sync.clear()
                 _sessionEntry = createNewLogEntry()
             })
             .catch(error => console.error('Error fetching JSON:', error))
