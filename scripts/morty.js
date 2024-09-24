@@ -466,6 +466,9 @@ const init = () => {
         //     downloadObjectAsJson(items, "morty_log_" + time().replace(":", "_"))
         // })
         // todo: implement a new download function
+        readFromDB((logData) => {
+            downloadObjectAsJson(logData, "morty_log_" + time().replace(":", "_"))
+        })
     })
     document.body.appendChild(btnSwitch)
 
@@ -730,16 +733,20 @@ const readFromDB = (onSuccess) => {
 
     const getRequest = store.getAll();
 
-    getRequest.onsuccess = onSuccess != undefined ? onSuccess :
+    getRequest.onsuccess =
         (event) => {
-            log("Data retrieved: ")
-            log(getRequest.result)
-        };
+            if (onSuccess == undefined) {
+                log("Data retrieved: ")
+                log(getRequest.result)
+            } else {
+                onSuccess(getRequest.result)
+            }
+        }
 
     getRequest.onerror = (event) => {
         log("error retrieving data: ")
         log(event)
-    };
+    }
 }
 
 //
