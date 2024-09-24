@@ -724,18 +724,19 @@ const writeToDB = (data, onSuccess) => {
 //
 //
 //
-const readFromDB = () => {
+const readFromDB = (onSuccess) => {
     const transaction = _db.transaction([ID_STORE], "readonly");
     const store = transaction.objectStore(ID_STORE);
 
     const getRequest = store.getAll();
 
-    getRequest.onsuccess = function(event) {
-        log("Data retrieved: ")
-        log(getRequest.result)
-    };
+    getRequest.onsuccess = onSuccess != undefined ? onSuccess :
+        (event) => {
+            log("Data retrieved: ")
+            log(getRequest.result)
+        };
 
-    getRequest.onerror = function(event) {
+    getRequest.onerror = (event) => {
         log("error retrieving data: ")
         log(event)
     };
