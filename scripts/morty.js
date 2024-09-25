@@ -696,7 +696,6 @@ const openDB = (onSuccess) => {
         log(event)
         log("error code: " + event.target.errorCode)
     }
-
 }
 
 //
@@ -759,7 +758,7 @@ const readFromDB = (onSuccess) => {
                 _config = data
 
                 init()
-
+                
                 openDB(readFromDB)
 
                 _sessionEntry = createNewLogEntry()
