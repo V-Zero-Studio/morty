@@ -231,7 +231,7 @@ const setupCffElements = () => {
 //
 //  set up ui to specify rating
 //  row: whether to place everything in a row (o/w in two lines: one for question and one for rating scale)
-//  onRated: call back when rating changes
+//  onRated: call back when rating changes (by mouse hovering)
 //
 const setupRatingUI = (id, question, labelsRating, row = false, onRated = undefined) => {
     const divRating = document.createElement("div")
@@ -541,7 +541,7 @@ const createNewLogEntry = () => {
             isFollowUp: undefined
         },
         confidenceRating: {
-            timeStamp: undefined, // todo: properly define this attr
+            timeStamp: undefined, // the time of the last-hovered rating
             rating: undefined
         },
         response: {
@@ -563,7 +563,7 @@ const createNewLogEntry = () => {
             keydownEvents: []
         },
         agreementRating: {
-            timeStamp: undefined, // todo: properly define this attr
+            timeStamp: undefined, // the time of the last-hovered rating
             rating: undefined
         }
     }
