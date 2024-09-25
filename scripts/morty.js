@@ -511,6 +511,12 @@ const init = () => {
             fadeOutAndRemove(_divAgreementRating)
         })
     })
+
+    // house keeping when starting a new chat
+    let btnNewChat = document.querySelectorAll(_config.QUERY_NEWCHAT)[0]
+    btnNewChat.addEventListener("click", () => {
+        saveLog()
+    })
 }
 
 //

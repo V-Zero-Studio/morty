@@ -6,5 +6,6 @@
     "QUERY_ELM_RESPONSE": "[data-message-author-role=\"assistant\"]",
     "ID_TEXTBOX_PROMPT": "prompt-textarea",
     "URL_ICON": "assets/icon48.png",
-    "QUERY_TOOLBAR": "[class=\"items-center justify-start rounded-xl p-1 flex\"]"
+    "QUERY_TOOLBAR": "[class=\"items-center justify-start rounded-xl p-1 flex\"]",
+    "QUERY_NEWCHAT": "[aria-label=\"New chat\"]"
 }
