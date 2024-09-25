@@ -462,10 +462,6 @@ const init = () => {
         // btnSwitch.style.filter = _on ? '' : 'grayscale(100%)'
     })
     btnSwitch.addEventListener("dblclick", () => {
-        // chrome.storage.sync.get(null, function (items) {
-        //     downloadObjectAsJson(items, "morty_log_" + time().replace(":", "_"))
-        // })
-        // todo: implement a new download function
         readFromDB((logData) => {
             downloadObjectAsJson(logData, "morty_log_" + time().replace(":", "_"))
         })
