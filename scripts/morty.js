@@ -409,7 +409,7 @@ const init = () => {
     // trigger mitigation from enter key press to send prompt
     document.addEventListener('keydown', function (event) {
         if (event.target.id === _config.ID_PROMPT_INPUT) {
-            _promptCurrent = event.target.value
+            _promptCurrent = event.target.innerText
 
             if (event.key === "Enter" && !event.shiftKey) {
                 const prompt = event.target.innerText
