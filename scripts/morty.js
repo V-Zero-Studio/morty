@@ -765,6 +765,9 @@ const readFromDB = (onSuccess) => {
 
                 init()
                 
+                // DANGER! KEEP IT COMMENTED
+                // indexedDB.deleteDatabase(ID_DB);
+
                 openDB(readFromDB)
 
                 _sessionEntry = createNewLogEntry()
