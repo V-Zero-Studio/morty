@@ -311,7 +311,6 @@ const prefixPrompt = (e) => {
     e.target.value = e.target.getAttribute("placeholder") + " "
     const textLength = e.target.value.length
     e.target.setSelectionRange(textLength, textLength)
-    // e.target.setAttribute("placeholder", _placeholderPrompt)
 
     // only do this prefixing once
     e.target.removeEventListener("click", prefixPrompt)
@@ -383,17 +382,17 @@ const startMonitoring = () => {
 //  trigger a dialog to download an object as a json file
 //
 const downloadObjectAsJson = (exportObj, exportName) => {
-    // Convert the object to a JSON string
+    // convert the object to a JSON string
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj));
 
-    // Create an invisible anchor element
+    // create an invisible anchor element
     const downloadAnchorNode = document.createElement('a');
 
-    // Set the download attribute with a filename
+    // set the download attribute with a filename
     downloadAnchorNode.setAttribute("href", dataStr);
     downloadAnchorNode.setAttribute("download", exportName + ".json");
 
-    // Append the anchor to the document, trigger a click on it, and then remove it
+    // append the anchor to the document, trigger a click on it, and then remove it
     document.body.appendChild(downloadAnchorNode);
     downloadAnchorNode.click();
     downloadAnchorNode.remove();
@@ -475,6 +474,7 @@ const init = () => {
         elmPromptBox.addEventListener("click", onClickPromptBox)
     } else {
         console.error("[morty]", "unable to locate prompt box!")
+        alert("Error initiating MORTY. Please refresh this page.")
     }
 
     // set up the disagreement rating ui (just once)
