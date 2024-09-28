@@ -423,6 +423,12 @@ const init = () => {
                 _sessionEntry.prompt.timeSent = time()
 
                 startMonitoring()
+                // hack: wait a bit and de-focus on the text prompt
+                // which forces the user to click it to re-engage
+                // (need the clicking event to signify the end of the prev. session)
+                setTimeout(() => {
+                    event.target.blur()
+                }, 250)
             }
         } else {
             // data logging
@@ -457,6 +463,7 @@ const init = () => {
     btnSwitch.style.filter = _on ? '' : 'grayscale(100%)'
     btnSwitch.addEventListener('click', (e) => {
         // disabled for data logging under on/off conditions
+        // todo: put back later when needed
         // _on = !_on
         // btnSwitch.style.filter = _on ? '' : 'grayscale(100%)'
     })
@@ -517,6 +524,7 @@ const init = () => {
     btnNewChat.addEventListener("click", () => {
         saveLog()
     })
+
 }
 
 //
@@ -528,7 +536,7 @@ const saveLog = () => {
     }
 
     writeToDB(_sessionEntry, () => {
-        log('Data successfully stored.')
+        log('data successfully stored.')
         log(_sessionEntry)
         _sessionEntry = createNewLogEntry()
     })
