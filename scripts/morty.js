@@ -772,7 +772,7 @@ const readFromDB = (onSuccess) => {
                 _config = data
 
                 init()
-                
+
                 // DANGER! KEEP IT COMMENTED
                 // indexedDB.deleteDatabase(ID_DB);
 
