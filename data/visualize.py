@@ -6,7 +6,7 @@ import math
 import os
 import matplotlib.dates as mdates
 
-DATA_FILE = "/data/morty_log_2024-08-24T03_31_04.319Z.json"
+DATA_FILE = "/data/morty_log_2024-10-01T03_13_15.865Z.json"
 
 START_DATE = "08/21/2024"
 END_DATE = "08/31/2024"
@@ -43,9 +43,9 @@ if __name__ == "__main__":
 
     start_date = datetime.strptime(START_DATE, "%m/%d/%Y")
     end_date = datetime.strptime(END_DATE, "%m/%d/%Y")
-    for key in data:
+    for entry in data:
         # print(str_entry)
-        entry = data[key]
+        # entry = entry
         date_str = entry["timeStamp"]
         date_entry = datetime.fromisoformat(date_str.replace("Z", "+00:00")).replace(tzinfo=None)
         if start_date > date_entry and date_entry > end_date:
@@ -53,19 +53,19 @@ if __name__ == "__main__":
 
         cnt_sessions += 1
 
-        series_date.append(data[key]["timeStamp"])
+        series_date.append(entry["timeStamp"])
 
-        if "rating" in data[key]["confidenceRating"]:
-            series_confidence.append(data[key]["confidenceRating"]["rating"])
+        if "rating" in entry["confidenceRating"]:
+            series_confidence.append(entry["confidenceRating"]["rating"])
         else:
             series_confidence.append(None)
 
-        if "rating" in data[key]["agreementRating"]:
-            series_agreement.append(data[key]["agreementRating"]["rating"])
+        if "rating" in entry["agreementRating"]:
+            series_agreement.append(entry["agreementRating"]["rating"])
         else:
             series_agreement.append(None)
 
-        int_bev = data[key]["interactionBehaviors"]
+        int_bev = entry["interactionBehaviors"]
 
         cnt_mouse_enter += len(int_bev["mouseenterEvents"])
         series_mouse_enter.append(len(int_bev["mouseenterEvents"]))
@@ -79,7 +79,7 @@ if __name__ == "__main__":
         cnt_window_leave += len(int_bev["windowleaveEvents"])
         series_window_leave.append(len(int_bev["windowleaveEvents"]))
 
-        prompt_log = data[key]["prompt"]
+        prompt_log = entry["prompt"]
         if "text" in prompt_log:
             series_prompt_length.append(len(prompt_log["text"]))
 
