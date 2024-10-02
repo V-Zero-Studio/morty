@@ -5,6 +5,8 @@ from datetime import datetime
 import math
 import os
 import matplotlib.dates as mdates
+import statistics
+
 
 DATA_FILE = "/data/morty_log_2024-10-01T03_13_15.865Z.json"
 
@@ -23,7 +25,7 @@ series_window_leave = []
 
 cnt_sessions = 0
 cnt_mouse_enter = 0
-cnt_mouse_leave = 0
+# cnt_mouse_leave = 0
 sum_mouse_move = 0
 cnt_window_leave = 0
 
@@ -70,7 +72,7 @@ if __name__ == "__main__":
         cnt_mouse_enter += len(int_bev["mouseenterEvents"])
         series_mouse_enter.append(len(int_bev["mouseenterEvents"]))
         
-        cnt_mouse_leave += len(int_bev["mouseleaveEvents"])
+        # cnt_mouse_leave += len(int_bev["mouseleaveEvents"]) 
 
         footprint = calMouseFootprint(int_bev["mousemoveEvents"])
         series_mouse_footprint.append(footprint)
@@ -83,10 +85,18 @@ if __name__ == "__main__":
         if "text" in prompt_log:
             series_prompt_length.append(len(prompt_log["text"]))
 
-    print("avg mouse enter events:", cnt_mouse_enter / cnt_sessions)
-    print("avg mouse leave events:", cnt_mouse_leave / cnt_sessions)
-    print("avg mouse movement:", sum_mouse_move / cnt_sessions)
-    print("avg window leave events:", cnt_window_leave / cnt_sessions)
+    # 
+    # summary stats of mouse related behaviors
+    # 
+    print("avg mouse enter events:", cnt_mouse_enter / cnt_sessions, "#:", len(series_mouse_enter))
+    # print("avg mouse leave events:", cnt_mouse_leave / cnt_sessions)
+    print("avg mouse movement:", sum_mouse_move / cnt_sessions, "#:", len(series_mouse_footprint))
+    print("avg window leave events:", cnt_window_leave / cnt_sessions, "#:", len(series_window_leave))
+
+    # 
+    # prompt related stats
+    # 
+    print("prompt length:", statistics.mean(series_prompt_length), "(", statistics.stdev(series_prompt_length), ")")
 
     # 
     # plot confidence rating over time
@@ -103,7 +113,9 @@ if __name__ == "__main__":
     plt.figure(figsize=(10, 6))
     plt.scatter(df_confidence_aggregated['date_aggregated'], df_confidence_aggregated['value'], color='blue', marker='o')
 
+    #
     # confidence / agreement response rate
+    # 
     cnt_confidence_response = sum(1 for element in series_confidence if element is not None)
     print("confidence response rate:", cnt_confidence_response / cnt_sessions)
     cnt_agreement_response = sum(1 for element in series_agreement if element is not None)
