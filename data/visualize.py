@@ -46,8 +46,6 @@ if __name__ == "__main__":
     start_date = datetime.strptime(START_DATE, "%m/%d/%Y")
     end_date = datetime.strptime(END_DATE, "%m/%d/%Y")
     for entry in data:
-        # print(str_entry)
-        # entry = entry
         date_str = entry["timeStamp"]
         date_entry = datetime.fromisoformat(date_str.replace("Z", "+00:00")).replace(tzinfo=None)
         if start_date > date_entry and date_entry > end_date:
@@ -55,7 +53,8 @@ if __name__ == "__main__":
 
         cnt_sessions += 1
 
-        series_date.append(entry["timeStamp"])
+        str_date = entry["timeStamp"]
+        series_date.append(datetime.strptime(str_date, "%Y-%m-%dT%H:%M:%S.%fZ"))
 
         if "rating" in entry["confidenceRating"]:
             series_confidence.append(entry["confidenceRating"]["rating"])
@@ -84,6 +83,13 @@ if __name__ == "__main__":
         prompt_log = entry["prompt"]
         if "text" in prompt_log:
             series_prompt_length.append(len(prompt_log["text"]))
+
+    # 
+    # basic usage summary
+    # 
+    diff_dates = max(series_date) - min(series_date)
+    print("total # of days", diff_dates.days)
+    print("avg # of sessions per day", cnt_sessions / diff_dates.days)
 
     # 
     # summary stats of mouse related behaviors
