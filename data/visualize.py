@@ -25,7 +25,6 @@ series_window_leave = []
 
 cnt_sessions = 0
 cnt_mouse_enter = 0
-# cnt_mouse_leave = 0
 sum_mouse_move = 0
 cnt_window_leave = 0
 cnt_copy_events = 0
@@ -73,8 +72,6 @@ if __name__ == "__main__":
         cnt_mouse_enter += len(int_bev["mouseenterEvents"])
         series_mouse_enter.append(len(int_bev["mouseenterEvents"]))
         
-        # cnt_mouse_leave += len(int_bev["mouseleaveEvents"]) 
-
         footprint = calMouseFootprint(int_bev["mousemoveEvents"])
         series_mouse_footprint.append(footprint)
         sum_mouse_move += footprint
@@ -114,7 +111,7 @@ if __name__ == "__main__":
     # 
     print("avg copy events per session:", cnt_copy_events / cnt_sessions)
     print("avg length per copy event", sum_length_copy / cnt_copy_events)
-    
+
     # 
     # plot confidence rating over time
     # 
