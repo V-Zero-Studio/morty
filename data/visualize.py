@@ -96,15 +96,14 @@ if __name__ == "__main__":
     # 
     # summary stats of mouse related behaviors
     # 
-    print("avg mouse enter events:", cnt_mouse_enter / cnt_sessions, "#:", len(series_mouse_enter))
-    # print("avg mouse leave events:", cnt_mouse_leave / cnt_sessions)
-    print("avg mouse movement:", sum_mouse_move / cnt_sessions, "#:", len(series_mouse_footprint))
-    print("avg window leave events:", cnt_window_leave / cnt_sessions, "#:", len(series_window_leave))
+    print("avg mouse enter events per session:", cnt_mouse_enter / cnt_sessions, "#:", len(series_mouse_enter))
+    print("avg mouse movement per session:", sum_mouse_move / cnt_sessions, "#:", len(series_mouse_footprint))
+    print("avg window leave event per sessions:", cnt_window_leave / cnt_sessions, "#:", len(series_window_leave))
 
     # 
     # prompt related stats
     # 
-    print("prompt length:", statistics.mean(series_prompt_length), "(", statistics.stdev(series_prompt_length), ")")
+    print("avg prompt length:", statistics.mean(series_prompt_length), "(", statistics.stdev(series_prompt_length), ")")
 
     # 
     # copy events
