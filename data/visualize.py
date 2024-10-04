@@ -28,6 +28,8 @@ cnt_mouse_enter = 0
 # cnt_mouse_leave = 0
 sum_mouse_move = 0
 cnt_window_leave = 0
+cnt_copy_events = 0
+sum_length_copy = 0
 
 def calMouseFootprint(events):
     footprint = 0
@@ -83,7 +85,10 @@ if __name__ == "__main__":
         prompt_log = entry["prompt"]
         if "text" in prompt_log:
             series_prompt_length.append(len(prompt_log["text"]))
-
+        
+        cnt_copy_events += len(int_bev["copyEvents"])
+        for event in int_bev["copyEvents"]:
+            sum_length_copy += event["length"]
     # 
     # basic usage summary
     # 
@@ -104,6 +109,12 @@ if __name__ == "__main__":
     # 
     print("prompt length:", statistics.mean(series_prompt_length), "(", statistics.stdev(series_prompt_length), ")")
 
+    # 
+    # copy events
+    # 
+    print("avg copy events per session:", cnt_copy_events / cnt_sessions)
+    print("avg length per copy event", sum_length_copy / cnt_copy_events)
+    
     # 
     # plot confidence rating over time
     # 
