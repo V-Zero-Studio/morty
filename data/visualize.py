@@ -30,6 +30,9 @@ cnt_window_leave = 0
 cnt_copy_events = 0
 sum_length_copy = 0
 
+# time to action
+series_time_to_action = []
+
 def calMouseFootprint(events):
     footprint = 0
     for i in range(1, len(events)):
@@ -86,6 +89,24 @@ if __name__ == "__main__":
         cnt_copy_events += len(int_bev["copyEvents"])
         for event in int_bev["copyEvents"]:
             sum_length_copy += event["length"]
+
+        ts_first_action = None
+        for eventType in int_bev:
+            for event in int_bev[eventType]:
+                ts = datetime.strptime(event['timeStamp'], "%Y-%m-%dT%H:%M:%S.%fZ")
+                if ts_first_action != None:
+                    ts_first_action = min(ts, ts_first_action)
+                else:
+                    ts_first_action = ts
+        if ts_first_action != None:
+            ts_prompt_sent = datetime.strptime(prompt_log["timeSent"], "%Y-%m-%dT%H:%M:%S.%fZ")
+            dt_first_action = ts_first_action - ts_prompt_sent
+            series_time_to_action.append(dt_first_action.seconds)
+            print(ts_prompt_sent, ts_first_action)
+        else:
+            series_time_to_action.append(None)
+    # ------------------------------------------------------------------------
+
     # 
     # basic usage summary
     # 
@@ -133,6 +154,11 @@ if __name__ == "__main__":
     print("confidence response rate:", cnt_confidence_response / cnt_sessions)
     cnt_agreement_response = sum(1 for element in series_agreement if element is not None)
     print("agreement response rate:", cnt_agreement_response / cnt_sessions)
+
+    # 
+    # less direct stats
+    # 
+    print("time to action:", series_time_to_action)
 
     # 
     # plot agreement rating over time
