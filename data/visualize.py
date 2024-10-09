@@ -85,6 +85,7 @@ if __name__ == "__main__":
         prompt_log = entry["prompt"]
         if "text" in prompt_log:
             series_prompt_length.append(len(prompt_log["text"]))
+        ts_prompt_sent = datetime.strptime(prompt_log["timeSent"], "%Y-%m-%dT%H:%M:%S.%fZ")
         
         cnt_copy_events += len(int_bev["copyEvents"])
         for event in int_bev["copyEvents"]:
@@ -94,15 +95,21 @@ if __name__ == "__main__":
         for eventType in int_bev:
             for event in int_bev[eventType]:
                 ts = datetime.strptime(event['timeStamp'], "%Y-%m-%dT%H:%M:%S.%fZ")
+
+                if ts < ts_prompt_sent:
+                    print(eventType)
+
                 if ts_first_action != None:
                     ts_first_action = min(ts, ts_first_action)
                 else:
                     ts_first_action = ts
+        
         if ts_first_action != None:
-            ts_prompt_sent = datetime.strptime(prompt_log["timeSent"], "%Y-%m-%dT%H:%M:%S.%fZ")
+            # ts_prompt_sent = datetime.strptime(prompt_log["timeSent"], "%Y-%m-%dT%H:%M:%S.%fZ")
             dt_first_action = ts_first_action - ts_prompt_sent
             series_time_to_action.append(dt_first_action.seconds)
-            print(ts_prompt_sent, ts_first_action)
+            # print(ts_prompt_sent, ts_first_action)
+            
         else:
             series_time_to_action.append(None)
     # ------------------------------------------------------------------------
