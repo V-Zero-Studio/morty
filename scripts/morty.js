@@ -369,7 +369,7 @@ const configCff = () => {
 }
 
 //
-//
+//  start the routine of monitoring streaming
 //
 const startMonitoring = () => {
     // create an instance of MutationObserver
@@ -605,7 +605,7 @@ const pushIfApart = (array, entry, dt, aggrFunc) => {
 }
 
 //
-//
+//  detecting whether a new prompt has been sent
 //
 const promptSent = () => {
     return _sessionEntry.prompt.timeSent != undefined
@@ -750,7 +750,7 @@ const openDB = (onSuccess) => {
 }
 
 //
-//
+// writing to indexedDB
 //
 const writeToDB = (data, onSuccess) => {
     const transaction = _db.transaction([ID_STORE], "readwrite");
@@ -771,7 +771,7 @@ const writeToDB = (data, onSuccess) => {
 }
 
 //
-//
+//  reading from indexedDB
 //
 const readFromDB = (onSuccess) => {
     const transaction = _db.transaction([ID_STORE], "readonly");
