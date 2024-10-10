@@ -297,11 +297,11 @@ const revealResponse = () => {
 //  event handler for clicking the prompt box to enter a prompt
 //
 const onClickPromptBox = () => {
-    if (_isLogging && _sessionEntry.timeStamp != undefined) {
-        saveLog()
-        clearTimeout(_autoSaveTimeout)
-        log("auto save timeout cleared")
-    }
+    // if (_isLogging && _sessionEntry.timeStamp != undefined) {
+    //     saveLog()
+    //     clearTimeout(_autoSaveTimeout)
+    //     log("auto save timeout cleared")
+    // }
 }
 
 //
@@ -418,16 +418,27 @@ const init = () => {
                     configCff()
                 }
 
-                // data logging
-                _sessionEntry.prompt.text = _promptCurrent
-                _sessionEntry.prompt.timeSent = time()
+                // data logging - saving previous session
+                if (_isLogging && _sessionEntry.timeStamp != undefined) {
+                    saveLog()
+                    clearTimeout(_autoSaveTimeout)
+                    log("auto save timeout cleared")
+                }
+
 
                 startMonitoring()
+
                 // hack: wait a bit and de-focus on the text prompt
                 // which forces the user to click it to re-engage
                 // (need the clicking event to signify the end of the prev. session)
                 setTimeout(() => {
                     event.target.blur()
+
+                    // logging for new session
+                    // delay because writing the previous session to DB takes time
+                    _sessionEntry.prompt.text = _promptCurrent
+                    _sessionEntry.prompt.timeSent = time()
+                    log(_sessionEntry)
                 }, 250)
             }
         } else {
@@ -447,12 +458,11 @@ const init = () => {
             }
 
             startMonitoring()
+
+            // data logging
+            _sessionEntry.prompt.text = _promptCurrent
+            _sessionEntry.prompt.timeSent = time()
         }
-
-        // data logging
-        _sessionEntry.prompt.text = _promptCurrent
-        _sessionEntry.prompt.timeSent = time()
-
     });
 
     // create on-web-page ui
