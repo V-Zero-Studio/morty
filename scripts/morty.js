@@ -77,14 +77,14 @@ const callbackNewResponse = (mutationsList, observer) => {
                     }
                     _observerNewResponse.disconnect()
 
-                    if (elements.length == 1) {
+                    // if (elements.length == 1) {
                         // starting a new prompt saves the previous session entry
                         // this event listener needs to be (re)created every time the user
                         // starts a new tab, which means # of response in history == 1
-                        let elmPromptBox = document.getElementById(_config.ID_TEXTBOX_PROMPT)
-                        elmPromptBox.removeEventListener("click", onClickPromptBox)
-                        elmPromptBox.addEventListener("click", onClickPromptBox)
-                    }
+                        // let elmPromptBox = document.getElementById(_config.ID_TEXTBOX_PROMPT)
+                        // elmPromptBox.removeEventListener("click", onClickPromptBox)
+                        // elmPromptBox.addEventListener("click", onClickPromptBox)
+                    // }
 
                     log("streaming starts")
                     _isStreaming = true
@@ -296,13 +296,13 @@ const revealResponse = () => {
 //
 //  event handler for clicking the prompt box to enter a prompt
 //
-const onClickPromptBox = () => {
+// const onClickPromptBox = () => {
     // if (_isLogging && _sessionEntry.timeStamp != undefined) {
     //     saveLog()
     //     clearTimeout(_autoSaveTimeout)
     //     log("auto save timeout cleared")
     // }
-}
+// }
 
 //
 //  use a textarea's placeholder as a prefilled prefix for the text to be entered
@@ -438,7 +438,6 @@ const init = () => {
                     // delay because writing the previous session to DB takes time
                     _sessionEntry.prompt.text = _promptCurrent
                     _sessionEntry.prompt.timeSent = time()
-                    log(_sessionEntry)
                 }, 250)
             }
         } else {
@@ -488,7 +487,7 @@ const init = () => {
     let elmPromptBox = document.getElementById(_config.ID_TEXTBOX_PROMPT)
     if (elmPromptBox != null) {
         _placeholderPrompt = elmPromptBox.getAttribute("placeholder")
-        elmPromptBox.addEventListener("click", onClickPromptBox)
+        // elmPromptBox.addEventListener("click", onClickPromptBox)
     } else {
         console.error("[morty]", "unable to locate prompt box!")
         alert("Error initiating MORTY. Please refresh this page.")
