@@ -7,7 +7,6 @@ import os
 import matplotlib.dates as mdates
 import statistics
 
-
 DATA_FILE = "/data/morty_log_2024-10-01T03_13_15.865Z.json"
 
 START_DATE = "08/21/2024"
@@ -32,6 +31,7 @@ sum_length_copy = 0
 
 # time to action
 series_time_to_action = []
+series_interaction_length = []
 
 def calMouseFootprint(events):
     footprint = 0
@@ -92,6 +92,7 @@ if __name__ == "__main__":
             sum_length_copy += event["length"]
 
         ts_first_action = None
+        ts_last_action = None
         for eventType in int_bev:
             for event in int_bev[eventType]:
                 ts = datetime.strptime(event['timeStamp'], "%Y-%m-%dT%H:%M:%S.%fZ")
@@ -99,19 +100,18 @@ if __name__ == "__main__":
                 if ts < ts_prompt_sent:
                     print(eventType)
 
-                if ts_first_action != None:
-                    ts_first_action = min(ts, ts_first_action)
-                else:
-                    ts_first_action = ts
-        
+                ts_first_action = min(ts, ts_first_action) if ts_first_action != None else ts
+                ts_last_action = max(ts, ts_last_action) if ts_last_action != None else ts
+
         if ts_first_action != None:
-            # ts_prompt_sent = datetime.strptime(prompt_log["timeSent"], "%Y-%m-%dT%H:%M:%S.%fZ")
             dt_first_action = ts_first_action - ts_prompt_sent
             series_time_to_action.append(dt_first_action.seconds)
             # print(ts_prompt_sent, ts_first_action)
-            
+            dt_interaction_length = ts_last_action - ts_first_action
+            series_interaction_length.append(dt_interaction_length.seconds)
         else:
             series_time_to_action.append(None)
+            series_interaction_length.append(None)
     # ------------------------------------------------------------------------
 
     # 
@@ -119,7 +119,7 @@ if __name__ == "__main__":
     # 
     diff_dates = max(series_date) - min(series_date)
     print("total # of days", diff_dates.days)
-    print("avg # of sessions per day", cnt_sessions / diff_dates.days)
+    print("avg # of sessions per day", cnt_sessions / (diff_dates.days + 1))
 
     # 
     # summary stats of mouse related behaviors
@@ -137,7 +137,8 @@ if __name__ == "__main__":
     # copy events
     # 
     print("avg copy events per session:", cnt_copy_events / cnt_sessions)
-    print("avg length per copy event", sum_length_copy / cnt_copy_events)
+    if cnt_copy_events > 0 :
+        print("avg length per copy event", sum_length_copy / cnt_copy_events)
 
     # 
     # plot confidence rating over time
@@ -166,6 +167,7 @@ if __name__ == "__main__":
     # less direct stats
     # 
     print("time to action:", series_time_to_action)
+    print("interaction lengths:", series_interaction_length)
 
     # 
     # plot agreement rating over time
