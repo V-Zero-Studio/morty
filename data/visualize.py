@@ -7,7 +7,7 @@ import os
 import matplotlib.dates as mdates
 import statistics
 
-DATA_FILE = "/data/morty_log_2024-10-01T03_13_15.865Z.json"
+DATA_FILE = "/data/morty_log_test.json"
 
 START_DATE = "08/21/2024"
 END_DATE = "08/31/2024"
