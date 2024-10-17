@@ -386,7 +386,7 @@ const init = () => {
     log("ready")
 
     // trigger mitigation from enter key press to send prompt
-    document.addEventListener('keydown', function (event) {
+    document.addEventListener('keydown', async (event) => {
         if (event.target.id === _config.ID_PROMPT_INPUT) {
             _promptCurrent = event.target.innerText
 
@@ -400,22 +400,16 @@ const init = () => {
 
                 // data logging - saving previous session
                 if (_isLogging && _sessionEntry.timeStamp != undefined) {
-                    saveLog()
+                    await saveLog()
                     clearTimeout(_autoSaveTimeout)
                     log("auto save timeout cleared")
                 }
 
-
                 startMonitoring()
 
-                setTimeout(() => {
-                    // event.target.blur()
-
-                    // logging for new session
-                    // delay because writing the previous session to DB takes time
-                    _sessionEntry.prompt.text = _promptCurrent
-                    _sessionEntry.prompt.timeSent = time()
-                }, 250)
+                _sessionEntry.prompt.text = _promptCurrent
+                _sessionEntry.prompt.timeSent = time()
+                log("prompt logged")
             }
         } else {
             // data logging
@@ -516,16 +510,20 @@ const init = () => {
 //
 //  save the latest session's log entry
 //
-const saveLog = () => {
+const saveLog = async () => {
     if (_sessionEntry == undefined || _sessionEntry.timeStamp == undefined) {
         return
     }
 
-    writeToDB(_sessionEntry, () => {
-        log('data successfully stored.')
-        log(_sessionEntry)
-        _sessionEntry = createNewLogEntry()
+    return new Promise((resolve, reject) => {
+        writeToDB(_sessionEntry, () => {
+            log('data successfully stored.')
+            log(_sessionEntry)
+            _sessionEntry = createNewLogEntry()
+            resolve()
+        })
     })
+    
 }
 
 //
@@ -596,12 +594,10 @@ const pushIfApart = (array, entry, dt, aggrFunc) => {
 const logInteractionBehaviorOnResponse = () => {
 
     _elmResponse.addEventListener("click", (e) => {
-        
         _sessionEntry.interactionBehaviors.clickEvents.push({ timeStamp: time() })
     })
 
     _elmResponse.addEventListener("mousewheel", (e) => {
-        
         pushIfApart(_sessionEntry.interactionBehaviors.scrollEvents, { timeStamp: time(), offset: e.deltaY }, DT_EVENTS, (array, entry) => {
             if (array.length > 0) {
                 array[array.length - 1].offset += entry.offset
@@ -610,37 +606,34 @@ const logInteractionBehaviorOnResponse = () => {
     })
 
     _elmResponse.addEventListener("mousedown", (e) => {
-        
         _sessionEntry.interactionBehaviors.mousedownEvents.push({ timeStamp: time(), coord: { x: e.clientX, y: e.clientY } })
     })
 
     _elmResponse.addEventListener("mousemove", (e) => {
-        
         pushIfApart(_sessionEntry.interactionBehaviors.mousemoveEvents, { timeStamp: time(), coord: { x: e.clientX, y: e.clientY } }, DT_EVENTS)
     })
 
     _elmResponse.addEventListener("mouseup", (e) => {
-        
         _sessionEntry.interactionBehaviors.mouseupEvents.push({ timeStamp: time(), coord: { x: e.clientX, y: e.clientY } })
     })
 
     _elmResponse.addEventListener("mouseenter", (e) => {
-        
+        log("mouse enter: " + time())
         _sessionEntry.interactionBehaviors.mouseenterEvents.push({ timeStamp: time() })
     })
 
     _elmResponse.addEventListener("mouseleave", (e) => {
-        
+
         _sessionEntry.interactionBehaviors.mouseleaveEvents.push({ timeStamp: time() })
     })
 
     _elmResponse.addEventListener("copy", (e) => {
-        
+
         _sessionEntry.interactionBehaviors.copyEvents.push({ timeStamp: time(), length: window.getSelection().toString().length })
     })
 
     window.addEventListener('blur', (e) => {
-        
+
         _sessionEntry.interactionBehaviors.windowleaveEvents.push({ timeStamp: time() })
         _isWindowBlur = false
         // if the user leaves the page during streaming, we assume they are not done with the session
@@ -657,7 +650,7 @@ const logInteractionBehaviorOnResponse = () => {
     })
 
     window.addEventListener('focus', (e) => {
-        
+
         _sessionEntry.interactionBehaviors.windowenterEvents.push({ timeStamp: time() })
         _isWindowBlur = true
         clearTimeout(_autoSaveTimeout)
