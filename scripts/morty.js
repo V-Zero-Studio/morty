@@ -408,11 +408,8 @@ const init = () => {
 
                 startMonitoring()
 
-                // hack: wait a bit and de-focus on the text prompt
-                // which forces the user to click it to re-engage
-                // (need the clicking event to signify the end of the prev. session)
                 setTimeout(() => {
-                    event.target.blur()
+                    // event.target.blur()
 
                     // logging for new session
                     // delay because writing the previous session to DB takes time
