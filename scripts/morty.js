@@ -594,13 +594,6 @@ const pushIfApart = (array, entry, dt, aggrFunc) => {
 }
 
 //
-//  detecting whether a new prompt has been sent
-//
-// const promptSent = () => {
-//     return _sessionEntry.prompt.timeSent != undefined
-// }
-
-//
 //  attach event listeners to log interaction behaviors
 //
 const logInteractionBehaviorOnResponse = () => {
