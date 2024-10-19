@@ -399,7 +399,7 @@ const init = () => {
                 }
 
                 // data logging - saving previous session
-                if (_isLogging && _sessionEntry != undefined && _sessionEntry.timeStamp != undefined) {
+                if (_isLogging && _sessionEntry != undefined) {
                     await saveLog()
                     clearTimeout(_autoSaveTimeout)
                     log("auto save timeout cleared")
@@ -414,7 +414,9 @@ const init = () => {
             }
         } else {
             // data logging
-            _sessionEntry.interactionBehaviors.keydownEvents.push({ timeStamp: time(), key: event.key })
+            if (_sessionEntry != undefined) {
+                _sessionEntry.interactionBehaviors.keydownEvents.push({ timeStamp: time(), key: event.key })
+            }
         }
 
     }, true)
@@ -533,7 +535,7 @@ const saveLog = async () => {
 //
 const createNewLogEntry = () => {
     return {
-        timeStamp: undefined,
+        timeStamp: time(),
         prompt: {
             timeStart: undefined,
             timeSent: undefined,
