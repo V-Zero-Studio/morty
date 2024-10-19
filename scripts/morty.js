@@ -525,7 +525,7 @@ const saveLog = async () => {
             resolve()
         })
     })
-    
+
 }
 
 //
@@ -596,12 +596,12 @@ const pushIfApart = (array, entry, dt, aggrFunc) => {
 const logInteractionBehaviorOnResponse = () => {
 
     _elmResponse.addEventListener("click", (e) => {
-        if(_sessionEntry == undefined) return
+        if (_sessionEntry == undefined) return
         _sessionEntry.interactionBehaviors.clickEvents.push({ timeStamp: time() })
     })
 
     _elmResponse.addEventListener("mousewheel", (e) => {
-        if(_sessionEntry == undefined) return
+        if (_sessionEntry == undefined) return
         pushIfApart(_sessionEntry.interactionBehaviors.scrollEvents, { timeStamp: time(), offset: e.deltaY }, DT_EVENTS, (array, entry) => {
             if (array.length > 0) {
                 array[array.length - 1].offset += entry.offset
@@ -610,37 +610,37 @@ const logInteractionBehaviorOnResponse = () => {
     })
 
     _elmResponse.addEventListener("mousedown", (e) => {
-        if(_sessionEntry == undefined) return
+        if (_sessionEntry == undefined) return
         _sessionEntry.interactionBehaviors.mousedownEvents.push({ timeStamp: time(), coord: { x: e.clientX, y: e.clientY } })
     })
 
     _elmResponse.addEventListener("mousemove", (e) => {
-        if(_sessionEntry == undefined) return
+        if (_sessionEntry == undefined) return
         pushIfApart(_sessionEntry.interactionBehaviors.mousemoveEvents, { timeStamp: time(), coord: { x: e.clientX, y: e.clientY } }, DT_EVENTS)
     })
 
     _elmResponse.addEventListener("mouseup", (e) => {
-        if(_sessionEntry == undefined) return
+        if (_sessionEntry == undefined) return
         _sessionEntry.interactionBehaviors.mouseupEvents.push({ timeStamp: time(), coord: { x: e.clientX, y: e.clientY } })
     })
 
     _elmResponse.addEventListener("mouseenter", (e) => {
-        if(_sessionEntry == undefined) return
+        if (_sessionEntry == undefined) return
         _sessionEntry.interactionBehaviors.mouseenterEvents.push({ timeStamp: time() })
     })
 
     _elmResponse.addEventListener("mouseleave", (e) => {
-        if(_sessionEntry == undefined) return
+        if (_sessionEntry == undefined) return
         _sessionEntry.interactionBehaviors.mouseleaveEvents.push({ timeStamp: time() })
     })
 
     _elmResponse.addEventListener("copy", (e) => {
-        if(_sessionEntry == undefined) return
+        if (_sessionEntry == undefined) return
         _sessionEntry.interactionBehaviors.copyEvents.push({ timeStamp: time(), length: window.getSelection().toString().length })
     })
 
     window.addEventListener('blur', (e) => {
-        if(_sessionEntry == undefined) return
+        if (_sessionEntry == undefined) return
         _sessionEntry.interactionBehaviors.windowleaveEvents.push({ timeStamp: time() })
         _isWindowBlur = false
         // if the user leaves the page during streaming, we assume they are not done with the session
@@ -657,7 +657,7 @@ const logInteractionBehaviorOnResponse = () => {
     })
 
     window.addEventListener('focus', (e) => {
-        if(_sessionEntry == undefined) return
+        if (_sessionEntry == undefined) return
         _sessionEntry.interactionBehaviors.windowenterEvents.push({ timeStamp: time() })
         _isWindowBlur = true
         clearTimeout(_autoSaveTimeout)
