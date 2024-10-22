@@ -14,9 +14,11 @@ END_DATE = "08/31/2024"
 
 series_date = []
 
+# technique related
 series_confidence = []
 series_agreement = []
 
+# user input
 series_mouse_enter = []
 series_mouse_footprint = []
 series_prompt_length = []
@@ -28,6 +30,8 @@ sum_mouse_move = 0
 cnt_window_leave = 0
 cnt_copy_events = 0
 sum_length_copy = 0
+cnt_scroll_needed = 0
+cnt_scroll_actions = 0
 
 # time to action
 series_time_to_action = []
@@ -82,6 +86,10 @@ if __name__ == "__main__":
         cnt_window_leave += len(int_bev["windowleaveEvents"])
         series_window_leave.append(len(int_bev["windowleaveEvents"]))
 
+        if entry["response"]["height"] > entry["viewHeight"]:
+            cnt_scroll_needed += 1
+            cnt_scroll_actions += len(int_bev["scrollEvents"])
+
         prompt_log = entry["prompt"]
         if "text" in prompt_log:
             series_prompt_length.append(len(prompt_log["text"]))
@@ -127,7 +135,7 @@ if __name__ == "__main__":
     print("avg mouse enter events per session:", cnt_mouse_enter / cnt_sessions, "#:", len(series_mouse_enter))
     print("avg mouse movement per session:", sum_mouse_move / cnt_sessions, "#:", len(series_mouse_footprint))
     print("avg window leave event per sessions:", cnt_window_leave / cnt_sessions, "#:", len(series_window_leave))
-
+    print("ave # of scroll actions (when needed):", cnt_scroll_actions / cnt_scroll_needed)
     # 
     # prompt related stats
     # 
