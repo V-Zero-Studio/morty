@@ -32,6 +32,7 @@ cnt_copy_events = 0
 sum_length_copy = 0
 cnt_scroll_needed = 0
 cnt_scroll_actions = 0
+sum_scroll_offset = 0
 
 # time to action
 series_time_to_action = []
@@ -89,6 +90,7 @@ if __name__ == "__main__":
         if entry["response"]["height"] > entry["viewHeight"]:
             cnt_scroll_needed += 1
             cnt_scroll_actions += len(int_bev["scrollEvents"])
+            sum_scroll_offset += sum(event["offset"] for event in int_bev["scrollEvents"])
 
         prompt_log = entry["prompt"]
         if "text" in prompt_log:
@@ -135,7 +137,8 @@ if __name__ == "__main__":
     print("avg mouse enter events per session:", cnt_mouse_enter / cnt_sessions, "#:", len(series_mouse_enter))
     print("avg mouse movement per session:", sum_mouse_move / cnt_sessions, "#:", len(series_mouse_footprint))
     print("avg window leave event per sessions:", cnt_window_leave / cnt_sessions, "#:", len(series_window_leave))
-    print("ave # of scroll actions (when needed):", cnt_scroll_actions / cnt_scroll_needed)
+    print("avg # of scroll actions (when needed):", cnt_scroll_actions / cnt_scroll_needed)
+    print("avg # of pixels scrolled (when needed):", sum_scroll_offset / cnt_scroll_needed)
     # 
     # prompt related stats
     # 
