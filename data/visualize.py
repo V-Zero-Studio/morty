@@ -60,6 +60,9 @@ if __name__ == "__main__":
         if start_date > date_entry and date_entry > end_date:
             continue
 
+        if entry["prompt"] == {}:
+            continue
+
         cnt_sessions += 1
 
         str_date = entry["timeStamp"]
