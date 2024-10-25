@@ -30,9 +30,13 @@ sum_mouse_move = 0
 cnt_window_leave = 0
 cnt_copy_events = 0
 sum_length_copy = 0
+
+# user input - scroll
 cnt_scroll_needed = 0
 cnt_scroll_actions = 0
 sum_scroll_offset = 0
+cnt_scroll_events = 0
+sum_scroll_intervals = 0
 
 # time to action
 series_time_to_action = []
@@ -94,6 +98,11 @@ if __name__ == "__main__":
             cnt_scroll_needed += 1
             cnt_scroll_actions += len(int_bev["scrollEvents"])
             sum_scroll_offset += sum(event["offset"] for event in int_bev["scrollEvents"])
+            for i in range(len(int_bev["scrollEvents"]) - 1):
+                ts = datetime.strptime(int_bev["scrollEvents"][i]['timeStamp'], "%Y-%m-%dT%H:%M:%S.%fZ")
+                ts_next = datetime.strptime(int_bev["scrollEvents"][i+1]['timeStamp'], "%Y-%m-%dT%H:%M:%S.%fZ")
+                sum_scroll_intervals += (ts_next - ts).seconds # todo: store the value in a series instead
+                cnt_scroll_events += 1
 
         prompt_log = entry["prompt"]
         if "text" in prompt_log:
@@ -142,6 +151,7 @@ if __name__ == "__main__":
     print("avg window leave event per sessions:", cnt_window_leave / cnt_sessions, "#:", len(series_window_leave))
     print("avg # of scroll actions (when needed):", cnt_scroll_actions / cnt_scroll_needed)
     print("avg # of pixels scrolled (when needed):", sum_scroll_offset / cnt_scroll_needed)
+    print("ave interval between scroll:", sum_scroll_intervals / cnt_scroll_events)
     # 
     # prompt related stats
     # 
