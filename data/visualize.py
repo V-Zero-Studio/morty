@@ -9,12 +9,12 @@ import statistics
 
 DATA_FILE = "/data/morty_log_test.json"
 
-START_DATE = "08/21/2024"
-END_DATE = "08/31/2024"
+START_DATE = "10/1/2024"
+END_DATE = "2/28/2025"
 
 series_date = []
 
-# technique related
+# mitigation technique related
 series_confidence = []
 series_agreement = []
 
@@ -38,7 +38,7 @@ sum_scroll_offset = 0
 cnt_scroll_events = 0
 sum_scroll_intervals = 0
 
-# time to action
+# timing related
 series_time_to_action = []
 series_interaction_length = []
 
@@ -61,10 +61,11 @@ if __name__ == "__main__":
     for entry in data:
         date_str = entry["timeStamp"]
         date_entry = datetime.fromisoformat(date_str.replace("Z", "+00:00")).replace(tzinfo=None)
-        if start_date > date_entry and date_entry > end_date:
+        if start_date > date_entry or date_entry > end_date:
             continue
 
         if entry["prompt"] == {}:
+            print("skipped empty entry")
             continue
 
         cnt_sessions += 1
@@ -94,7 +95,7 @@ if __name__ == "__main__":
         cnt_window_leave += len(int_bev["windowleaveEvents"])
         series_window_leave.append(len(int_bev["windowleaveEvents"]))
 
-        if entry["response"]["height"] > entry["viewHeight"]:
+        if "height" in entry["response"] and entry["response"]["height"] > entry["viewHeight"]:
             cnt_scroll_needed += 1
             cnt_scroll_actions += len(int_bev["scrollEvents"])
             sum_scroll_offset += sum(event["offset"] for event in int_bev["scrollEvents"])
@@ -149,7 +150,7 @@ if __name__ == "__main__":
     print("avg mouse enter events per session:", cnt_mouse_enter / cnt_sessions, "#:", len(series_mouse_enter))
     print("avg mouse movement per session:", sum_mouse_move / cnt_sessions, "#:", len(series_mouse_footprint))
     print("avg window leave event per sessions:", cnt_window_leave / cnt_sessions, "#:", len(series_window_leave))
-    print("avg # of scroll actions (when needed):", cnt_scroll_actions / cnt_scroll_needed)
+    print("avg # of scroll actions (when needed):", cnt_scroll_actions / cnt_scroll_needed, "#:", cnt_scroll_needed)
     print("avg # of pixels scrolled (when needed):", sum_scroll_offset / cnt_scroll_needed)
     print("ave interval between scroll:", sum_scroll_intervals / cnt_scroll_events)
     # 
