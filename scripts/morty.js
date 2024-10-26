@@ -515,7 +515,7 @@ const init = () => {
 //  save the latest session's log entry
 //
 const saveLog = async () => {
-    if (_sessionEntry == undefined || _sessionEntry.timeStamp == undefined) {
+    if (_sessionEntry == undefined || _sessionEntry.timeStamp == undefined || _sessionEntry.prompt.text == undefined) {
         return
     }
 
