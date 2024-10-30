@@ -151,7 +151,7 @@ if __name__ == "__main__":
     print("avg window leave event per sessions:", cnt_window_leave / cnt_sessions, "#:", len(series_window_leave))
     print("avg # of scroll actions (when needed):", cnt_scroll_actions / cnt_scroll_needed, "#:", cnt_scroll_needed)
     print("avg # of pixels scrolled (when needed):", sum_scroll_offset / cnt_scroll_needed)
-    print("ave interval between scroll:", sum_scroll_intervals / cnt_scroll_events)
+    print("avg interval between scroll:", sum_scroll_intervals / cnt_scroll_events)
     # 
     # prompt related stats
     # 
