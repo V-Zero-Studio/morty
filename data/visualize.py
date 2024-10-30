@@ -54,8 +54,6 @@ if __name__ == "__main__":
     with open(os.getcwd() + DATA_FILE, 'r') as file:
         data = json.load(file)
 
-    print("total # of session entries:", len(data))
-
     start_date = datetime.strptime(START_DATE, "%m/%d/%Y")
     end_date = datetime.strptime(END_DATE, "%m/%d/%Y")
     for entry in data:
@@ -95,6 +93,7 @@ if __name__ == "__main__":
         cnt_window_leave += len(int_bev["windowleaveEvents"])
         series_window_leave.append(len(int_bev["windowleaveEvents"]))
 
+        # if scrolling is needed
         if "height" in entry["response"] and entry["response"]["height"] > entry["viewHeight"]:
             cnt_scroll_needed += 1
             cnt_scroll_actions += len(int_bev["scrollEvents"])
@@ -106,8 +105,7 @@ if __name__ == "__main__":
                 cnt_scroll_events += 1
 
         prompt_log = entry["prompt"]
-        if "text" in prompt_log:
-            series_prompt_length.append(len(prompt_log["text"]))
+        series_prompt_length.append(len(prompt_log["text"]))
         ts_prompt_sent = datetime.strptime(prompt_log["timeSent"], "%Y-%m-%dT%H:%M:%S.%fZ")
         
         cnt_copy_events += len(int_bev["copyEvents"])
@@ -140,6 +138,7 @@ if __name__ == "__main__":
     # 
     # basic usage summary
     # 
+    print("total # of (non-empty) sessions:", cnt_sessions)
     diff_dates = max(series_date) - min(series_date)
     print("total # of days", diff_dates.days)
     print("avg # of sessions per day", cnt_sessions / (diff_dates.days + 1))
