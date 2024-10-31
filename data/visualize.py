@@ -117,17 +117,12 @@ if __name__ == "__main__":
         for eventType in int_bev:
             for event in int_bev[eventType]:
                 ts = datetime.strptime(event['timeStamp'], "%Y-%m-%dT%H:%M:%S.%fZ")
-
-                if ts < ts_prompt_sent:
-                    print(eventType)
-
                 ts_first_action = min(ts, ts_first_action) if ts_first_action != None else ts
                 ts_last_action = max(ts, ts_last_action) if ts_last_action != None else ts
 
         if ts_first_action != None:
             dt_first_action = ts_first_action - ts_prompt_sent
             series_time_to_action.append(dt_first_action.seconds)
-            # print(ts_prompt_sent, ts_first_action)
             dt_interaction_length = ts_last_action - ts_first_action
             series_interaction_length.append(dt_interaction_length.seconds)
         else:
@@ -138,6 +133,7 @@ if __name__ == "__main__":
     # 
     # basic usage summary
     # 
+    print()
     print("total # of (non-empty) sessions:", cnt_sessions)
     diff_dates = max(series_date) - min(series_date)
     print("total # of days", diff_dates.days)
@@ -146,20 +142,24 @@ if __name__ == "__main__":
     # 
     # summary stats of mouse related behaviors
     # 
+    print()
     print("avg mouse enter events per session:", cnt_mouse_enter / cnt_sessions, "#:", len(series_mouse_enter))
     print("avg mouse movement per session:", sum_mouse_move / cnt_sessions, "#:", len(series_mouse_footprint))
     print("avg window leave event per sessions:", cnt_window_leave / cnt_sessions, "#:", len(series_window_leave))
     print("avg # of scroll actions (when needed):", cnt_scroll_actions / cnt_scroll_needed, "#:", cnt_scroll_needed)
     print("avg # of pixels scrolled (when needed):", sum_scroll_offset / cnt_scroll_needed)
     print("avg interval between scroll:", sum_scroll_intervals / cnt_scroll_events)
+    
     # 
     # prompt related stats
     # 
+    print()
     print("avg prompt length:", statistics.mean(series_prompt_length), "(", statistics.stdev(series_prompt_length), ")")
 
     # 
     # copy events
     # 
+    print()
     print("avg copy events per session:", cnt_copy_events / cnt_sessions)
     if cnt_copy_events > 0 :
         print("avg length per copy event", sum_length_copy / cnt_copy_events)
@@ -182,6 +182,7 @@ if __name__ == "__main__":
     #
     # confidence / agreement response rate
     # 
+    print()
     cnt_confidence_response = sum(1 for element in series_confidence if element is not None)
     print("confidence response rate:", cnt_confidence_response / cnt_sessions)
     cnt_agreement_response = sum(1 for element in series_agreement if element is not None)
@@ -190,6 +191,7 @@ if __name__ == "__main__":
     # 
     # less direct stats
     # 
+    print()
     print("time to action:", series_time_to_action)
     print("interaction lengths:", series_interaction_length)
 
