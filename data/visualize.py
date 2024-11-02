@@ -42,6 +42,7 @@ sum_scroll_intervals = 0
 series_time_to_action = []
 series_interaction_length = []
 
+# calculate the footprint (length) of a sequence of mouse movements
 def calMouseFootprint(events):
     footprint = 0
     for i in range(1, len(events)):
@@ -56,9 +57,10 @@ if __name__ == "__main__":
 
     start_date = datetime.strptime(START_DATE, "%m/%d/%Y")
     end_date = datetime.strptime(END_DATE, "%m/%d/%Y")
+
     for entry in data:
-        date_str = entry["timeStamp"]
-        date_entry = datetime.fromisoformat(date_str.replace("Z", "+00:00")).replace(tzinfo=None)
+        # exclude data outside of specified range
+        date_entry = datetime.fromisoformat(entry["timeStamp"].replace("Z", "+00:00")).replace(tzinfo=None)
         if start_date > date_entry or date_entry > end_date:
             continue
 
@@ -68,8 +70,7 @@ if __name__ == "__main__":
 
         cnt_sessions += 1
 
-        str_date = entry["timeStamp"]
-        series_date.append(datetime.strptime(str_date, "%Y-%m-%dT%H:%M:%S.%fZ"))
+        series_date.append(datetime.strptime(entry["timeStamp"], "%Y-%m-%dT%H:%M:%S.%fZ"))
 
         if "rating" in entry["confidenceRating"]:
             series_confidence.append(entry["confidenceRating"]["rating"])
@@ -163,6 +164,13 @@ if __name__ == "__main__":
     print("avg copy events per session:", cnt_copy_events / cnt_sessions)
     if cnt_copy_events > 0 :
         print("avg length per copy event", sum_length_copy / cnt_copy_events)
+    
+    # 
+    # less direct stats
+    # 
+    print()
+    print("time to action:", series_time_to_action)
+    print("interaction lengths:", series_interaction_length)
 
     # 
     # plot confidence rating over time
@@ -189,21 +197,14 @@ if __name__ == "__main__":
     print("agreement response rate:", cnt_agreement_response / cnt_sessions)
 
     # 
-    # less direct stats
-    # 
-    print()
-    print("time to action:", series_time_to_action)
-    print("interaction lengths:", series_interaction_length)
-
-    # 
     # plot agreement rating over time
     # 
     df_agreement = pd.DataFrame({
         'date': series_date,
         'value': series_agreement
     })
-    df_agreement['date'] = pd.to_datetime(df_confidence["date"])
-    df_agreement_aggregated = df_agreement.groupby(df_confidence['date'].dt.date).mean()
+    df_agreement['date'] = pd.to_datetime(df_agreement["date"])
+    df_agreement_aggregated = df_agreement.groupby(df_agreement['date'].dt.date).mean()
     df_agreement_aggregated.index.name = 'date_aggregated' 
     df_agreement_aggregated = df_agreement_aggregated.reset_index()
 
