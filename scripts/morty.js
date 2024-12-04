@@ -38,7 +38,7 @@ const TIMEOUT_PLACEHOLDER_RESET = 30000
 const STYLE_AGREEMENT_RATING = "rgba(255, 255, 0, 0.25)"
 
 
-let _on = false
+let _on = true
 let _isStreaming = false
 let _config = {}
 let _observerNewResponse = undefined
