@@ -7,9 +7,9 @@ import os
 import matplotlib.dates as mdates
 import statistics
 
-DATA_FILE = "/data/morty_log_test.json"
+DATA_FILE = "/data/morty_log_2024-12-04T03_26_47.067Z.json"
 
-START_DATE = "10/1/2024"
+START_DATE = "11/1/2024"
 END_DATE = "2/28/2025"
 
 series_date = []
@@ -95,7 +95,7 @@ if __name__ == "__main__":
         series_window_leave.append(len(int_bev["windowleaveEvents"]))
 
         # if scrolling is needed
-        if "height" in entry["response"] and entry["response"]["height"] > entry["viewHeight"]:
+        if "height" in entry["response"] and "viewHeight" in entry and entry["response"]["height"] > entry["viewHeight"]:
             cnt_scroll_needed += 1
             cnt_scroll_actions += len(int_bev["scrollEvents"])
             sum_scroll_offset += sum(event["offset"] for event in int_bev["scrollEvents"])
