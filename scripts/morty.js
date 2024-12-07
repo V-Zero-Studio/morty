@@ -72,50 +72,6 @@ const callbackNewResponse = (mutationsList, observer) => {
           typeof node.className.includes == "function" &&
           node.className.includes(_config.KEYWORD_STREAMING)
         ) {
-          var elements = document.querySelectorAll(_config.QUERY_ELM_RESPONSE);
-          _elmResponse = elements[elements.length - 1];
-
-          // keep monitoring until the actual response arrives
-          if (_elmResponse.textContent.length == 0) {
-            return;
-          }
-          _observerNewResponse.disconnect();
-
-          log("streaming starts");
-          _isStreaming = true;
-
-          // data logging
-          _sessionEntry.timeStamp = time();
-          _sessionEntry.on = _on;
-          _sessionEntry.response.timeStreamingStarted = time();
-          _sessionEntry.viewHeight = window.innerHeight;
-
-          monitorStreaming();
-
-          // reset all previous response elements to full opacity
-          elements.forEach((value, index, array) => {
-            array[index].style.opacity = 1;
-          });
-
-          logInteractionBehaviorOnResponse();
-
-          _sessionEntry.prompt.isFollowUp = _isFollowUp;
-          if (_on && !_isFollowUp) {
-            setupCffElements();
-            const divRating = setupRatingUI(
-              "labelConfidence",
-              CONFI_QUESTION_PROMPT,
-              CONFIDENCE_LEVELS,
-              false,
-              (idxRating) => {
-                // data logging
-                _sessionEntry.confidenceRating.rating = idxRating;
-                _sessionEntry.confidenceRating.timeStamp = time();
-              }
-            );
-            _divCff.prepend(divRating);
-          }
-
           return;
         }
       });
@@ -161,8 +117,8 @@ const fadeOutAndRemove = (element) => {
 const monitorStreaming = () => {
   setTimeout(() => {
     // indicator of streaming ended
-    var elements = document.querySelectorAll(
-      '[class*="' + _config.KEYWORD_STREAMING + '"'
+    let elements = document.querySelectorAll(
+      '[class*="' + _config.KEYWORD_STREAMING + '"]'
     );
     if (elements.length > 0) {
       monitorStreaming();
@@ -379,9 +335,64 @@ const configCff = () => {
 //
 const startMonitoring = () => {
   // create an instance of MutationObserver
-  _observerNewResponse = new MutationObserver(callbackNewResponse);
-  const divChat = document.querySelector(_config.QUERY_CHAT_DIV);
-  _observerNewResponse.observe(divChat, { childList: true, subtree: true });
+  //   _observerNewResponse = new MutationObserver(callbackNewResponse);
+  //   const divChat = document.querySelector(_config.QUERY_CHAT_DIV);
+  //   _observerNewResponse.observe(divChat, { childList: true, subtree: true });
+  log("looking for streaming div ...");
+  let divStreaming = document.querySelector(
+    "[class*='" + _config.KEYWORD_STREAMING + "']"
+  );
+
+  if (divStreaming != null) {
+    log("found the streaming div!");
+    let elements = document.querySelectorAll(_config.QUERY_ELM_RESPONSE);
+    _elmResponse = elements[elements.length - 1];
+
+    // keep monitoring until the actual response arrives
+    if (_elmResponse.textContent.length == 0) {
+      return;
+    }
+    // _observerNewResponse.disconnect();
+
+    log("streaming starts");
+    _isStreaming = true;
+
+    // data logging
+    _sessionEntry.timeStamp = time();
+    _sessionEntry.on = _on;
+    _sessionEntry.response.timeStreamingStarted = time();
+    _sessionEntry.viewHeight = window.innerHeight;
+
+    monitorStreaming();
+
+    // reset all previous response elements to full opacity
+    elements.forEach((value, index, array) => {
+      array[index].style.opacity = 1;
+    });
+
+    logInteractionBehaviorOnResponse();
+
+    _sessionEntry.prompt.isFollowUp = _isFollowUp;
+    if (_on && !_isFollowUp) {
+      setupCffElements();
+      const divRating = setupRatingUI(
+        "labelConfidence",
+        CONFI_QUESTION_PROMPT,
+        CONFIDENCE_LEVELS,
+        false,
+        (idxRating) => {
+          // data logging
+          _sessionEntry.confidenceRating.rating = idxRating;
+          _sessionEntry.confidenceRating.timeStamp = time();
+        }
+      );
+      _divCff.prepend(divRating);
+    }
+  } else {
+    setTimeout(() => {
+      startMonitoring();
+    }, 1000);
+  }
 };
 
 //
@@ -434,12 +445,12 @@ const init = () => {
             log("auto save timeout cleared");
           }
 
-          startMonitoring();
-
           _sessionEntry = createNewLogEntry();
           _sessionEntry.prompt.text = _promptCurrent;
           _sessionEntry.prompt.timeSent = time();
           log("prompt logged");
+
+          startMonitoring();
         }
       } else {
         // data logging
@@ -512,7 +523,7 @@ const init = () => {
       const placeholder =
         "I " + AGREEMENT_LEVELS[idxRating].toLowerCase() + " because";
       if (ratingNormalized < 0.5) {
-        elmPromptBox.setAttribute("placeholder", placeholder)
+        elmPromptBox.setAttribute("placeholder", placeholder);
         // below is the new code that works
         // let elmPromptPlaceHolder = document.querySelector(_config.QUERY_PLACEHOLDER)
         // elmPromptPlaceHolder.setAttribute("data-placeholder", placeholder)
