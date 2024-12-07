@@ -269,7 +269,7 @@ const prefixPrompt = (e) => {
   e.target.setSelectionRange(textLength, textLength);
 
   // only do this prefixing once
-  e.target.removeEventListener("click", prefixPrompt);
+//   e.target.removeEventListener("click", prefixPrompt);
 };
 
 //
@@ -529,16 +529,16 @@ const init = () => {
         // elmPromptPlaceHolder.setAttribute("data-placeholder", placeholder)
 
         // clicking the prompt box will use the placeholder as the prefix to prefill the prompt
-        elmPromptBox.addEventListener("click", prefixPrompt);
+        // elmPromptBox.addEventListener("click", prefixPrompt);
 
         // remove it after a timeout, assuming the user would have ignored it by then
         setTimeout(() => {
-          elmPromptBox.removeEventListener("click", prefixPrompt);
+        //   elmPromptBox.removeEventListener("click", prefixPrompt);
           elmPromptBox.setAttribute("placeholder", _placeholderPrompt);
         }, TIMEOUT_PLACEHOLDER_RESET);
       } else {
         elmPromptBox.setAttribute("placeholder", _placeholderPrompt);
-        elmPromptBox.removeEventListener("click", prefixPrompt);
+        // elmPromptBox.removeEventListener("click", prefixPrompt);
       }
 
       // data logging
