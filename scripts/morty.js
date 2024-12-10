@@ -63,21 +63,21 @@ const ID_STORE = "sessionStore";
 //
 // callback function to execute when mutations are observed
 //
-const callbackNewResponse = (mutationsList, observer) => {
-  for (const mutation of mutationsList) {
-    if (mutation.type === "childList") {
-      mutation.addedNodes.forEach((node) => {
-        if (
-          node.className != undefined &&
-          typeof node.className.includes == "function" &&
-          node.className.includes(_config.KEYWORD_STREAMING)
-        ) {
-          return;
-        }
-      });
-    }
-  }
-};
+// const callbackNewResponse = (mutationsList, observer) => {
+//   for (const mutation of mutationsList) {
+//     if (mutation.type === "childList") {
+//       mutation.addedNodes.forEach((node) => {
+//         if (
+//           node.className != undefined &&
+//           typeof node.className.includes == "function" &&
+//           node.className.includes(_config.KEYWORD_STREAMING)
+//         ) {
+//           return;
+//         }
+//       });
+//     }
+//   }
+// };
 
 //
 //  fade in the AI response area
@@ -269,7 +269,7 @@ const prefixPrompt = (e) => {
   e.target.setSelectionRange(textLength, textLength);
 
   // only do this prefixing once
-//   e.target.removeEventListener("click", prefixPrompt);
+  //   e.target.removeEventListener("click", prefixPrompt);
 };
 
 //
@@ -338,6 +338,11 @@ const startMonitoring = () => {
   //   _observerNewResponse = new MutationObserver(callbackNewResponse);
   //   const divChat = document.querySelector(_config.QUERY_CHAT_DIV);
   //   _observerNewResponse.observe(divChat, { childList: true, subtree: true });
+
+  if (_isStreaming) {
+    return;
+  }
+
   log("looking for streaming div ...");
   let divStreaming = document.querySelector(
     "[class*='" + _config.KEYWORD_STREAMING + "']"
@@ -533,7 +538,7 @@ const init = () => {
 
         // remove it after a timeout, assuming the user would have ignored it by then
         setTimeout(() => {
-        //   elmPromptBox.removeEventListener("click", prefixPrompt);
+          //   elmPromptBox.removeEventListener("click", prefixPrompt);
           elmPromptBox.setAttribute("placeholder", _placeholderPrompt);
         }, TIMEOUT_PLACEHOLDER_RESET);
       } else {
@@ -542,8 +547,10 @@ const init = () => {
       }
 
       // data logging
-      _sessionEntry.agreementRating.rating = idxRating;
-      _sessionEntry.agreementRating.timeStamp = time();
+      if (_sessionEntry != undefined) {
+        _sessionEntry.agreementRating.rating = idxRating;
+        _sessionEntry.agreementRating.timeStamp = time();
+      }
     }
   );
 
