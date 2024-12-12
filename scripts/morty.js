@@ -61,25 +61,6 @@ const ID_DB = "MortyDB";
 const ID_STORE = "sessionStore";
 
 //
-// callback function to execute when mutations are observed
-//
-// const callbackNewResponse = (mutationsList, observer) => {
-//   for (const mutation of mutationsList) {
-//     if (mutation.type === "childList") {
-//       mutation.addedNodes.forEach((node) => {
-//         if (
-//           node.className != undefined &&
-//           typeof node.className.includes == "function" &&
-//           node.className.includes(_config.KEYWORD_STREAMING)
-//         ) {
-//           return;
-//         }
-//       });
-//     }
-//   }
-// };
-
-//
 //  fade in the AI response area
 //
 const fadeIn = (elm) => {
@@ -334,11 +315,6 @@ const configCff = () => {
 //  start the routine of monitoring streaming
 //
 const startMonitoring = () => {
-  // create an instance of MutationObserver
-  //   _observerNewResponse = new MutationObserver(callbackNewResponse);
-  //   const divChat = document.querySelector(_config.QUERY_CHAT_DIV);
-  //   _observerNewResponse.observe(divChat, { childList: true, subtree: true });
-
   if (_isStreaming) {
     return;
   }
@@ -357,7 +333,6 @@ const startMonitoring = () => {
     if (_elmResponse.textContent.length == 0) {
       return;
     }
-    // _observerNewResponse.disconnect();
 
     log("streaming starts");
     _isStreaming = true;
@@ -529,7 +504,8 @@ const init = () => {
         "I " + AGREEMENT_LEVELS[idxRating].toLowerCase() + " because";
       if (ratingNormalized < 0.5) {
         elmPromptBox.setAttribute("placeholder", placeholder);
-        // below is the new code that works
+        // NOTE: as of 12/2024, we could no longer change the placeholder
+        // there is some open ai code that keeps setting the placeholder back to its default value
         // let elmPromptPlaceHolder = document.querySelector(_config.QUERY_PLACEHOLDER)
         // elmPromptPlaceHolder.setAttribute("data-placeholder", placeholder)
 
