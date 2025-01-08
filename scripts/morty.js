@@ -7,7 +7,7 @@ const PATH_CONFIG_FILE = "data/config.json";
 // design parameters for cff
 // const HEIGHT_CFF_CONTAINER = 100;
 // const HEIGHT_POST_RESPONSE = 300;
-// const INTERVAL_MONITOR_STREAMING = 1000; // ms
+const INTERVAL_MONITOR_STREAMING = 1000; // ms
 
 // design parameters for cff
 // const FADE_RATIO = 1.25; // how fast the covered response area fades
@@ -38,11 +38,11 @@ const PATH_CONFIG_FILE = "data/config.json";
 // const TIMEOUT_PLACEHOLDER_RESET = 30000;
 // const STYLE_AGREEMENT_RATING = "rgba(255, 255, 0, 0.25)";
 
-// let _on = true;
-// let _isStreaming = false;
-// let _config = {};
-// let _observerNewResponse = undefined;
-// let _elmResponse = undefined;
+let _on = true;
+let _isStreaming = false;
+let _config = {};
+let _observerNewResponse = undefined;
+let _elmResponse = undefined;
 // let _divCff = undefined;
 // let _promptCurrent = undefined;
 // let _placeholderPrompt = undefined;
@@ -113,22 +113,22 @@ const monitorStreaming = () => {
       _sessionEntry.response.height =
         _elmResponse.getBoundingClientRect().height;
 
-      if (_on) {
-        // if the cff container has not been clear, don't set up post response yet;
-        // instead, set it up when a user clicks to reveal response
-        if (document.getElementsByClassName("cff-container").length <= 0) {
-          setupPostResponseElements();
-        } else {
-          if (_elmResponse.parentElement != null) {
-            _elmResponse.parentElement.addEventListener(
-              "click",
-              setupPostResponseElements
-            );
-          }
-        }
+      // if (_on) {
+      //   // if the cff container has not been clear, don't set up post response yet;
+      //   // instead, set it up when a user clicks to reveal response
+      //   if (document.getElementsByClassName("cff-container").length <= 0) {
+      //     setupPostResponseElements();
+      //   } else {
+      //     if (_elmResponse.parentElement != null) {
+      //       _elmResponse.parentElement.addEventListener(
+      //         "click",
+      //         setupPostResponseElements
+      //       );
+      //     }
+      //   }
 
-        _isFollowUp = false;
-      }
+      //   _isFollowUp = false;
+      // }
 
       // auto save when the user is not focused on the current window
       if (_isWindowBlur) {
@@ -546,6 +546,48 @@ const init = () => {
   // btnNewChat.addEventListener("click", () => {
   //   saveLog();
   // });
+
+  // adding one-time window-switching monitoring for logging
+  window.addEventListener("blur", (e) => {
+    if (_sessionEntry == undefined) {
+      return
+    }
+
+    _sessionEntry.interactionBehaviors.windowleaveEvents.push({
+      timeStamp: time(),
+    });
+    _isWindowBlur = false;
+    // if the user leaves the page during streaming, we assume they are not done with the session
+    // so we don't end and save the log entry
+    if (!_isStreaming && _autoSaveTimeout == undefined) {
+      _autoSaveTimeout = setTimeout(() => {
+        saveLog();
+        // in case the user wasn't engaged
+        // fadeOutAndRemove(_divAgreementRating);
+        _autoSaveTimeout = undefined;
+      }, TIMEOUT_AUTO_LOG_SAVE);
+      log("auto save timeout started");
+    }
+  });
+
+  window.addEventListener("focus", (e) => {
+    if (_sessionEntry == undefined) return;
+    _sessionEntry.interactionBehaviors.windowenterEvents.push({
+      timeStamp: time(),
+    });
+    _isWindowBlur = true;
+    clearTimeout(_autoSaveTimeout);
+    log("auto save timeout cleared");
+    _autoSaveTimeout = undefined;
+  });
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") {
+      console.log("User switched away from the tab.");
+    } else if (document.visibilityState === "visible") {
+      console.log("User returned to the tab.");
+    }
+  });
 };
 
 //
@@ -702,35 +744,7 @@ const logInteractionBehaviorOnResponse = () => {
     });
   });
 
-  window.addEventListener("blur", (e) => {
-    if (_sessionEntry == undefined) return;
-    _sessionEntry.interactionBehaviors.windowleaveEvents.push({
-      timeStamp: time(),
-    });
-    _isWindowBlur = false;
-    // if the user leaves the page during streaming, we assume they are not done with the session
-    // so we don't end and save the log entry
-    if (!_isStreaming && _autoSaveTimeout == undefined) {
-      _autoSaveTimeout = setTimeout(() => {
-        saveLog();
-        // in case the user wasn't engaged
-        fadeOutAndRemove(_divAgreementRating);
-        _autoSaveTimeout = undefined;
-      }, TIMEOUT_AUTO_LOG_SAVE);
-      log("auto save timeout started");
-    }
-  });
-
-  window.addEventListener("focus", (e) => {
-    if (_sessionEntry == undefined) return;
-    _sessionEntry.interactionBehaviors.windowenterEvents.push({
-      timeStamp: time(),
-    });
-    _isWindowBlur = true;
-    clearTimeout(_autoSaveTimeout);
-    log("auto save timeout cleared");
-    _autoSaveTimeout = undefined;
-  });
+  
 };
 
 //
