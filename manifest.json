@@ -1,41 +1,32 @@
 {
-    "manifest_version": 3,
-    "name": "MORTY",
-    "description": "Mitigating OverReliance on inTelligent sYstems",
-    "version": "1.0",
-    "icons": {
-        "16": "assets/icon16.png",
-        "48": "assets/icon48.png",
-        "128": "assets/icon128.png"
-      },
-    "content_scripts": [
-        {
-            "js": [
-                "scripts/morty.js"
-            ],
-            "css": [
-                "scripts/morty.css"
-            ],
-            "matches": [
-                "https://chatgpt.com/",
-                "https://chatgpt.com/c/*"
-            ]
-        }
-    ],
-    "background": {
-        "service_worker": "scripts/background.js"
-    },
-    "web_accessible_resources": [
-        {
-            "resources": [
-                "data/config.json", "assets/icon48.png"
-            ],
-            "matches": [
-                "<all_urls>"
-            ]
-        }
-    ],
-    "permissions": [
-        "storage"
-    ]
+  "manifest_version": 3,
+  "name": "MORTY",
+  "description": "Mitigating OverReliance on inTelligent sYstems",
+  "version": "1.0",
+  "icons": {
+    "16": "assets/icon16.png",
+    "48": "assets/icon48.png",
+    "128": "assets/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "js": ["scripts/morty.js"],
+      "css": ["scripts/morty.css"],
+      "matches": ["https://chatgpt.com/", "https://chatgpt.com/c/*"]
+    }
+  ],
+  "action": {
+    "default_popup": "scripts/popup.html",
+    "default_icon": "assets/icon16.png"
+  },
+  "background": {
+    "service_worker": "scripts/background.js"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["data/config.json", "assets/icon48.png"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "permissions": ["storage"]
 }
