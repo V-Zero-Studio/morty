@@ -548,30 +548,62 @@ const init = () => {
   // });
 
   // adding one-time window-switching monitoring for logging
-  window.addEventListener("blur", (e) => {
-    if (_sessionEntry == undefined) {
-      return
-    }
+  // window.addEventListener("blur", (e) => {
+  //   if (_sessionEntry == undefined) {
+  //     return
+  //   }
 
-    _sessionEntry.interactionBehaviors.windowleaveEvents.push({
-      timeStamp: time(),
-    });
-    _isWindowBlur = false;
-    // if the user leaves the page during streaming, we assume they are not done with the session
-    // so we don't end and save the log entry
-    if (!_isStreaming && _autoSaveTimeout == undefined) {
-      _autoSaveTimeout = setTimeout(() => {
-        saveLog();
-        // in case the user wasn't engaged
-        // fadeOutAndRemove(_divAgreementRating);
-        _autoSaveTimeout = undefined;
-      }, TIMEOUT_AUTO_LOG_SAVE);
-      log("auto save timeout started");
-    }
-  });
+  //   _sessionEntry.interactionBehaviors.windowleaveEvents.push({
+  //     timeStamp: time(),
+  //   });
+  //   _isWindowBlur = false;
+  //   // if the user leaves the page during streaming, we assume they are not done with the session
+  //   // so we don't end and save the log entry
+  //   if (!_isStreaming && _autoSaveTimeout == undefined) {
+  //     _autoSaveTimeout = setTimeout(() => {
+  //       saveLog();
+  //       // in case the user wasn't engaged
+  //       // fadeOutAndRemove(_divAgreementRating);
+  //       _autoSaveTimeout = undefined;
+  //     }, TIMEOUT_AUTO_LOG_SAVE);
+  //     log("auto save timeout started");
+  //   }
+  // });
 
-  window.addEventListener("focus", (e) => {
-    if (_sessionEntry == undefined) return;
+  // window.addEventListener("focus", (e) => {
+  //   if (_sessionEntry == undefined) return;
+  //   _sessionEntry.interactionBehaviors.windowenterEvents.push({
+  //     timeStamp: time(),
+  //   });
+  //   _isWindowBlur = true;
+  //   clearTimeout(_autoSaveTimeout);
+  //   log("auto save timeout cleared");
+  //   _autoSaveTimeout = undefined;
+  // });
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") {
+      if (_sessionEntry == undefined) {
+        return
+      }
+  
+      _sessionEntry.interactionBehaviors.windowleaveEvents.push({
+        timeStamp: time(),
+      });
+      _isWindowBlur = false;
+      // if the user leaves the page during streaming, we assume they are not done with the session
+      // so we don't end and save the log entry
+      if (!_isStreaming && _autoSaveTimeout == undefined) {
+        _autoSaveTimeout = setTimeout(() => {
+          saveLog();
+          // in case the user wasn't engaged
+          // fadeOutAndRemove(_divAgreementRating);
+          _autoSaveTimeout = undefined;
+        }, TIMEOUT_AUTO_LOG_SAVE);
+        log("auto save timeout started");
+      }
+    } else if (document.visibilityState === "visible") {
+      if (_sessionEntry == undefined) return;
     _sessionEntry.interactionBehaviors.windowenterEvents.push({
       timeStamp: time(),
     });
@@ -579,13 +611,6 @@ const init = () => {
     clearTimeout(_autoSaveTimeout);
     log("auto save timeout cleared");
     _autoSaveTimeout = undefined;
-  });
-
-  document.addEventListener("visibilitychange", () => {
-    if (document.visibilityState === "hidden") {
-      console.log("User switched away from the tab.");
-    } else if (document.visibilityState === "visible") {
-      console.log("User returned to the tab.");
     }
   });
 };
@@ -619,20 +644,20 @@ const createNewLogEntry = () => {
   return {
     timeStamp: time(),
     prompt: {
-      timeStart: undefined,
+      // timeStart: undefined,
       timeSent: undefined,
       text: undefined,
-      isFollowUp: undefined,
+      // isFollowUp: undefined,
     },
-    confidenceRating: {
-      timeStamp: undefined, // the time of the last-hovered rating
-      rating: undefined,
-    },
-    response: {
-      timeStreamingStarted: undefined,
-      timeStreamingEnded: undefined,
-      height: undefined,
-    },
+    // confidenceRating: {
+    //   timeStamp: undefined, // the time of the last-hovered rating
+    //   rating: undefined,
+    // },
+    // response: {
+    //   timeStreamingStarted: undefined,
+    //   timeStreamingEnded: undefined,
+    //   height: undefined,
+    // },
     interactionBehaviors: {
       scrollEvents: [],
       clickEvents: [],
