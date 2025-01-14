@@ -886,4 +886,10 @@ const readFromDB = (onSuccess) => {
       })
       .catch((error) => console.error("Error fetching JSON:", error));
   });
+
+  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    log("from popup: " + request);
+    sendResponse({ status: 'message logged' });
+  });
+  
 })();
