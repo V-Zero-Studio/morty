@@ -35,6 +35,15 @@ span.reveal {
   z-index: 1000;
 }
 
+.mini-popup {
+  position: fixed;
+  bottom: 65px;
+  right: 15px;
+  width: 160px;
+  z-index: 1000;
+  background-color: rgba(255, 255, 255, 0.85);
+}
+
 div.dots {
   display: flex;
   flex-direction: row;

@@ -17,7 +17,7 @@ const INTERVAL_MONITOR_STREAMING = 1000; // ms
 
 // users' confidence levels
 // const CONFI_QUESTION_PROMPT =
-  // "How confident are you if you were to respond to this prompt without ChatGPT's help?";
+// "How confident are you if you were to respond to this prompt without ChatGPT's help?";
 // const CONFIDENCE_LEVELS = [
 //   "Not confident at all",
 //   "Slightly confident",
@@ -474,6 +474,12 @@ const init = () => {
     // todo: put back later when needed
     // _on = !_on
     // btnSwitch.style.filter = _on ? '' : 'grayscale(100%)'
+
+    if (popup.style.display === 'none') {
+      popup.style.display = 'block';
+    } else {
+      popup.style.display = 'none';
+    }
   });
   btnSwitch.addEventListener("dblclick", () => {
     readFromDB((logData) => {
@@ -481,6 +487,13 @@ const init = () => {
     });
   });
   document.body.appendChild(btnSwitch);
+
+  // create on-web-page mini page
+  const popup = document.createElement("div")
+  popup.classList.add("mini-popup")
+  popup.style.display = "none" // Initially hidden
+  popup.innerHTML = "Hello"
+  document.body.appendChild(popup)
 
   // extract the default placeholder in the prompt box
   // let elmPromptBox = document.getElementById(_config.ID_TEXTBOX_PROMPT);
@@ -584,9 +597,9 @@ const init = () => {
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "hidden") {
       if (_sessionEntry == undefined) {
-        return
+        return;
       }
-  
+
       _sessionEntry.interactionBehaviors.windowleaveEvents.push({
         timeStamp: time(),
       });
@@ -604,13 +617,13 @@ const init = () => {
       }
     } else if (document.visibilityState === "visible") {
       if (_sessionEntry == undefined) return;
-    _sessionEntry.interactionBehaviors.windowenterEvents.push({
-      timeStamp: time(),
-    });
-    _isWindowBlur = true;
-    clearTimeout(_autoSaveTimeout);
-    log("auto save timeout cleared");
-    _autoSaveTimeout = undefined;
+      _sessionEntry.interactionBehaviors.windowenterEvents.push({
+        timeStamp: time(),
+      });
+      _isWindowBlur = true;
+      clearTimeout(_autoSaveTimeout);
+      log("auto save timeout cleared");
+      _autoSaveTimeout = undefined;
     }
   });
 };
@@ -768,8 +781,6 @@ const logInteractionBehaviorOnResponse = () => {
       length: window.getSelection().toString().length,
     });
   });
-
-  
 };
 
 //
@@ -787,7 +798,7 @@ const log = (msg) => {
 };
 
 //
-// 
+//
 //
 const openDB = (onSuccess) => {
   const request = indexedDB.open(ID_DB, 1);
@@ -889,7 +900,6 @@ const readFromDB = (onSuccess) => {
 
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     log("from popup: " + request);
-    sendResponse({ status: 'message logged' });
+    sendResponse({ status: "message logged" });
   });
-  
 })();
