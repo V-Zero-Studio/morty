@@ -464,23 +464,23 @@ const init = () => {
   });
 
   // create on-web-page ui
-  // const btnSwitch = document.createElement("img");
-  // btnSwitch.src = chrome.runtime.getURL(_config.URL_ICON);
-  // btnSwitch.alt = "Toggle Button";
-  // btnSwitch.classList.add("switch");
-  // btnSwitch.style.filter = _on ? "" : "grayscale(100%)";
-  // btnSwitch.addEventListener("click", (e) => {
-  //   // disabled for data logging under on/off conditions
-  //   // todo: put back later when needed
-  //   // _on = !_on
-  //   // btnSwitch.style.filter = _on ? '' : 'grayscale(100%)'
-  // });
-  // btnSwitch.addEventListener("dblclick", () => {
-  //   readFromDB((logData) => {
-  //     downloadObjectAsJson(logData, "morty_log_" + time().replace(":", "_"));
-  //   });
-  // });
-  // document.body.appendChild(btnSwitch);
+  const btnSwitch = document.createElement("img");
+  btnSwitch.src = chrome.runtime.getURL(_config.URL_ICON);
+  btnSwitch.alt = "Toggle Button";
+  btnSwitch.classList.add("switch");
+  btnSwitch.style.filter = _on ? "" : "grayscale(100%)";
+  btnSwitch.addEventListener("click", (e) => {
+    // disabled for data logging under on/off conditions
+    // todo: put back later when needed
+    // _on = !_on
+    // btnSwitch.style.filter = _on ? '' : 'grayscale(100%)'
+  });
+  btnSwitch.addEventListener("dblclick", () => {
+    readFromDB((logData) => {
+      downloadObjectAsJson(logData, "morty_log_" + time().replace(":", "_"));
+    });
+  });
+  document.body.appendChild(btnSwitch);
 
   // extract the default placeholder in the prompt box
   // let elmPromptBox = document.getElementById(_config.ID_TEXTBOX_PROMPT);
