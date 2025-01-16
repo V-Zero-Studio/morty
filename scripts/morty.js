@@ -3,6 +3,7 @@
 //
 
 const PATH_CONFIG_FILE = "data/config.json";
+const PATH_POPUP_HTML = "scripts/popup.html"
 
 // design parameters for cff
 // const HEIGHT_CFF_CONTAINER = 100;
@@ -425,12 +426,12 @@ const init = () => {
             log("auto save timeout cleared");
           }
 
-          _sessionEntry = createNewLogEntry();
+          _sessionEntry = createNewLogEntry()
           _sessionEntry.prompt.text = _promptCurrent;
           _sessionEntry.prompt.timeSent = time();
           log("prompt logged");
 
-          startMonitoring();
+          startMonitoring()
         }
       } else {
         // data logging
@@ -454,12 +455,12 @@ const init = () => {
       //   configCff();
       // }
 
-      startMonitoring();
-
       // data logging
       _sessionEntry = createNewLogEntry();
       _sessionEntry.prompt.text = _promptCurrent;
       _sessionEntry.prompt.timeSent = time();
+
+      startMonitoring()
     }
   });
 
@@ -492,8 +493,26 @@ const init = () => {
   const popup = document.createElement("div")
   popup.classList.add("mini-popup")
   popup.style.display = "none" // Initially hidden
-  popup.innerHTML = "Hello"
+  // popup.innerHTML = "Hello"
   document.body.appendChild(popup)
+
+  // Fetch the HTML file
+  const popupHtmlPath = chrome.runtime.getURL(PATH_POPUP_HTML);
+  fetch(popupHtmlPath)
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`Failed to load HTML file: ${response.statusText}`);
+    }
+    return response.text();
+  })
+  .then(htmlContent => {
+    // Inject the HTML content into the target element
+    popup.innerHTML = htmlContent;
+  })
+  .catch(error => {
+    // Handle errors
+    log(error.message)
+  });
 
   // extract the default placeholder in the prompt box
   // let elmPromptBox = document.getElementById(_config.ID_TEXTBOX_PROMPT);
@@ -666,11 +685,11 @@ const createNewLogEntry = () => {
     //   timeStamp: undefined, // the time of the last-hovered rating
     //   rating: undefined,
     // },
-    // response: {
-    //   timeStreamingStarted: undefined,
-    //   timeStreamingEnded: undefined,
-    //   height: undefined,
-    // },
+    response: {
+      timeStreamingStarted: undefined,
+      timeStreamingEnded: undefined,
+      height: undefined,
+    },
     interactionBehaviors: {
       scrollEvents: [],
       clickEvents: [],

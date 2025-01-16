@@ -20,7 +20,7 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["data/config.json", "assets/icon48.png"],
+      "resources": ["data/config.json", "assets/icon48.png", "scripts/popup.html"],
       "matches": ["<all_urls>"]
     }
   ],
