@@ -399,6 +399,26 @@ const downloadObjectAsJson = (exportObj, exportName) => {
 };
 
 //
+//
+//
+const initPopupUI = () => {
+  const buttons = document.querySelectorAll('.tab-btn');
+  const contents = document.querySelectorAll('.tab-content');
+
+  buttons.forEach(button => {
+    button.addEventListener('click', () => {
+      // Remove active class from all buttons and content
+      buttons.forEach(btn => btn.classList.remove('active'));
+      contents.forEach(content => content.classList.remove('active'));
+
+      // Add active class to the clicked button and corresponding content
+      button.classList.add('active');
+      document.getElementById(button.getAttribute('data-tab')).classList.add('active');
+    });
+  });
+}
+
+//
 // initialization
 //
 const init = () => {
@@ -508,6 +528,7 @@ const init = () => {
   .then(htmlContent => {
     // Inject the HTML content into the target element
     popup.innerHTML = htmlContent;
+    initPopupUI()
   })
   .catch(error => {
     // Handle errors

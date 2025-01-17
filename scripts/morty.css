@@ -91,3 +91,36 @@ div.rating-row {
 p.rating-question {
   margin-right: 5px;
 }
+
+.tab-container {
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.tab-buttons {
+  display: flex;
+  background-color: #f1f1f1;
+  border-bottom: 1px solid #ccc;
+}
+.tab-buttons button {
+  flex: 1;
+  padding: 10px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  outline: none;
+  transition: background-color 0.3s ease;
+}
+.tab-buttons button.active {
+  background-color: #fff;
+  font-weight: bold;
+  border-bottom: 3px solid #007BFF;
+}
+.tab-content {
+  display: none;
+  padding: 15px;
+}
+.tab-content.active {
+  display: block;
+}
