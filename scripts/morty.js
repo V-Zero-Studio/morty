@@ -3,7 +3,7 @@
 //
 
 const PATH_CONFIG_FILE = "data/config.json";
-const PATH_POPUP_HTML = "scripts/popup.html"
+const PATH_POPUP_HTML = "scripts/popup.html";
 
 const INTERVAL_MONITOR_STREAMING = 1000; // ms
 
@@ -91,7 +91,6 @@ const startMonitoring = () => {
     monitorStreaming();
 
     logInteractionBehaviorOnResponse();
-
   } else {
     setTimeout(() => {
       startMonitoring();
@@ -125,21 +124,23 @@ const downloadObjectAsJson = (exportObj, exportName) => {
 //
 //
 const initPopupUI = () => {
-  const buttons = document.querySelectorAll('.tab-btn');
-  const contents = document.querySelectorAll('.tab-content');
+  const buttons = document.querySelectorAll(".tab-btn");
+  const contents = document.querySelectorAll(".tab-content");
 
-  buttons.forEach(button => {
-    button.addEventListener('click', () => {
+  buttons.forEach((button) => {
+    button.addEventListener("click", () => {
       // Remove active class from all buttons and content
-      buttons.forEach(btn => btn.classList.remove('active'));
-      contents.forEach(content => content.classList.remove('active'));
+      buttons.forEach((btn) => btn.classList.remove("active"));
+      contents.forEach((content) => content.classList.remove("active"));
 
       // Add active class to the clicked button and corresponding content
-      button.classList.add('active');
-      document.getElementById(button.getAttribute('data-tab')).classList.add('active');
+      button.classList.add("active");
+      document
+        .getElementById(button.getAttribute("data-tab"))
+        .classList.add("active");
     });
   });
-}
+};
 
 //
 // initialization
@@ -164,12 +165,12 @@ const init = () => {
             log("auto save timeout cleared");
           }
 
-          _sessionEntry = createNewLogEntry()
+          _sessionEntry = createNewLogEntry();
           _sessionEntry.prompt.text = _promptCurrent;
           _sessionEntry.prompt.timeSent = time();
           log("prompt logged");
 
-          startMonitoring()
+          startMonitoring();
         }
       } else {
         // data logging
@@ -194,7 +195,7 @@ const init = () => {
       _sessionEntry.prompt.text = _promptCurrent;
       _sessionEntry.prompt.timeSent = time();
 
-      startMonitoring()
+      startMonitoring();
     }
   });
 
@@ -205,10 +206,11 @@ const init = () => {
   btnSwitch.classList.add("switch");
   btnSwitch.style.filter = _on ? "" : "grayscale(100%)";
   btnSwitch.addEventListener("click", (e) => {
-    if (popup.style.display === 'none') {
-      popup.style.display = 'block';
+    if (popup.style.display === "none") {
+      popup.style.display = "block";
+      aggregateSeries();
     } else {
-      popup.style.display = 'none';
+      popup.style.display = "none";
     }
   });
   btnSwitch.addEventListener("dblclick", () => {
@@ -219,30 +221,29 @@ const init = () => {
   document.body.appendChild(btnSwitch);
 
   // create on-web-page mini page
-  const popup = document.createElement("div")
-  popup.classList.add("mini-popup")
-  popup.style.display = "none" // Initially hidden
-  document.body.appendChild(popup)
+  const popup = document.createElement("div");
+  popup.classList.add("mini-popup");
+  popup.style.display = "none"; // Initially hidden
+  document.body.appendChild(popup);
 
-  // Fetch the HTML file
+  // fetch the HTML file
   const popupHtmlPath = chrome.runtime.getURL(PATH_POPUP_HTML);
   fetch(popupHtmlPath)
-  .then(response => {
-    if (!response.ok) {
-      throw new Error(`Failed to load HTML file: ${response.statusText}`);
-    }
-    return response.text();
-  })
-  .then(htmlContent => {
-    // Inject the HTML content into the target element
-    popup.innerHTML = htmlContent;
-    initPopupUI()
-  })
-  .catch(error => {
-    // Handle errors
-    log(error.message)
-  });
-
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`Failed to load HTML file: ${response.statusText}`);
+      }
+      return response.text();
+    })
+    .then((htmlContent) => {
+      // inject the HTML content into the target element
+      popup.innerHTML = htmlContent;
+      initPopupUI();
+    })
+    .catch((error) => {
+      // handle errors
+      log(error.message);
+    });
 
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "hidden") {
@@ -298,6 +299,36 @@ const saveLog = async () => {
       resolve();
     });
   });
+};
+
+//
+//
+//
+const aggregateSeries = () => {
+  
+  openDB((event) => {
+    readFromDB((series) => {
+      const series_timeStamps = []
+      let cnt_sessions = 0
+
+      for (const entry of series) {
+        // log(entry)
+        cnt_sessions += 1
+        series_timeStamps.push(entry.timeStamp);
+      }
+
+      const minDate = new Date(
+        Math.min(...series_timeStamps.map((date) => new Date(date).getTime()))
+      );
+      const maxDate = new Date(
+        Math.max(...series_timeStamps.map((date) => new Date(date).getTime()))
+      );
+      const days = ((maxDate - minDate) / (1000 * 60 * 60 * 24) | 0);
+      log("avg # of sessions per day: " + (cnt_sessions / days))
+    });
+  });
+
+  
 };
 
 //
