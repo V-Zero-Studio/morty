@@ -309,13 +309,24 @@ const aggregateSeries = () => {
   openDB((event) => {
     readFromDB((series) => {
       const series_timeStamps = []
+      const mapDailyStats = new Map()
       let cnt_sessions = 0
 
       for (const entry of series) {
         // log(entry)
         cnt_sessions += 1
         series_timeStamps.push(entry.timeStamp);
+        
+        // update a map of daily stats
+        const strDate = entry.timeStamp.split("T")[0]
+        let numSessions = 0
+        if(mapDailyStats.has(strDate)) {
+          numSessions = mapDailyStats.get(strDate) 
+        }
+        mapDailyStats.set(strDate, numSessions + 1)
       }
+
+      log(mapDailyStats)
 
       const minDate = new Date(
         Math.min(...series_timeStamps.map((date) => new Date(date).getTime()))
