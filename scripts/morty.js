@@ -4,6 +4,7 @@
 
 const PATH_CONFIG_FILE = "data/config.json";
 const PATH_POPUP_HTML = "scripts/popup.html";
+const PATH_VIS_LIB = "scripts/chart.js";
 
 const INTERVAL_MONITOR_STREAMING = 1000; // ms
 
@@ -209,6 +210,7 @@ const init = () => {
     if (popup.style.display === "none") {
       popup.style.display = "block";
       aggregateSeries();
+      testChartJs();
     } else {
       popup.style.display = "none";
     }
@@ -305,41 +307,120 @@ const saveLog = async () => {
 //
 //
 const aggregateSeries = () => {
-  
   openDB((event) => {
     readFromDB((series) => {
-      const series_timeStamps = []
-      const mapDailyStats = new Map()
-      let cnt_sessions = 0
+      const series_timeStamps = [];
+      const mapDailyStats = new Map();
+      let cnt_sessions = 0;
 
+      // preprocesing log for visualization
       for (const entry of series) {
         // log(entry)
-        cnt_sessions += 1
+        cnt_sessions += 1;
         series_timeStamps.push(entry.timeStamp);
-        
+
         // update a map of daily stats
-        const strDate = entry.timeStamp.split("T")[0]
-        let numSessions = 0
-        if(mapDailyStats.has(strDate)) {
-          numSessions = mapDailyStats.get(strDate) 
+        const strDate = entry.timeStamp.split("T")[0];
+        let numSessions = 0;
+        if (mapDailyStats.has(strDate)) {
+          numSessions = mapDailyStats.get(strDate);
         }
-        mapDailyStats.set(strDate, numSessions + 1)
+        mapDailyStats.set(strDate, numSessions + 1);
       }
 
-      log(mapDailyStats)
+      // log(mapDailyStats)
 
-      const minDate = new Date(
-        Math.min(...series_timeStamps.map((date) => new Date(date).getTime()))
+      // const minDate = new Date(
+      //   Math.min(...series_timeStamps.map((date) => new Date(date).getTime()))
+      // );
+      // const maxDate = new Date(
+      //   Math.max(...series_timeStamps.map((date) => new Date(date).getTime()))
+      // );
+      // const days = ((maxDate - minDate) / (1000 * 60 * 60 * 24) | 0);
+      // log("avg # of sessions per day: " + (cnt_sessions / days))
+
+      const dates = [...mapDailyStats.keys()].sort((a, b) =>
+        a.localeCompare(b)
       );
-      const maxDate = new Date(
-        Math.max(...series_timeStamps.map((date) => new Date(date).getTime()))
-      );
-      const days = ((maxDate - minDate) / (1000 * 60 * 60 * 24) | 0);
-      log("avg # of sessions per day: " + (cnt_sessions / days))
+      const minDate = dates[0]; // First date in sorted order
+      const maxDate = dates[dates.length - 1]; // Last date in sorted order
     });
   });
+};
 
-  
+//
+const testChartJs = () => {
+  // set the dimensions and margins of the graph
+  const margin = { top: 10, right: 30, bottom: 30, left: 60 },
+    width = 460 - margin.left - margin.right,
+    height = 400 - margin.top - margin.bottom;
+
+  // append the svg object to the body of the page
+  const svg = d3
+    .select("#my_dataviz")
+    .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", `translate(${margin.left},${margin.top})`);
+
+  //Read the data
+  d3.csv(
+    "https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_dataset/3_TwoNumOrdered_comma.csv",
+
+    // When reading the csv, I must format variables:
+    function (d) {
+      return { date: d3.timeParse("%Y-%m-%d")(d.date), value: d.value };
+    }
+  ).then(
+    // Now I can use this dataset:
+    function (data) {
+      // Add X axis --> it is a date format
+      const x = d3
+        .scaleTime()
+        .domain(
+          d3.extent(data, function (d) {
+            return d.date;
+          })
+        )
+        .range([0, width]);
+      svg
+        .append("g")
+        .attr("transform", `translate(0, ${height})`)
+        .call(d3.axisBottom(x));
+
+      // Add Y axis
+      const y = d3
+        .scaleLinear()
+        .domain([
+          0,
+          d3.max(data, function (d) {
+            return +d.value;
+          }),
+        ])
+        .range([height, 0]);
+      svg.append("g").call(d3.axisLeft(y));
+
+      // Add the line
+      svg
+        .append("path")
+        .datum(data)
+        .attr("fill", "none")
+        .attr("stroke", "steelblue")
+        .attr("stroke-width", 1.5)
+        .attr(
+          "d",
+          d3
+            .line()
+            .x(function (d) {
+              return x(d.date);
+            })
+            .y(function (d) {
+              return y(d.value);
+            })
+        );
+    }
+  );
 };
 
 //
@@ -557,6 +638,13 @@ const readFromDB = (onSuccess) => {
     log("error retrieving data: ");
     log(event);
   };
+};
+
+const injectScript = (url, callback) => {
+  const script = document.createElement("script");
+  script.src = url;
+  script.onload = callback; // Call the function when the script loads
+  document.head.appendChild(script);
 };
 
 //
