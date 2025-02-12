@@ -210,7 +210,7 @@ const init = () => {
     if (popup.style.display === "none") {
       popup.style.display = "block";
       aggregateSeries();
-      testChartJs();
+      // testChartJs();
     } else {
       popup.style.display = "none";
     }
@@ -328,6 +328,8 @@ const aggregateSeries = () => {
         mapDailyStats.set(strDate, numSessions + 1);
       }
 
+      plot(mapDailyStats)
+
       // log(mapDailyStats)
 
       // const minDate = new Date(
@@ -339,13 +341,62 @@ const aggregateSeries = () => {
       // const days = ((maxDate - minDate) / (1000 * 60 * 60 * 24) | 0);
       // log("avg # of sessions per day: " + (cnt_sessions / days))
 
-      const dates = [...mapDailyStats.keys()].sort((a, b) =>
-        a.localeCompare(b)
-      );
-      const minDate = dates[0]; // First date in sorted order
-      const maxDate = dates[dates.length - 1]; // Last date in sorted order
+      // const dates = [...mapDailyStats.keys()].sort((a, b) =>
+      //   a.localeCompare(b)
+      // );
+      // const minDate = dates[0]; // First date in sorted order
+      // const maxDate = dates[dates.length - 1]; // Last date in sorted order
     });
   });
+};
+
+const plot = (dataMap) => {
+  const data = Array.from(dataMap, ([date, value]) => ({
+    date: new Date(date), // Convert to Date object
+    value,
+  }));
+
+  const margin = { top: 20, right: 30, bottom: 40, left: 50 };
+  const width = 600 - margin.left - margin.right;
+  const height = 400 - margin.top - margin.bottom;
+
+  const x = d3
+    .scaleTime()
+    .domain(d3.extent(data, (d) => d.date)) // Get min and max dates
+    .range([0, width]);
+
+  const y = d3
+    .scaleLinear()
+    .domain([0, d3.max(data, (d) => d.value)]) // Scale to max value
+    .range([height, 0]);
+
+  const xAxis = d3.axisBottom(x).ticks(5).tickFormat(d3.timeFormat("%b %d"));
+  const yAxis = d3.axisLeft(y);
+
+  const svg = d3
+    .select("#my_dataviz")
+    .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", `translate(${margin.left},${margin.top})`);
+
+  svg.append("g").attr("transform", `translate(0,${height})`).call(xAxis);
+
+  svg.append("g").call(yAxis);
+
+  const line = d3
+    .line()
+    .x((d) => x(d.date))
+    .y((d) => y(d.value));
+
+  svg
+    .append("path")
+    .datum(data)
+    .attr("fill", "none")
+    .attr("stroke", "steelblue")
+    .attr("stroke-width", 2)
+    .attr("d", line);
 };
 
 //

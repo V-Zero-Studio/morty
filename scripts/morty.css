@@ -39,7 +39,7 @@ span.reveal {
   position: fixed;
   bottom: 65px;
   right: 15px;
-  width: 160px;
+  width: 320px;
   z-index: 1000;
   background-color: rgba(255, 255, 255, 0.85);
 }
@@ -115,7 +115,7 @@ p.rating-question {
 .tab-buttons button.active {
   background-color: #fff;
   font-weight: bold;
-  border-bottom: 3px solid #007BFF;
+  border-bottom: 3px solid #007bff;
 }
 .tab-content {
   display: none;
