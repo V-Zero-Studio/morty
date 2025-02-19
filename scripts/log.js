@@ -1,5 +1,5 @@
 //
-//
+// MORTY: BEHAVIORAL LOGGING MODULE
 //
 
 //
@@ -40,16 +40,16 @@ const createNewLogEntry = () => {
 //
 //  attach event listeners to log interaction behaviors
 //
-const logInteractionBehaviorOn = (elm) => {
+const logInteractionBehaviorOn = (elm, entry) => {
   elm.addEventListener("click", (e) => {
-    if (_sessionEntry == undefined) return;
-    _sessionEntry.interactionBehaviors.clickEvents.push({ timeStamp: time() });
+    if (entry == undefined) return;
+    entry.interactionBehaviors.clickEvents.push({ timeStamp: time() });
   });
 
   elm.addEventListener("mousewheel", (e) => {
-    if (_sessionEntry == undefined) return;
+    if (entry == undefined) return;
     pushIfApart(
-      _sessionEntry.interactionBehaviors.scrollEvents,
+      entry.interactionBehaviors.scrollEvents,
       { timeStamp: time(), offset: e.deltaY },
       DT_EVENTS,
       (array, entry) => {
@@ -61,47 +61,47 @@ const logInteractionBehaviorOn = (elm) => {
   });
 
   elm.addEventListener("mousedown", (e) => {
-    if (_sessionEntry == undefined) return;
-    _sessionEntry.interactionBehaviors.mousedownEvents.push({
+    if (entry == undefined) return;
+    entry.interactionBehaviors.mousedownEvents.push({
       timeStamp: time(),
       coord: { x: e.clientX, y: e.clientY },
     });
   });
 
   elm.addEventListener("mousemove", (e) => {
-    if (_sessionEntry == undefined) return;
+    if (entry == undefined) return;
     pushIfApart(
-      _sessionEntry.interactionBehaviors.mousemoveEvents,
+      entry.interactionBehaviors.mousemoveEvents,
       { timeStamp: time(), coord: { x: e.clientX, y: e.clientY } },
       DT_EVENTS
     );
   });
 
   elm.addEventListener("mouseup", (e) => {
-    if (_sessionEntry == undefined) return;
-    _sessionEntry.interactionBehaviors.mouseupEvents.push({
+    if (entry == undefined) return;
+    entry.interactionBehaviors.mouseupEvents.push({
       timeStamp: time(),
       coord: { x: e.clientX, y: e.clientY },
     });
   });
 
   elm.addEventListener("mouseenter", (e) => {
-    if (_sessionEntry == undefined) return;
-    _sessionEntry.interactionBehaviors.mouseenterEvents.push({
+    if (entry == undefined) return;
+    entry.interactionBehaviors.mouseenterEvents.push({
       timeStamp: time(),
     });
   });
 
   elm.addEventListener("mouseleave", (e) => {
-    if (_sessionEntry == undefined) return;
-    _sessionEntry.interactionBehaviors.mouseleaveEvents.push({
+    if (entry == undefined) return;
+    entry.interactionBehaviors.mouseleaveEvents.push({
       timeStamp: time(),
     });
   });
 
   elm.addEventListener("copy", (e) => {
-    if (_sessionEntry == undefined) return;
-    _sessionEntry.interactionBehaviors.copyEvents.push({
+    if (entry == undefined) return;
+    entry.interactionBehaviors.copyEvents.push({
       timeStamp: time(),
       length: window.getSelection().toString().length,
     });

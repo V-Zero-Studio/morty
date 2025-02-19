@@ -1,5 +1,5 @@
 //
-//
+// MORTY: MAIN
 //
 
 const PATH_CONFIG_FILE = "data/config.json";
@@ -91,7 +91,7 @@ const startMonitoring = () => {
 
     monitorStreaming();
 
-    logInteractionBehaviorOn(_elmResponse);
+    logInteractionBehaviorOn(_elmResponse, _sessionEntry);
   } else {
     setTimeout(() => {
       startMonitoring();
