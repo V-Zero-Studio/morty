@@ -91,7 +91,7 @@ const startMonitoring = () => {
 
     monitorStreaming();
 
-    logInteractionBehaviorOnResponse();
+    logInteractionBehaviorOn(_elmResponse);
   } else {
     setTimeout(() => {
       startMonitoring();
@@ -122,7 +122,7 @@ const downloadObjectAsJson = (exportObj, exportName) => {
 };
 
 //
-//
+// initialize pop-up ui (on the web page)
 //
 const initPopupUI = () => {
   const buttons = document.querySelectorAll(".tab-btn");
@@ -204,7 +204,7 @@ const init = () => {
   const btnSwitch = document.createElement("img");
   btnSwitch.src = chrome.runtime.getURL(_config.URL_ICON);
   btnSwitch.alt = "Toggle Button";
-  btnSwitch.classList.add("switch");
+  btnSwitch.classList.add("icon-button");
   btnSwitch.style.filter = _on ? "" : "grayscale(100%)";
   btnSwitch.addEventListener("click", (e) => {
     if (popup.style.display === "none") {
@@ -304,215 +304,6 @@ const saveLog = async () => {
 };
 
 //
-//
-//
-const aggregateSeries = () => {
-  openDB((event) => {
-    readFromDB((series) => {
-      const series_timeStamps = [];
-      const mapDailyStats = new Map();
-      let cnt_sessions = 0;
-
-      // preprocesing log for visualization
-      for (const entry of series) {
-        // log(entry)
-        cnt_sessions += 1;
-        series_timeStamps.push(entry.timeStamp);
-
-        // update a map of daily stats
-        const strDate = entry.timeStamp.split("T")[0];
-        let numSessions = 0;
-        if (mapDailyStats.has(strDate)) {
-          numSessions = mapDailyStats.get(strDate);
-        }
-        mapDailyStats.set(strDate, numSessions + 1);
-      }
-
-      plot(mapDailyStats)
-    });
-  });
-};
-
-//
-//
-//
-const plot = (dataMap) => {
-  const data = Array.from(dataMap, ([date, value]) => ({
-    date: new Date(date), // Convert to Date object
-    value,
-  }));
-
-  const margin = { top: 20, right: 30, bottom: 40, left: 50 };
-  const width = 600 - margin.left - margin.right;
-  const height = 400 - margin.top - margin.bottom;
-
-  const x = d3
-    .scaleTime()
-    .domain(d3.extent(data, (d) => d.date)) // Get min and max dates
-    .range([0, width]);
-
-  const y = d3
-    .scaleLinear()
-    .domain([0, d3.max(data, (d) => d.value)]) // Scale to max value
-    .range([height, 0]);
-
-  const xAxis = d3.axisBottom(x).ticks(5).tickFormat(d3.timeFormat("%b %d"));
-  const yAxis = d3.axisLeft(y);
-
-  const svg = d3
-    .select("#my_dataviz")
-    .append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-    .attr("transform", `translate(${margin.left},${margin.top})`);
-
-  svg.append("g").attr("transform", `translate(0,${height})`).call(xAxis);
-
-  svg.append("g").call(yAxis);
-
-  const line = d3
-    .line()
-    .x((d) => x(d.date))
-    .y((d) => y(d.value));
-
-  svg
-    .append("path")
-    .datum(data)
-    .attr("fill", "none")
-    .attr("stroke", "steelblue")
-    .attr("stroke-width", 2)
-    .attr("d", line);
-};
-
-//
-//  create an empty new log entry
-//
-const createNewLogEntry = () => {
-  return {
-    timeStamp: time(),
-    prompt: {
-      timeSent: undefined,
-      text: undefined,
-    },
-    response: {
-      timeStreamingStarted: undefined,
-      timeStreamingEnded: undefined,
-      height: undefined,
-    },
-    interactionBehaviors: {
-      scrollEvents: [],
-      clickEvents: [],
-      mousedownEvents: [],
-      mousemoveEvents: [],
-      mouseupEvents: [],
-      mouseenterEvents: [],
-      mouseleaveEvents: [],
-      copyEvents: [],
-      windowenterEvents: [],
-      windowleaveEvents: [],
-      keydownEvents: [],
-    },
-    agreementRating: {
-      timeStamp: undefined, // the time of the last-hovered rating
-      rating: undefined,
-    },
-  };
-};
-
-//
-// for continuous data (e.g., mouse move, scrolling),
-// push it to the queue if it's dt apart from previous data point
-// (to avoid oversampling)
-// aggrFunc is a custom function to aggregate "dense" data points' values into a single one
-//
-const pushIfApart = (array, entry, dt, aggrFunc) => {
-  if (array.length === 0) {
-    array.push(entry);
-    return;
-  }
-
-  const timeStampPrev = array[array.length - 1].timeStamp;
-
-  if (new Date().getTime() - new Date(timeStampPrev).getTime() > dt) {
-    array.push(entry);
-  } else if (aggrFunc != undefined) {
-    aggrFunc(array, entry);
-  }
-};
-
-//
-//  attach event listeners to log interaction behaviors
-//
-const logInteractionBehaviorOnResponse = () => {
-  _elmResponse.addEventListener("click", (e) => {
-    if (_sessionEntry == undefined) return;
-    _sessionEntry.interactionBehaviors.clickEvents.push({ timeStamp: time() });
-  });
-
-  _elmResponse.addEventListener("mousewheel", (e) => {
-    if (_sessionEntry == undefined) return;
-    pushIfApart(
-      _sessionEntry.interactionBehaviors.scrollEvents,
-      { timeStamp: time(), offset: e.deltaY },
-      DT_EVENTS,
-      (array, entry) => {
-        if (array.length > 0) {
-          array[array.length - 1].offset += entry.offset;
-        }
-      }
-    );
-  });
-
-  _elmResponse.addEventListener("mousedown", (e) => {
-    if (_sessionEntry == undefined) return;
-    _sessionEntry.interactionBehaviors.mousedownEvents.push({
-      timeStamp: time(),
-      coord: { x: e.clientX, y: e.clientY },
-    });
-  });
-
-  _elmResponse.addEventListener("mousemove", (e) => {
-    if (_sessionEntry == undefined) return;
-    pushIfApart(
-      _sessionEntry.interactionBehaviors.mousemoveEvents,
-      { timeStamp: time(), coord: { x: e.clientX, y: e.clientY } },
-      DT_EVENTS
-    );
-  });
-
-  _elmResponse.addEventListener("mouseup", (e) => {
-    if (_sessionEntry == undefined) return;
-    _sessionEntry.interactionBehaviors.mouseupEvents.push({
-      timeStamp: time(),
-      coord: { x: e.clientX, y: e.clientY },
-    });
-  });
-
-  _elmResponse.addEventListener("mouseenter", (e) => {
-    if (_sessionEntry == undefined) return;
-    _sessionEntry.interactionBehaviors.mouseenterEvents.push({
-      timeStamp: time(),
-    });
-  });
-
-  _elmResponse.addEventListener("mouseleave", (e) => {
-    if (_sessionEntry == undefined) return;
-    _sessionEntry.interactionBehaviors.mouseleaveEvents.push({
-      timeStamp: time(),
-    });
-  });
-
-  _elmResponse.addEventListener("copy", (e) => {
-    if (_sessionEntry == undefined) return;
-    _sessionEntry.interactionBehaviors.copyEvents.push({
-      timeStamp: time(),
-      length: window.getSelection().toString().length,
-    });
-  });
-};
-
-//
 //  shortcut method to get the current time as a string
 //
 const time = () => {
@@ -525,13 +316,6 @@ const time = () => {
 const log = (msg) => {
   console.info("[morty]", time(), msg);
 };
-
-// const injectScript = (url, callback) => {
-//   const script = document.createElement("script");
-//   script.src = url;
-//   script.onload = callback; // Call the function when the script loads
-//   document.head.appendChild(script);
-// };
 
 //
 //  entry function

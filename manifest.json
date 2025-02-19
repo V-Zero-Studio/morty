@@ -10,7 +10,7 @@
   },
   "content_scripts": [
     {
-      "js": ["scripts/morty.js", "scripts/db.js", "scripts/d3.v6.js"],
+      "js": ["scripts/morty.js", "scripts/log.js", "scripts/va.js", "scripts/db.js", "scripts/d3.v6.js"],
       "css": ["scripts/morty.css"],
       "matches": ["https://chatgpt.com/", "https://chatgpt.com/c/*"]
     }
