@@ -209,7 +209,9 @@ const init = () => {
   btnSwitch.addEventListener("click", (e) => {
     if (popup.style.display === "none") {
       popup.style.display = "block";
-      aggregateSeries();
+
+      let containerVis = document.getElementById("tabVis");
+      visualizeSeries(containerVis);
       // testChartJs();
     } else {
       popup.style.display = "none";
