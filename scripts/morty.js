@@ -217,11 +217,11 @@ const init = () => {
       popup.style.display = "none";
     }
   });
-  btnSwitch.addEventListener("dblclick", () => {
-    readFromDB((logData) => {
-      downloadObjectAsJson(logData, "morty_log_" + time().replace(":", "_"));
-    });
-  });
+  // btnSwitch.addEventListener("dblclick", () => {
+  //   readFromDB((logData) => {
+  //     downloadObjectAsJson(logData, "morty_log_" + time().replace(":", "_"));
+  //   });
+  // });
   document.body.appendChild(btnSwitch);
 
   // create on-web-page mini page
