@@ -14,7 +14,6 @@ const visualizeSeries = (containerVis) => {
 
       // preprocesing log for visualization
       for (const entry of series) {
-        // log(entry)
         cnt_sessions += 1;
         series_timeStamps.push(entry.timeStamp);
 
@@ -64,8 +63,8 @@ const plot = (dataMap, idDivVis) => {
     .domain([0, d3.max(data, (d) => d.value)]) // Scale to max value
     .range([height, 0]);
 
-  const xAxis = d3.axisBottom(x).ticks(5).tickFormat(d3.timeFormat("%b %d"));
-  const yAxis = d3.axisLeft(y);
+  // const xAxis = d3.axisBottom(x).ticks(5).tickFormat(d3.timeFormat("%b %d"));
+  // const yAxis = d3.axisLeft(y);
 
   const svg = d3
     .select("#" + idDivVis)
@@ -100,4 +99,51 @@ const plot = (dataMap, idDivVis) => {
     .attr("stroke", "steelblue")
     .attr("stroke-width", 2)
     .attr("d", line);
+
+  //
+  // hovering feature
+  //
+  
+  const focus = svg.append("g").style("display", "none");
+
+// Circle marker
+focus.append("circle")
+  .attr("r", 5)
+  .attr("fill", "red");
+
+// Tooltip text
+const tooltip = svg.append("text")
+  .attr("class", "tooltip")
+  .attr("x", 10)
+  .attr("y", 10)
+  .attr("fill", "black");
+
+// Create overlay rectangle for mouse events
+svg.append("rect")
+  .attr("width", width)
+  .attr("height", height)
+  .attr("fill", "none")
+  .attr("pointer-events", "all")
+  .on("mouseover", () => focus.style("display", null))
+  .on("mouseout", () => focus.style("display", "none"))
+  .on("mousemove", function (event) {
+    const [mouseX] = d3.pointer(event, this);
+    
+    // Bisector to find nearest date
+    const bisect = d3.bisector(d => d.date).left;
+    const x0 = x.invert(mouseX);
+    const index = bisect(data, x0, 1);
+    const d0 = data[index - 1];
+    const d1 = data[index];
+    const d = d1 && (x0 - d0.date > d1.date - x0) ? d1 : d0;
+
+    // Move the focus circle
+    focus.attr("transform", `translate(${x(d.date)},${y(d.value)})`);
+
+    // Update tooltip text
+    tooltip
+      .attr("x", x(d.date) + 10)
+      .attr("y", y(d.value) - 10)
+      .text(`Date: ${d3.timeFormat("%Y-%m-%d")(d.date)}, Value: ${d.value}`);
+  });
 };
