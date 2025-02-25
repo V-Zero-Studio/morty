@@ -31,6 +31,9 @@ const visualizeSeries = (containerVis) => {
   });
 };
 
+//
+//
+//
 const createDivVis = (id, container) => {
   let divVis = document.createElement("div");
   divVis.id = id;
@@ -144,6 +147,6 @@ svg.append("rect")
     tooltip
       .attr("x", x(d.date) + 10)
       .attr("y", y(d.value) - 10)
-      .text(`Date: ${d3.timeFormat("%Y-%m-%d")(d.date)}, Value: ${d.value}`);
+      .text(`${d3.timeFormat("%Y-%m-%d")(d.date)}: ${d.value}`);
   });
 };
