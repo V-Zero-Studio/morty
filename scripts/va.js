@@ -8,16 +8,11 @@
 const visualizeSeries = (containerVis) => {
   openDB((event) => {
     readFromDB((series) => {
-      // const series_timeStamps = []
       const mapDailyStats = new Map();
       const mapDailyMouseFootprintPerSession = new Map();
-      // let cnt_sessions = 0
 
       // num of sessions per day
       for (const entry of series) {
-        // cnt_sessions += 1
-        // series_timeStamps.push(entry.timeStamp)
-
         const strDate = entry.timeStamp.split("T")[0];
 
         // calculate num of sessions
@@ -34,7 +29,6 @@ const visualizeSeries = (containerVis) => {
         const strDate = entry.timeStamp.split("T")[0];
         numSessions = mapDailyStats.get(strDate);
 
-        // mouse move footprint
         const mousemoveEvents = entry.interactionBehaviors.mousemoveEvents;
         let footprint = 0;
         let coordPrev;
@@ -95,9 +89,6 @@ const plot = (dataMap, idDivVis) => {
     .domain([0, d3.max(data, (d) => d.value)]) // Scale to max value
     .range([height, 0]);
 
-  // const xAxis = d3.axisBottom(x).ticks(5).tickFormat(d3.timeFormat("%b %d"))
-  // const yAxis = d3.axisLeft(y)
-
   const svg = d3
     .select("#" + idDivVis)
     .append("svg")
@@ -105,19 +96,6 @@ const plot = (dataMap, idDivVis) => {
     .attr("height", height + margin.top + margin.bottom)
     .append("g")
     .attr("transform", `translate(${margin.left},${margin.top})`);
-
-  // svg
-  //   .append("g")
-  //   .attr("transform", `translate(0,${height})`)
-  //   .call(xAxis)
-  //   .selectAll("path, line, text")
-  //   .attr("stroke", "black")
-
-  // svg
-  //   .append("g")
-  //   .call(yAxis)
-  //   .selectAll("path, line, text")
-  //   .attr("stroke", "black")
 
   const line = d3
     .line()
