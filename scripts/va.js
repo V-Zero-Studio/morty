@@ -42,14 +42,19 @@ const visualizeSeries = (containerVis) => {
           coordPrev = coord;
         }
 
-        let footprintExisting = 0
-        if(mapDailyMouseFootprintPerSession.has(strDate)) {
-          footprintExisting = mapDailyMouseFootprintPerSession.get(strDate)
+        let footprintExisting = 0;
+        if (mapDailyMouseFootprintPerSession.has(strDate)) {
+          footprintExisting = mapDailyMouseFootprintPerSession.get(strDate);
         }
-        mapDailyMouseFootprintPerSession.set(strDate, footprintExisting + footprint / numSessions);
+        mapDailyMouseFootprintPerSession.set(
+          strDate,
+          (footprintExisting + footprint / numSessions) | 0
+        );
       }
-      plot(mapDailyMouseFootprintPerSession, createDivVis("visMouseFootprint", containerVis));
-      
+      plot(
+        mapDailyMouseFootprintPerSession,
+        createDivVis("visMouseFootprint", containerVis)
+      );
     });
   });
 };
@@ -64,14 +69,47 @@ const createDivVis = (id, container) => {
   return id;
 };
 
+const fillMissingDates = (dataMap) => {
+  // Convert dataMap to an array and sort by date
+  const data = Array.from(dataMap, ([date, value]) => ({
+    date: new Date(date),
+    value,
+  })).sort((a, b) => a.date - b.date);
+
+  if (data.length === 0) return [];
+
+  // Get the min and max dates
+  const minDate = new Date(data[0].date);
+  const maxDate = new Date(data[data.length - 1].date);
+
+  // Create a map for quick lookup
+  const dataMapObj = new Map(
+    data.map((d) => [d.date.toISOString().split("T")[0], d.value])
+  );
+
+  // Generate all dates within the range
+  const filledData = [];
+  for (let d = new Date(minDate); d <= maxDate; d.setDate(d.getDate() + 1)) {
+    const dateStr = d.toISOString().split("T")[0];
+    filledData.push({
+      date: new Date(dateStr),
+      value: dataMapObj.has(dateStr) ? dataMapObj.get(dateStr) : 0,
+    });
+  }
+
+  return filledData;
+};
+
 //
 //  plotting data series in a div
 //
 const plot = (dataMap, idDivVis) => {
-  const data = Array.from(dataMap, ([date, value]) => ({
-    date: new Date(date), // Convert to Date object
-    value,
-  }));
+  // const data = Array.from(dataMap, ([date, value]) => ({
+  //   date: new Date(date), // Convert to Date object
+  //   value,
+  // }));
+
+  const data = fillMissingDates(dataMap);
 
   const widthContainer = document.getElementById(idDivVis).offsetWidth;
   const visHeight = 80;
@@ -113,7 +151,6 @@ const plot = (dataMap, idDivVis) => {
   //
   // hovering feature
   //
-
   const focus = svg.append("g").style("display", "none");
 
   // Circle marker
@@ -126,6 +163,11 @@ const plot = (dataMap, idDivVis) => {
     .attr("x", 10)
     .attr("y", 10)
     .attr("fill", "black");
+
+  // the following values are static
+  // not dynamically matching the actual tooltip dimensions
+  const widthTooltip = 80;
+  const heightTooltip = 10;
 
   // Create overlay rectangle for mouse events
   svg
@@ -152,8 +194,8 @@ const plot = (dataMap, idDivVis) => {
 
       // Update tooltip text
       tooltip
-        .attr("x", x(d.date) + 10)
-        .attr("y", y(d.value) - 10)
-        .text(`${d3.timeFormat("%Y-%m-%d")(d.date)}: ${d.value}`);
+        .attr("x", Math.min(x(d.date) + 5, width - widthTooltip))
+        .attr("y", Math.max(y(d.value) - 5, heightTooltip))
+        .text(`${d3.timeFormat("%m/%d")(d.date)}: ${d.value}`);
     });
 };
