@@ -176,8 +176,14 @@ const plot = (dataMap, idDivVis) => {
     .attr("height", height)
     .attr("fill", "none")
     .attr("pointer-events", "all")
-    .on("mouseover", () => focus.style("display", null))
-    .on("mouseout", () => focus.style("display", "none"))
+    .on("mouseover", () => {
+      focus.style("display", null);
+      tooltip.style("display", null);
+    })
+    .on("mouseout", () => {
+      focus.style("display", "none");
+      tooltip.style("display", "none");
+    })
     .on("mousemove", function (event) {
       const [mouseX] = d3.pointer(event, this);
 

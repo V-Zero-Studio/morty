@@ -215,17 +215,15 @@ const init = () => {
       containerVis.innerHTML = "";
     }
   });
-  // btnSwitch.addEventListener("dblclick", () => {
-  //   readFromDB((logData) => {
-  //     downloadObjectAsJson(logData, "morty_log_" + time().replace(":", "_"))
-  //   })
-  // })
   document.body.appendChild(btnSwitch);
 
   // create on-web-page mini page
   const popup = document.createElement("div");
   popup.classList.add("mini-popup");
   popup.style.display = "none"; // Initially hidden
+  popup.addEventListener("click", (e) => {
+    e.stopPropagation();
+  })
   document.body.appendChild(popup);
 
   // fetch the HTML file
