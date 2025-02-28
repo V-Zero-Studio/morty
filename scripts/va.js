@@ -22,7 +22,7 @@ const visualizeSeries = (containerVis) => {
         }
         mapDailyStats.set(strDate, numSessions + 1);
       }
-      plot(mapDailyStats, createDivVis("visDailyStats", containerVis));
+      plot("# of sessions", mapDailyStats, createDivVis("visDailyStats", containerVis));
 
       // avg mouse footprint per session per day
       for (const entry of series) {
@@ -51,7 +51,7 @@ const visualizeSeries = (containerVis) => {
           (footprintExisting + footprint / numSessions) | 0
         );
       }
-      plot(
+      plot("mouse movement",
         mapDailyMouseFootprintPerSession,
         createDivVis("visMouseFootprint", containerVis)
       );
@@ -103,7 +103,7 @@ const fillMissingDates = (dataMap) => {
 //
 //  plotting data series in a div
 //
-const plot = (dataMap, idDivVis) => {
+const plot = (title, dataMap, idDivVis) => {
   // const data = Array.from(dataMap, ([date, value]) => ({
   //   date: new Date(date), // Convert to Date object
   //   value,
@@ -113,7 +113,7 @@ const plot = (dataMap, idDivVis) => {
 
   const widthContainer = document.getElementById(idDivVis).offsetWidth;
   const visHeight = 80;
-  const margin = { top: 5, right: 5, bottom: 5, left: 5 };
+  const margin = { top: 5, right: 5, bottom: 20, left: 5 };
   const width = widthContainer - margin.left - margin.right;
   const height = visHeight - margin.top - margin.bottom;
 
@@ -148,13 +148,20 @@ const plot = (dataMap, idDivVis) => {
     .attr("stroke-width", 2)
     .attr("d", line);
 
+    svg.append("text")
+    .attr("x", 0)  // Center the title
+    .attr("y", margin.top) // Position it above the plot
+    .attr("text-anchor", "start") // Center the text
+    .style("font-size", "14px") // Set font size
+    .text(title);
+
   //
   // hovering feature
   //
   const focus = svg.append("g").style("display", "none");
 
   // Circle marker
-  focus.append("circle").attr("r", 5).attr("fill", "red");
+  focus.append("circle").attr("r", 5).attr("fill", "steelblue");
 
   // Tooltip text
   const tooltip = svg
@@ -202,6 +209,7 @@ const plot = (dataMap, idDivVis) => {
       tooltip
         .attr("x", Math.min(x(d.date) + 5, width - widthTooltip))
         .attr("y", Math.max(y(d.value) - 5, heightTooltip))
-        .text(`${d3.timeFormat("%m/%d")(d.date)}: ${d.value}`);
+        .text(`${d3.timeFormat("%m/%d")(d.date)}: ${d.value}`)
+        .style("font-size", "14px");
     });
 };
