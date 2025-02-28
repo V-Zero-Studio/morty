@@ -20,6 +20,7 @@
   border: 1px solid #ccc;
   border-radius: 8px;
   overflow: hidden;
+  color: black;
 }
 .tab-buttons {
   display: flex;
