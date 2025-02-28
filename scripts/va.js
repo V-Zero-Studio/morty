@@ -60,7 +60,7 @@ const visualizeSeries = (containerVis) => {
 };
 
 //
-//
+// create a div and return its id for adding a new vis
 //
 const createDivVis = (id, container) => {
   let divVis = document.createElement("div");
@@ -69,6 +69,9 @@ const createDivVis = (id, container) => {
   return id;
 };
 
+//
+//  fill in dataMap where there are dates with missing log (i.e., no usage)
+//
 const fillMissingDates = (dataMap) => {
   // Convert dataMap to an array and sort by date
   const data = Array.from(dataMap, ([date, value]) => ({
@@ -104,11 +107,6 @@ const fillMissingDates = (dataMap) => {
 //  plotting data series in a div
 //
 const plot = (title, dataMap, idDivVis) => {
-  // const data = Array.from(dataMap, ([date, value]) => ({
-  //   date: new Date(date), // Convert to Date object
-  //   value,
-  // }));
-
   const data = fillMissingDates(dataMap);
 
   const widthContainer = document.getElementById(idDivVis).offsetWidth;
