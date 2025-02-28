@@ -43,6 +43,7 @@
 .tab-content {
   display: none;
   padding: 15px;
+  min-height: 360px;
 }
 .tab-content.active {
   display: block;
