@@ -8,27 +8,28 @@
 const visualizeSeries = (containerVis) => {
   openDB((event) => {
     readFromDB((series) => {
-      const mapDailyStats = new Map();
-      const mapDailyMouseFootprintPerSession = new Map();
+      const mapStats = new Map();
+      const mapMouseFootprintPerSession = new Map();
+      const mapNumCopyEventsPerSession = new Map();
 
-      // num of sessions per day
+      // [behavior] num of sessions per day
       for (const entry of series) {
         const strDate = entry.timeStamp.split("T")[0];
 
         // calculate num of sessions
         let numSessions = 0;
-        if (mapDailyStats.has(strDate)) {
-          numSessions = mapDailyStats.get(strDate);
+        if (mapStats.has(strDate)) {
+          numSessions = mapStats.get(strDate);
         }
-        mapDailyStats.set(strDate, numSessions + 1);
+        mapStats.set(strDate, numSessions + 1);
       }
-      plot("# of sessions", mapDailyStats, createDivVis("visDailyStats", containerVis));
+      plot("# of sessions", mapStats, createDivVis("visStats", containerVis));
 
-      // avg mouse footprint per session per day
       for (const entry of series) {
         const strDate = entry.timeStamp.split("T")[0];
-        numSessions = mapDailyStats.get(strDate);
+        numSessions = mapStats.get(strDate);
 
+        // [behavior] avg mouse footprint per session per day
         const mousemoveEvents = entry.interactionBehaviors.mousemoveEvents;
         let footprint = 0;
         let coordPrev;
@@ -43,17 +44,38 @@ const visualizeSeries = (containerVis) => {
         }
 
         let footprintExisting = 0;
-        if (mapDailyMouseFootprintPerSession.has(strDate)) {
-          footprintExisting = mapDailyMouseFootprintPerSession.get(strDate);
+        if (mapMouseFootprintPerSession.has(strDate)) {
+          footprintExisting = mapMouseFootprintPerSession.get(strDate);
         }
-        mapDailyMouseFootprintPerSession.set(
+        mapMouseFootprintPerSession.set(
           strDate,
           (footprintExisting + footprint / numSessions) | 0
         );
+
+        // [behavior] ave copy events per session
+        const numCopyEvents = entry.interactionBehaviors.copyEvents.length;
+        let numCopyEventsPerSession = 0;
+        if (mapNumCopyEventsPerSession.has(strDate)) {
+          numCopyEventsPerSession = mapNumCopyEventsPerSession.get(strDate);
+        }
+
+        numCopyEventsPerSession += numCopyEvents / numSessions;
+        mapNumCopyEventsPerSession.set(
+          strDate,
+          Number(Number(numCopyEventsPerSession).toPrecision(2))
+        );
       }
-      plot("mouse movement",
-        mapDailyMouseFootprintPerSession,
+
+      plot(
+        "mouse movement",
+        mapMouseFootprintPerSession,
         createDivVis("visMouseFootprint", containerVis)
+      );
+
+      plot(
+        "# of copy",
+        mapNumCopyEventsPerSession,
+        createDivVis("visNumCopyEvents", containerVis)
       );
     });
   });
@@ -146,8 +168,9 @@ const plot = (title, dataMap, idDivVis) => {
     .attr("stroke-width", 2)
     .attr("d", line);
 
-    svg.append("text")
-    .attr("x", 0)  // Center the title
+  svg
+    .append("text")
+    .attr("x", 0) // Center the title
     .attr("y", margin.top) // Position it above the plot
     .attr("text-anchor", "start") // Center the text
     .style("font-size", "14px") // Set font size
