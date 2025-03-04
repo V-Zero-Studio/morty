@@ -77,3 +77,26 @@ const readFromDB = (onSuccess) => {
     log(event);
   };
 };
+
+
+//
+//  trigger a dialog to download an object as a json file
+//
+const downloadObjectAsJson = (exportObj, exportName) => {
+  // convert the object to a JSON string
+  const dataStr =
+    "data:text/jsoncharset=utf-8," +
+    encodeURIComponent(JSON.stringify(exportObj));
+
+  // create an invisible anchor element
+  const downloadAnchorNode = document.createElement("a");
+
+  // set the download attribute with a filename
+  downloadAnchorNode.setAttribute("href", dataStr);
+  downloadAnchorNode.setAttribute("download", exportName + ".json");
+
+  // append the anchor to the document, trigger a click on it, and then remove it
+  document.body.appendChild(downloadAnchorNode);
+  downloadAnchorNode.click();
+  downloadAnchorNode.remove();
+};
