@@ -10,7 +10,7 @@ const WINDOW = 30;
 const visualizeSeries = (containerVis) => {
   openDB((event) => {
     readFromDB((series) => {
-      const mapStats = new Map();
+      const mapSessions = new Map();
       const mapMouseFootprintPerSession = new Map();
       const mapNumCopyEventsPerSession = new Map();
 
@@ -20,20 +20,23 @@ const visualizeSeries = (containerVis) => {
 
         const strDate = entry.timeStamp.split("T")[0];
 
-        // calculate num of sessions
-        let numSessions = 0;
-        if (mapStats.has(strDate)) {
-          numSessions = mapStats.get(strDate);
-        }
-        mapStats.set(strDate, numSessions + 1);
+        let numSessions = mapSessions.has(strDate)
+          ? mapSessions.get(strDate)
+          : 0;
+        mapSessions.set(strDate, numSessions + 1);
       }
-      plot("# of sessions", mapStats, createDivVis("visStats", containerVis));
+
+      plot(
+        "# of sessions",
+        mapSessions,
+        createDivVis("visSessions", containerVis)
+      );
 
       for (const entry of series) {
         if (isOutOfWindow(entry.timeStamp)) continue;
 
         const strDate = entry.timeStamp.split("T")[0];
-        numSessions = mapStats.get(strDate);
+        numSessions = mapSessions.get(strDate);
 
         // [behavior] avg mouse footprint per session per day
         const mousemoveEvents = entry.interactionBehaviors.mousemoveEvents;
@@ -49,10 +52,10 @@ const visualizeSeries = (containerVis) => {
           coordPrev = coord;
         }
 
-        let footprintExisting = 0;
-        if (mapMouseFootprintPerSession.has(strDate)) {
-          footprintExisting = mapMouseFootprintPerSession.get(strDate);
-        }
+        let footprintExisting = mapMouseFootprintPerSession.has(strDate)
+          ? mapMouseFootprintPerSession.get(strDate)
+          : 0;
+
         mapMouseFootprintPerSession.set(
           strDate,
           (footprintExisting + footprint / numSessions) | 0
@@ -60,10 +63,9 @@ const visualizeSeries = (containerVis) => {
 
         // [behavior] ave copy events per session
         const numCopyEvents = entry.interactionBehaviors.copyEvents.length;
-        let numCopyEventsPerSession = 0;
-        if (mapNumCopyEventsPerSession.has(strDate)) {
-          numCopyEventsPerSession = mapNumCopyEventsPerSession.get(strDate);
-        }
+        let numCopyEventsPerSession = mapNumCopyEventsPerSession.has(strDate)
+          ? mapNumCopyEventsPerSession.get(strDate)
+          : 0;
 
         numCopyEventsPerSession += numCopyEvents / numSessions;
         mapNumCopyEventsPerSession.set(
@@ -73,13 +75,13 @@ const visualizeSeries = (containerVis) => {
       }
 
       plot(
-        "mouse movement",
+        "mouse movement / session",
         mapMouseFootprintPerSession,
         createDivVis("visMouseFootprint", containerVis)
       );
 
       plot(
-        "# of copy",
+        "# of copy / session",
         mapNumCopyEventsPerSession,
         createDivVis("visNumCopyEvents", containerVis)
       );
@@ -88,7 +90,8 @@ const visualizeSeries = (containerVis) => {
 };
 
 //
-//
+//  detect if a log entry is out of the window
+//  (i.e., older than n days ago)
 //
 const isOutOfWindow = (timeStamp) => {
   const givenDate = new Date(timeStamp);
