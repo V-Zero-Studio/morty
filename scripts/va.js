@@ -2,6 +2,8 @@
 //  MORTY: VISUAL ANALYTICS MODULE
 //
 
+const WINDOW = 30;
+
 //
 //  aggregate multiple series of log data and visualize it
 //
@@ -14,6 +16,8 @@ const visualizeSeries = (containerVis) => {
 
       // [behavior] num of sessions per day
       for (const entry of series) {
+        if (isOutOfWindow(entry.timeStamp)) continue;
+
         const strDate = entry.timeStamp.split("T")[0];
 
         // calculate num of sessions
@@ -26,6 +30,8 @@ const visualizeSeries = (containerVis) => {
       plot("# of sessions", mapStats, createDivVis("visStats", containerVis));
 
       for (const entry of series) {
+        if (isOutOfWindow(entry.timeStamp)) continue;
+
         const strDate = entry.timeStamp.split("T")[0];
         numSessions = mapStats.get(strDate);
 
@@ -79,6 +85,16 @@ const visualizeSeries = (containerVis) => {
       );
     });
   });
+};
+
+//
+//
+//
+const isOutOfWindow = (timeStamp) => {
+  const givenDate = new Date(timeStamp);
+  const earliestDate = new Date();
+  earliestDate.setDate(earliestDate.getDate() - WINDOW);
+  return givenDate < earliestDate;
 };
 
 //
