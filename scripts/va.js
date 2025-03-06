@@ -11,8 +11,8 @@ const visualizeSeries = (containerVis) => {
   openDB((event) => {
     readFromDB((series) => {
       const mapSessions = new Map();
-      const mapMouseFootprintPerSession = new Map();
-      const mapNumCopyEventsPerSession = new Map();
+      const mapMouseFootprint = new Map();
+      const mapNumCopyEvents = new Map();
 
       // [behavior] num of sessions per day
       for (const entry of series) {
@@ -32,6 +32,7 @@ const visualizeSeries = (containerVis) => {
         createDivVis("visSessions", containerVis)
       );
 
+      // [behaviors] others
       for (const entry of series) {
         if (isOutOfWindow(entry.timeStamp)) continue;
 
@@ -52,37 +53,37 @@ const visualizeSeries = (containerVis) => {
           coordPrev = coord;
         }
 
-        let footprintExisting = mapMouseFootprintPerSession.has(strDate)
-          ? mapMouseFootprintPerSession.get(strDate)
+        let footprintExisting = mapMouseFootprint.has(strDate)
+          ? mapMouseFootprint.get(strDate)
           : 0;
 
-        mapMouseFootprintPerSession.set(
+        mapMouseFootprint.set(
           strDate,
           (footprintExisting + footprint / numSessions) | 0
         );
 
         // [behavior] ave copy events per session
         const numCopyEvents = entry.interactionBehaviors.copyEvents.length;
-        let numCopyEventsPerSession = mapNumCopyEventsPerSession.has(strDate)
-          ? mapNumCopyEventsPerSession.get(strDate)
+        let numCopyEventsExisting = mapNumCopyEvents.has(strDate)
+          ? mapNumCopyEvents.get(strDate)
           : 0;
 
-        numCopyEventsPerSession += numCopyEvents / numSessions;
-        mapNumCopyEventsPerSession.set(
+        numCopyEventsExisting += numCopyEvents / numSessions;
+        mapNumCopyEvents.set(
           strDate,
-          Number(Number(numCopyEventsPerSession).toPrecision(2))
+          Number(Number(numCopyEventsExisting).toPrecision(2))
         );
       }
 
       plot(
         "mouse movement / session",
-        mapMouseFootprintPerSession,
+        mapMouseFootprint,
         createDivVis("visMouseFootprint", containerVis)
       );
 
       plot(
         "# of copy / session",
-        mapNumCopyEventsPerSession,
+        mapNumCopyEvents,
         createDivVis("visNumCopyEvents", containerVis)
       );
     });
