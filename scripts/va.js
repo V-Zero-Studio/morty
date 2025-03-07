@@ -13,6 +13,8 @@ const visualizeSeries = (containerVis) => {
       const mapSessions = new Map();
       const mapMouseFootprint = new Map();
       const mapNumCopyEvents = new Map();
+      const mapSessionsScrollNeeded = new Map();
+      const mapNumScrollEvents = new Map();
 
       // [behavior] num of sessions per day
       for (const entry of series) {
@@ -62,7 +64,7 @@ const visualizeSeries = (containerVis) => {
           (footprintExisting + footprint / numSessions) | 0
         );
 
-        // [behavior] ave copy events per session
+        // [behavior] avg copy events per session
         const numCopyEvents = entry.interactionBehaviors.copyEvents.length;
         let numCopyEventsExisting = mapNumCopyEvents.has(strDate)
           ? mapNumCopyEvents.get(strDate)
@@ -73,6 +75,24 @@ const visualizeSeries = (containerVis) => {
           strDate,
           Number(Number(numCopyEventsExisting).toPrecision(2))
         );
+
+        // [behavior] scrolling
+        if (
+          entry.response.height != undefined &&
+          entry.viewHeight != undefined &&
+          entry.response.height > entry.viewHeight
+        ) {
+          let numSessionsScrollNeeded = mapSessionsScrollNeeded.has(strDate)
+            ? mapSessionsScrollNeeded.get(strDate)
+            : 0;
+          mapSessionsScrollNeeded.set(strDate, numSessionsScrollNeeded + 1);
+
+          const numScrolls = entry.interactionBehaviors.scrollEvents.length;
+          let numScrollsExisting = mapNumScrollEvents.has(strDate)
+            ? mapNumScrollEvents.get(strDate)
+            : 0;
+          mapNumScrollEvents.set(strDate, numScrollsExisting + numScrolls);
+        }
       }
 
       plot(
@@ -85,6 +105,22 @@ const visualizeSeries = (containerVis) => {
         "# of copy / session",
         mapNumCopyEvents,
         createDivVis("visNumCopyEvents", containerVis)
+      );
+
+      for (const strDate of mapSessionsScrollNeeded.keys()) {
+        const numScrollsPerSession =
+          mapNumScrollEvents.get(strDate) /
+          mapSessionsScrollNeeded.get(strDate);
+        mapNumScrollEvents.set(
+          strDate,
+          Number(Number(numScrollsPerSession).toPrecision(2))
+        );
+      }
+      log(mapNumScrollEvents);
+      plot(
+        "# of scrolls / session",
+        mapNumScrollEvents,
+        createDivVis("visNumScrollEvents", containerVis)
       );
     });
   });
