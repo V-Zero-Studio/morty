@@ -161,7 +161,7 @@ const fillMissingDates = (dataMap) => {
 
   // Get the min and max dates
   const minDate = new Date(data[0].date);
-  const maxDate = new Date(data[data.length - 1].date);
+  const maxDate = new Date();
 
   // Create a map for quick lookup
   const dataMapObj = new Map(
