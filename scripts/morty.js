@@ -103,13 +103,13 @@ const startMonitoring = () => {
 // initialize pop-up ui (on the web page)
 //
 const initPopupUI = () => {
-  const buttons = document.querySelectorAll(".tab-btn");
+  const tabs = document.querySelectorAll(".tab-btn");
   const contents = document.querySelectorAll(".tab-content");
 
-  buttons.forEach((button) => {
+  tabs.forEach((button) => {
     button.addEventListener("click", () => {
-      // Remove active class from all buttons and content
-      buttons.forEach((btn) => btn.classList.remove("active"));
+      // Remove active class from all tabs and content
+      tabs.forEach((btn) => btn.classList.remove("active"));
       contents.forEach((content) => content.classList.remove("active"));
 
       // Add active class to the clicked button and corresponding content
@@ -117,6 +117,18 @@ const initPopupUI = () => {
       const idButnClicked = button.getAttribute("data-tab");
       document.getElementById(idButnClicked).classList.add("active");
     });
+  });
+
+  const btnDel = document.getElementById("btnDel");
+  btnDel.addEventListener("click", (event) => {
+    if (
+      confirm(
+        "Are you sure you want to delete the log data? This action cannot be undone."
+      )
+    ) {
+      indexedDB.deleteDatabase(ID_DB);
+      alert("Log deleted!");
+    }
   });
 };
 
@@ -201,7 +213,7 @@ const init = () => {
   popup.style.display = "none"; // Initially hidden
   popup.addEventListener("click", (e) => {
     e.stopPropagation();
-  })
+  });
   document.body.appendChild(popup);
 
   // fetch the HTML file
@@ -307,9 +319,6 @@ const log = (msg) => {
         _config = data;
 
         init();
-
-        // DANGER! KEEP IT COMMENTED
-        // indexedDB.deleteDatabase(ID_DB)
 
         openDB(readFromDB);
 
