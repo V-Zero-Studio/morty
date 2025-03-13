@@ -119,6 +119,31 @@ const initPopupUI = () => {
     });
   });
 
+  // auto delete old log
+  const inputAutoDel = document.getElementById("autoDeleteToggle");
+  inputAutoDel.addEventListener("change", () => {
+    const daysInput = document.getElementById("daysInput");
+    daysInput.disabled = !inputAutoDel.checked;
+  });
+
+  // save settings button
+  const btnSaveSettings = document.getElementById("btnSaveSettings");
+  btnSaveSettings.addEventListener("click", () => {
+    const isAutoDelete = document.getElementById("autoDeleteToggle").checked;
+    const days = document.getElementById("daysInput").value;
+
+    if (isAutoDelete && (days === "" || days <= 0)) {
+      alert("Please enter a valid number of days.");
+      return;
+    }
+
+    alert(
+      `Settings saved:\nAuto Delete: ${isAutoDelete}\nDelete logs older than: ${days} days`
+    );
+    // Here you can add actual logic to save the settings (e.g., send data to a server).
+  });
+
+  // button to delete all log
   const btnDel = document.getElementById("btnDel");
   btnDel.addEventListener("click", (event) => {
     if (
