@@ -126,21 +126,35 @@ const initPopupUI = () => {
     daysInput.disabled = !inputAutoDel.checked;
   });
 
+  chrome.storage.local.get(["autoDelete", "days"], function (data) {
+    if (data.autoDelete !== undefined) {
+      inputAutoDel.checked = data.autoDelete;
+      daysInput.disabled = !data.autoDelete;
+    }
+    if (data.days !== undefined) {
+      daysInput.value = data.days;
+    }
+    log(data.autoDelete + ", " + data.days)
+  });
+
   // save settings button
   const btnSaveSettings = document.getElementById("btnSaveSettings");
   btnSaveSettings.addEventListener("click", () => {
-    const isAutoDelete = document.getElementById("autoDeleteToggle").checked;
+    const autoDelete = document.getElementById("autoDeleteToggle").checked;
     const days = document.getElementById("daysInput").value;
 
-    if (isAutoDelete && (days === "" || days <= 0)) {
+    if (autoDelete && (days === "" || days <= 0)) {
       alert("Please enter a valid number of days.");
       return;
     }
 
-    alert(
-      `Settings saved:\nAuto Delete: ${isAutoDelete}\nDelete logs older than: ${days} days`
-    );
+    // alert(
+    //   `Settings saved:\nAuto Delete: ${isAutoDelete}\nDelete logs older than: ${days} days`
+    // );
     // Here you can add actual logic to save the settings (e.g., send data to a server).
+    chrome.storage.local.set({ autoDelete, days }, function () {
+      alert("Settings saved!");
+    });
   });
 
   // button to delete all log
@@ -241,7 +255,7 @@ const init = () => {
   });
   document.body.appendChild(popup);
 
-  // fetch the HTML file
+  // fetch the mini page's HTML file
   const popupHtmlPath = chrome.runtime.getURL(PATH_POPUP_HTML);
   fetch(popupHtmlPath)
     .then((response) => {
@@ -260,6 +274,7 @@ const init = () => {
       log(error.message);
     });
 
+  // todo: add comments
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "hidden") {
       if (_sessionEntry == undefined) {
