@@ -173,7 +173,7 @@ const fillMissingDates = (dataMap) => {
   for (let d = new Date(minDate); d <= maxDate; d.setDate(d.getDate() + 1)) {
     const dateStr = d.toISOString().split("T")[0];
     filledData.push({
-      date: new Date(dateStr),
+      date: new Date(d.getTime()),
       value: dataMapObj.has(dateStr) ? dataMapObj.get(dateStr) : 0,
     });
   }
@@ -186,7 +186,6 @@ const fillMissingDates = (dataMap) => {
 //
 const plot = (title, dataMap, idDivVis) => {
   const data = fillMissingDates(dataMap);
-
   const widthContainer = document.getElementById(idDivVis).offsetWidth;
   const visHeight = 80;
   const margin = { top: 5, right: 5, bottom: 20, left: 5 };
