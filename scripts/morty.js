@@ -148,10 +148,6 @@ const initPopupUI = () => {
       return;
     }
 
-    // alert(
-    //   `Settings saved:\nAuto Delete: ${isAutoDelete}\nDelete logs older than: ${days} days`
-    // );
-    // Here you can add actual logic to save the settings (e.g., send data to a server).
     chrome.storage.local.set({ autoDelete, days }, function () {
       alert("Settings saved!");
     });
@@ -361,6 +357,12 @@ const log = (msg) => {
         init();
 
         openDB(readFromDB);
+        chrome.storage.local.get(["autoDelete", "days"], function (data) {
+          if (data.autoDelete && data.days !== undefined) {
+            autoDeleteOldLog(ID_DB, ID_STORE, parseInt(data.days))
+          }
+        });
+        
 
         _sessionEntry = createNewLogEntry();
       })

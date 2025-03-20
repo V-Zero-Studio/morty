@@ -18,7 +18,7 @@ const visualizeSeries = (containerVis) => {
 
       // [behavior] num of sessions per day
       for (const entry of series) {
-        if (isOutOfWindow(entry.timeStamp)) continue;
+        // if (isOutOfWindow(entry.timeStamp)) continue;
 
         const strDate = entry.timeStamp.split("T")[0];
 
@@ -124,17 +124,6 @@ const visualizeSeries = (containerVis) => {
       );
     });
   });
-};
-
-//
-//  detect if a log entry is out of the window
-//  (i.e., older than n days ago)
-//
-const isOutOfWindow = (timeStamp) => {
-  const givenDate = new Date(timeStamp);
-  const earliestDate = new Date();
-  earliestDate.setDate(earliestDate.getDate() - WINDOW);
-  return givenDate < earliestDate;
 };
 
 //
