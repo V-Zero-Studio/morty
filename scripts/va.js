@@ -8,8 +8,6 @@ const WINDOW = 30;
 //  aggregate multiple series of log data and visualize it
 //
 const visualizeSeries = (series, containerVis) => {
-  // openDB((event) => {
-  //   readFromDB((series) => {
   const mapSessions = new Map();
   const mapMouseFootprint = new Map();
   const mapNumCopyEvents = new Map();
@@ -18,8 +16,6 @@ const visualizeSeries = (series, containerVis) => {
 
   // [behavior] num of sessions per day
   for (const entry of series) {
-    // if (isOutOfWindow(entry.timeStamp)) continue;
-
     const strDate = entry.timeStamp.split("T")[0];
 
     let numSessions = mapSessions.has(strDate) ? mapSessions.get(strDate) : 0;
@@ -30,8 +26,6 @@ const visualizeSeries = (series, containerVis) => {
 
   // [behaviors] others
   for (const entry of series) {
-    if (isOutOfWindow(entry.timeStamp)) continue;
-
     const strDate = entry.timeStamp.split("T")[0];
     numSessions = mapSessions.get(strDate);
 
