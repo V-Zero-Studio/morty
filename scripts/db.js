@@ -5,13 +5,13 @@
 //
 // opening database
 //
-const openDB = (onSuccess) => {
-  const request = indexedDB.open(ID_DB, 1);
+const openDB = (dbID, storeID, onSuccess) => {
+  const request = indexedDB.open(dbID, 1);
 
   request.onupgradeneeded = function (event) {
-    _db = event.target.result;
-    if (!_db.objectStoreNames.contains(ID_STORE)) {
-      const store = _db.createObjectStore(ID_STORE, {
+    const db = event.target.result;
+    if (!db.objectstoreIDs.contains(storeID)) {
+      const store = db.createObjectStore(storeID, {
         keyPath: "id",
         autoIncrement: true,
       });
@@ -22,9 +22,8 @@ const openDB = (onSuccess) => {
   };
 
   request.onsuccess = function (event) {
-    _db = event.target.result;
     log("database opened successfully in content script");
-    onSuccess();
+    onSuccess(event);
   };
 
   request.onerror = function (event) {
@@ -36,9 +35,9 @@ const openDB = (onSuccess) => {
 //
 // writing to indexedDB
 //
-const writeToDB = (data, onSuccess) => {
-  const transaction = _db.transaction([ID_STORE], "readwrite");
-  const store = transaction.objectStore(ID_STORE);
+const writeToDB = (db, storeID, data, onSuccess) => {
+  const transaction = db.transaction([storeID], "readwrite");
+  const store = transaction.objectStore(storeID);
 
   const addRequest = store.put(data);
 
@@ -55,46 +54,11 @@ const writeToDB = (data, onSuccess) => {
 };
 
 //
-//
-//
-function deleteEntry(dbName, storeName, key) {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open(dbName);
-
-    request.onsuccess = function (event) {
-      const db = event.target.result;
-      const transaction = db.transaction(storeName, "readwrite");
-      const store = transaction.objectStore(storeName);
-      const deleteRequest = store.delete(key);
-
-      deleteRequest.onsuccess = function () {
-        console.log(`Entry with key ${key} deleted successfully.`);
-        resolve();
-      };
-
-      deleteRequest.onerror = function (event) {
-        console.error("Error deleting entry:", event.target.error);
-        reject(event.target.error);
-      };
-
-      transaction.oncomplete = function () {
-        db.close(); // Close the database connection after the operation
-      };
-    };
-
-    request.onerror = function (event) {
-      console.error("Error opening database:", event.target.error);
-      reject(event.target.error);
-    };
-  });
-}
-
-//
 //  reading from indexedDB
 //
-const readFromDB = (onSuccess) => {
-  const transaction = _db.transaction([ID_STORE], "readonly");
-  const store = transaction.objectStore(ID_STORE);
+const readFromDB = (db, storeID, onSuccess) => {
+  const transaction = db.transaction([storeID], "readonly");
+  const store = transaction.objectStore(storeID);
 
   const getRequest = store.getAll();
 
@@ -112,6 +76,40 @@ const readFromDB = (onSuccess) => {
     log(event);
   };
 };
+
+//
+//
+//
+function deleteEntry(db, storeID, key) {
+  // return new Promise((resolve, reject) => {
+  //   const request = indexedDB.open(dbID);
+
+  //   request.onsuccess = function (event) {
+  const transaction = db.transaction(storeID, "readwrite");
+  const store = transaction.objectStore(storeID);
+  const deleteRequest = store.delete(key);
+
+  deleteRequest.onsuccess = function () {
+    console.log(`Entry with key ${key} deleted successfully.`);
+    resolve();
+  };
+
+  deleteRequest.onerror = function (event) {
+    console.error("Error deleting entry:", event.target.error);
+    reject(event.target.error);
+  };
+
+  // transaction.oncomplete = function () {
+  //   db.close(); // Close the database connection after the operation
+  // };
+  // };
+
+  //   request.onerror = function (event) {
+  //     console.error("Error opening database:", event.target.error);
+  //     reject(event.target.error);
+  //   };
+  // });
+}
 
 //
 //  trigger a dialog to download an object as a json file
@@ -147,17 +145,18 @@ const isOutOfWindow = (timeStamp, window) => {
 };
 
 //
-//
+//  automatically deleting old entries
 //
 const autoDeleteOldLog = (dbID, storeID, daysToKeep) => {
-  openDB((event) => {
-    const transaction = _db.transaction([storeID], "readonly");
+  openDB(dbID, storeID, (event) => {
+    const db = event.target.result;
+    const transaction = db.transaction([storeID], "readonly");
     const store = transaction.objectStore(storeID);
 
     const keysRequest = store.getAllKeys();
 
     keysRequest.onsuccess = function (event) {
-      console.log("Keys:", event.target.result);
+      // console.log("Keys:", event.target.result);
       const keys = event.target.result;
       for (const key of keys) {
         const getRequest = store.get(key);
@@ -165,36 +164,23 @@ const autoDeleteOldLog = (dbID, storeID, daysToKeep) => {
         getRequest.onsuccess = function (event) {
           const entry = event.target.result;
           if (entry !== undefined) {
-            // console.log("Record found:", record);
             if (isOutOfWindow(entry.timeStamp, daysToKeep)) {
-              deleteEntry(dbID, storeID, key);
+              deleteEntry(db, storeID, key);
               console.log("entry deleted", entry);
             }
           } else {
-            console.log("No entry found for key:", yourKey);
+            console.log("no entry found for key:", yourKey);
           }
         };
 
         getRequest.onerror = function (event) {
-          console.error("Error retrieving entry:", event.target.error);
+          console.error("error retrieving entry:", event.target.error);
         };
       }
     };
 
     keysRequest.onerror = function (event) {
-      console.error("Error retrieving keys:", event.target.error);
+      console.error("error retrieving keys:", event.target.error);
     };
-    // readFromDB(async (series) => {
-    //   await indexedDB.deleteDatabase(id);
-    //   // const trimmedSeries = [];
-    //   for (const entry of series) {
-    //     if (isOutOfWindow(entry.timeStamp), daysToKeep) {
-    //       deleteEntry(entry.timeStamp)
-    //     }
-    //     // trimmedSeries.push(entry);
-    //     // writeToDB(entry);
-    //   }
-    //   // log(trimmedSeries);
-    // });
   });
 };

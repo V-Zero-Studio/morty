@@ -134,7 +134,7 @@ const initPopupUI = () => {
     if (data.days !== undefined) {
       daysInput.value = data.days;
     }
-    log(data.autoDelete + ", " + data.days)
+    log(data.autoDelete + ", " + data.days);
   });
 
   // save settings button
@@ -234,7 +234,12 @@ const init = () => {
     let containerVis = document.getElementById("tabVis");
     if (popup.style.display === "none") {
       popup.style.display = "block";
-      visualizeSeries(containerVis);
+      openDB(ID_DB, ID_STORE, (event) => {
+        _db = event.target.result;
+        readFromDB(_db, ID_STORE, (series) => {
+          visualizeSeries(series, containerVis);
+        });
+      });
     } else {
       popup.style.display = "none";
       containerVis.innerHTML = "";
@@ -318,7 +323,8 @@ const saveLog = async () => {
   }
 
   return new Promise((resolve, reject) => {
-    writeToDB(_sessionEntry, () => {
+    // todo: check _db
+    writeToDB(_db, ID_STORE, _sessionEntry, () => {
       log("data successfully stored.");
       log(_sessionEntry);
       _sessionEntry = undefined;
@@ -356,13 +362,15 @@ const log = (msg) => {
 
         init();
 
-        openDB(readFromDB);
+        openDB(ID_DB, ID_STORE, (event) => {
+          _db = event.target.result;
+          readFromDB(_db, ID_STORE);
+        });
         chrome.storage.local.get(["autoDelete", "days"], function (data) {
           if (data.autoDelete && data.days !== undefined) {
-            autoDeleteOldLog(ID_DB, ID_STORE, parseInt(data.days))
+            autoDeleteOldLog(ID_DB, ID_STORE, parseInt(data.days));
           }
         });
-        
 
         _sessionEntry = createNewLogEntry();
       })

@@ -7,123 +7,116 @@ const WINDOW = 30;
 //
 //  aggregate multiple series of log data and visualize it
 //
-const visualizeSeries = (containerVis) => {
-  openDB((event) => {
-    readFromDB((series) => {
-      const mapSessions = new Map();
-      const mapMouseFootprint = new Map();
-      const mapNumCopyEvents = new Map();
-      const mapSessionsScrollNeeded = new Map();
-      const mapNumScrollEvents = new Map();
+const visualizeSeries = (series, containerVis) => {
+  // openDB((event) => {
+  //   readFromDB((series) => {
+  const mapSessions = new Map();
+  const mapMouseFootprint = new Map();
+  const mapNumCopyEvents = new Map();
+  const mapSessionsScrollNeeded = new Map();
+  const mapNumScrollEvents = new Map();
 
-      // [behavior] num of sessions per day
-      for (const entry of series) {
-        // if (isOutOfWindow(entry.timeStamp)) continue;
+  // [behavior] num of sessions per day
+  for (const entry of series) {
+    // if (isOutOfWindow(entry.timeStamp)) continue;
 
-        const strDate = entry.timeStamp.split("T")[0];
+    const strDate = entry.timeStamp.split("T")[0];
 
-        let numSessions = mapSessions.has(strDate)
-          ? mapSessions.get(strDate)
-          : 0;
-        mapSessions.set(strDate, numSessions + 1);
+    let numSessions = mapSessions.has(strDate) ? mapSessions.get(strDate) : 0;
+    mapSessions.set(strDate, numSessions + 1);
+  }
+
+  plot("# of sessions", mapSessions, createDivVis("visSessions", containerVis));
+
+  // [behaviors] others
+  for (const entry of series) {
+    if (isOutOfWindow(entry.timeStamp)) continue;
+
+    const strDate = entry.timeStamp.split("T")[0];
+    numSessions = mapSessions.get(strDate);
+
+    // [behavior] avg mouse footprint per session per day
+    const mousemoveEvents = entry.interactionBehaviors.mousemoveEvents;
+    let footprint = 0;
+    let coordPrev;
+    for (event of mousemoveEvents) {
+      const coord = event.coord;
+      if (coordPrev != undefined) {
+        const dx = coord.x - coordPrev.x;
+        const dy = coord.y - coordPrev.y;
+        footprint += Math.sqrt(dx * dx + dy * dy);
       }
+      coordPrev = coord;
+    }
 
-      plot(
-        "# of sessions",
-        mapSessions,
-        createDivVis("visSessions", containerVis)
-      );
+    let footprintExisting = mapMouseFootprint.has(strDate)
+      ? mapMouseFootprint.get(strDate)
+      : 0;
 
-      // [behaviors] others
-      for (const entry of series) {
-        if (isOutOfWindow(entry.timeStamp)) continue;
+    mapMouseFootprint.set(
+      strDate,
+      (footprintExisting + footprint / numSessions) | 0
+    );
 
-        const strDate = entry.timeStamp.split("T")[0];
-        numSessions = mapSessions.get(strDate);
+    // [behavior] avg copy events per session
+    const numCopyEvents = entry.interactionBehaviors.copyEvents.length;
+    let numCopyEventsExisting = mapNumCopyEvents.has(strDate)
+      ? mapNumCopyEvents.get(strDate)
+      : 0;
 
-        // [behavior] avg mouse footprint per session per day
-        const mousemoveEvents = entry.interactionBehaviors.mousemoveEvents;
-        let footprint = 0;
-        let coordPrev;
-        for (event of mousemoveEvents) {
-          const coord = event.coord;
-          if (coordPrev != undefined) {
-            const dx = coord.x - coordPrev.x;
-            const dy = coord.y - coordPrev.y;
-            footprint += Math.sqrt(dx * dx + dy * dy);
-          }
-          coordPrev = coord;
-        }
+    numCopyEventsExisting += numCopyEvents / numSessions;
+    mapNumCopyEvents.set(
+      strDate,
+      Number(Number(numCopyEventsExisting).toPrecision(2))
+    );
 
-        let footprintExisting = mapMouseFootprint.has(strDate)
-          ? mapMouseFootprint.get(strDate)
-          : 0;
+    // [behavior] scrolling
+    if (
+      entry.response.height != undefined &&
+      entry.viewHeight != undefined &&
+      entry.response.height > entry.viewHeight
+    ) {
+      let numSessionsScrollNeeded = mapSessionsScrollNeeded.has(strDate)
+        ? mapSessionsScrollNeeded.get(strDate)
+        : 0;
+      mapSessionsScrollNeeded.set(strDate, numSessionsScrollNeeded + 1);
 
-        mapMouseFootprint.set(
-          strDate,
-          (footprintExisting + footprint / numSessions) | 0
-        );
+      const numScrolls = entry.interactionBehaviors.scrollEvents.length;
+      let numScrollsExisting = mapNumScrollEvents.has(strDate)
+        ? mapNumScrollEvents.get(strDate)
+        : 0;
+      mapNumScrollEvents.set(strDate, numScrollsExisting + numScrolls);
+    }
+  }
 
-        // [behavior] avg copy events per session
-        const numCopyEvents = entry.interactionBehaviors.copyEvents.length;
-        let numCopyEventsExisting = mapNumCopyEvents.has(strDate)
-          ? mapNumCopyEvents.get(strDate)
-          : 0;
+  plot(
+    "mouse movement / session",
+    mapMouseFootprint,
+    createDivVis("visMouseFootprint", containerVis)
+  );
 
-        numCopyEventsExisting += numCopyEvents / numSessions;
-        mapNumCopyEvents.set(
-          strDate,
-          Number(Number(numCopyEventsExisting).toPrecision(2))
-        );
+  plot(
+    "# of copy / session",
+    mapNumCopyEvents,
+    createDivVis("visNumCopyEvents", containerVis)
+  );
 
-        // [behavior] scrolling
-        if (
-          entry.response.height != undefined &&
-          entry.viewHeight != undefined &&
-          entry.response.height > entry.viewHeight
-        ) {
-          let numSessionsScrollNeeded = mapSessionsScrollNeeded.has(strDate)
-            ? mapSessionsScrollNeeded.get(strDate)
-            : 0;
-          mapSessionsScrollNeeded.set(strDate, numSessionsScrollNeeded + 1);
-
-          const numScrolls = entry.interactionBehaviors.scrollEvents.length;
-          let numScrollsExisting = mapNumScrollEvents.has(strDate)
-            ? mapNumScrollEvents.get(strDate)
-            : 0;
-          mapNumScrollEvents.set(strDate, numScrollsExisting + numScrolls);
-        }
-      }
-
-      plot(
-        "mouse movement / session",
-        mapMouseFootprint,
-        createDivVis("visMouseFootprint", containerVis)
-      );
-
-      plot(
-        "# of copy / session",
-        mapNumCopyEvents,
-        createDivVis("visNumCopyEvents", containerVis)
-      );
-
-      for (const strDate of mapSessionsScrollNeeded.keys()) {
-        const numScrollsPerSession =
-          mapNumScrollEvents.get(strDate) /
-          mapSessionsScrollNeeded.get(strDate);
-        mapNumScrollEvents.set(
-          strDate,
-          Number(Number(numScrollsPerSession).toPrecision(2))
-        );
-      }
-      log(mapNumScrollEvents);
-      plot(
-        "# of scrolls / session",
-        mapNumScrollEvents,
-        createDivVis("visNumScrollEvents", containerVis)
-      );
-    });
-  });
+  for (const strDate of mapSessionsScrollNeeded.keys()) {
+    const numScrollsPerSession =
+      mapNumScrollEvents.get(strDate) / mapSessionsScrollNeeded.get(strDate);
+    mapNumScrollEvents.set(
+      strDate,
+      Number(Number(numScrollsPerSession).toPrecision(2))
+    );
+  }
+  log(mapNumScrollEvents);
+  plot(
+    "# of scrolls / session",
+    mapNumScrollEvents,
+    createDivVis("visNumScrollEvents", containerVis)
+  );
+  //   });
+  // });
 };
 
 //
