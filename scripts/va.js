@@ -80,6 +80,8 @@ const visualizeSeries = (series, containerVis) => {
         ? mapNumScrollEvents.get(strDate)
         : 0;
       mapNumScrollEvents.set(strDate, numScrollsExisting + numScrolls);
+    } else {
+      mapNumScrollEvents.set(strDate, 0);
     }
   }
 
@@ -109,8 +111,6 @@ const visualizeSeries = (series, containerVis) => {
     mapNumScrollEvents,
     createDivVis("visNumScrollEvents", containerVis)
   );
-  //   });
-  // });
 };
 
 //
@@ -133,18 +133,17 @@ const fillMissingDates = (dataMap) => {
     value,
   })).sort((a, b) => a.date - b.date);
 
-  if (data.length === 0) return [];
-
-  // Get the min and max dates
-  const minDate = new Date(data[0].date);
+  // get the min and max dates
+  // if the dataMap is empty, fill in today
   const maxDate = new Date();
+  const minDate = data.length === 0 ? maxDate : new Date(data[0].date);
 
-  // Create a map for quick lookup
+  // create a map for quick lookup
   const dataMapObj = new Map(
     data.map((d) => [d.date.toISOString().split("T")[0], d.value])
   );
 
-  // Generate all dates within the range
+  // generate all dates within the range
   const filledData = [];
   for (let d = new Date(minDate); d <= maxDate; d.setDate(d.getDate() + 1)) {
     const dateStr = d.toISOString().split("T")[0];
@@ -161,6 +160,7 @@ const fillMissingDates = (dataMap) => {
 //  plotting data series in a div
 //
 const plot = (title, dataMap, idDivVis) => {
+  // if (dataMap.size === 0) return;
   const data = fillMissingDates(dataMap);
   const widthContainer = document.getElementById(idDivVis).offsetWidth;
   const visHeight = 80;
