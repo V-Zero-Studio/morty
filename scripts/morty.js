@@ -233,6 +233,8 @@ const init = () => {
   btnSwitch.addEventListener("click", (e) => {
     let containerVis = document.getElementById("tabVis");
     if (popup.style.display === "none") {
+      const tabVis = document.querySelector('[data-tab="tabVis"]');
+      tabVis.click();
       popup.style.display = "block";
       openDB(ID_DB, ID_STORE, (event) => {
         _db = event.target.result;
