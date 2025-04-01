@@ -81,9 +81,6 @@ const readFromDB = (db, storeID, onSuccess) => {
 //
 //
 function deleteEntry(db, storeID, key) {
-  // return new Promise((resolve, reject) => {
-  //   const request = indexedDB.open(dbID);
-
   //   request.onsuccess = function (event) {
   const transaction = db.transaction(storeID, "readwrite");
   const store = transaction.objectStore(storeID);
@@ -98,17 +95,6 @@ function deleteEntry(db, storeID, key) {
     console.error("Error deleting entry:", event.target.error);
     reject(event.target.error);
   };
-
-  // transaction.oncomplete = function () {
-  //   db.close(); // Close the database connection after the operation
-  // };
-  // };
-
-  //   request.onerror = function (event) {
-  //     console.error("Error opening database:", event.target.error);
-  //     reject(event.target.error);
-  //   };
-  // });
 }
 
 //
@@ -156,7 +142,6 @@ const autoDeleteOldLog = (dbID, storeID, daysToKeep) => {
     const keysRequest = store.getAllKeys();
 
     keysRequest.onsuccess = function (event) {
-      // console.log("Keys:", event.target.result);
       const keys = event.target.result;
       for (const key of keys) {
         const getRequest = store.get(key);

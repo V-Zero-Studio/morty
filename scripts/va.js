@@ -13,6 +13,7 @@ const visualizeSeries = (series, containerVis) => {
   const mapNumCopyEvents = new Map();
   const mapSessionsScrollNeeded = new Map();
   const mapNumScrollEvents = new Map();
+  const mapOffsetScrollEvents = new Map();
 
   // [behavior] num of sessions per day
   for (const entry of series) {
@@ -75,13 +76,24 @@ const visualizeSeries = (series, containerVis) => {
         : 0;
       mapSessionsScrollNeeded.set(strDate, numSessionsScrollNeeded + 1);
 
+      // number of scroll events
       const numScrolls = entry.interactionBehaviors.scrollEvents.length;
       let numScrollsExisting = mapNumScrollEvents.has(strDate)
         ? mapNumScrollEvents.get(strDate)
         : 0;
       mapNumScrollEvents.set(strDate, numScrollsExisting + numScrolls);
+
+      const offsetScrolls = entry.interactionBehaviors.scrollEvents.reduce(
+        (sum, event) => sum + event.offset,
+        0
+      );
+      let offsetScrollsExisting = mapOffsetScrollEvents.has(strDate)
+        ? mapOffsetScrollEvents.get(strDate)
+        : 0;
+      mapOffsetScrollEvents.set(strDate, offsetScrollsExisting + offsetScrolls);
     } else {
       mapNumScrollEvents.set(strDate, 0);
+      mapOffsetScrollEvents.set(strDate, 0);
     }
   }
 
@@ -104,12 +116,25 @@ const visualizeSeries = (series, containerVis) => {
       strDate,
       Number(Number(numScrollsPerSession).toPrecision(2))
     );
+
+    const offsetScrollsPerSession =
+      mapOffsetScrollEvents.get(strDate) / mapSessionsScrollNeeded.get(strDate);
+    mapOffsetScrollEvents.set(
+      strDate,
+      Number(Number(offsetScrollsPerSession).toPrecision(2))
+    );
   }
-  log(mapNumScrollEvents);
+
   plot(
     "# of scrolls / session",
     mapNumScrollEvents,
     createDivVis("visNumScrollEvents", containerVis)
+  );
+
+  plot(
+    "offset of scrolls / session",
+    mapOffsetScrollEvents,
+    createDivVis("visOffsetScrollEvents", containerVis)
   );
 };
 
