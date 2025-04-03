@@ -1,5 +1,5 @@
 {
-    "KEYWORD_STREAMING": "result-streaming",
+    "KEYWORD_STREAMING": "streaming-animation",
     "ID_PROMPT_INPUT": "prompt-textarea",
     "QUERY_SEND_BTN": "[data-testid=\"send-button\"]",
     "QUERY_CHAT_DIV": "[role=\"presentation\"]",
